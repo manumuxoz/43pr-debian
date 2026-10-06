@@ -5,6 +5,12 @@ rice — *"Hyprland + Quickshell setup"* — running on **Hyprland 0.55 (Lua con
 era)**, **Waybar 0.12** and **Quickshell 0.3**, with a **greetd/hyprlogin** login
 screen and **fingerprint** unlock.
 
+> **Upstream project:** [43PR dotfiles](https://github.com/43PR/dotfiles) —
+> https://github.com/43PR/dotfiles — *"Hyprland + Quickshell setup"*, MIT, © 43PR.
+> This is an independent Debian 13 adaptation: all credit for the original rice,
+> theme engine, QML shell and keybind design goes to the 43PR authors; only the
+> Debian port and the hardware/greeter adaptations are new.
+
 Tested on: ASUS Zenbook UX3402VA · Debian 13.7 · Hyprland 0.55.2 · Quickshell
 0.3.0 · Waybar 0.12.0 · greetd 0.10.3.
 
@@ -107,7 +113,13 @@ Files generated at install time (`hyprlock-colors.conf`, `waybar/colors.css`,
 
 ## Credits and license
 
-See [`NOTICE.md`](NOTICE.md). The adaptation is MIT; upstream 43PR dotfiles are
-MIT (© 43PR), hyprlogin is BSD-3-Clause, and the libfprint patch refers to an
-LGPL-2.1 project. No personal wallpapers or images from the original setup are
-included.
+This repository is a **Debian 13 adaptation of the [43PR dotfiles](https://github.com/43PR/dotfiles)**
+(https://github.com/43PR/dotfiles), MIT © 43PR — most files under `config/`
+originate there and keep the upstream MIT license. See [`NOTICE.md`](NOTICE.md)
+for the full attribution and [`LICENSES/`](LICENSES/) for the license texts.
+
+The adaptation itself is MIT (see [`LICENSE`](LICENSE)). hyprlogin is
+BSD-3-Clause (© 2024 Hypr Development); the Waybar IPC shim works around two
+unmerged upstream Waybar PRs; the libfprint patch refers to an LGPL-2.1 project
+(patch only — no upstream source is redistributed). No personal wallpapers or
+images from the original setup are included.
