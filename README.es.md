@@ -64,7 +64,7 @@ sudo apt install \
   swaybg jq imagemagick python3 greetd
 
 # 2. Clona e instala en tu HOME (hace copia de seguridad de lo existente):
-git clone https://github.com/<tu-usuario>/43pr-debian.git
+git clone https://github.com/manumuxoz/43pr-debian.git
 cd 43pr-debian
 ./install.sh
 ```
