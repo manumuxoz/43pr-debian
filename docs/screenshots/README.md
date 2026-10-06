@@ -1,13 +1,14 @@
 # Screenshots
 
-The main READMEs link captures of this setup once they are added here.
+Captures of this setup, linked from the main READMEs:
 
-Suggested captures (each under ~500 KB):
-
-- `desktop.jpg` — clean desktop: wallpaper, Waybar, a couple of windows
-- `launcher.jpg` — `SUPER+W` wallpaper picker (hyprquickpaper)
-- `settings.jpg` — Quickshell settings (`SUPER+I`)
-- `lock.jpg` — hyprlock / hyprlogin lock screen
+- `waybar.jpg` — desktop with the Waybar bar (also usable as the GitHub social preview)
+- `wofi.jpg` — wofi launcher
+- `quickshell.jpg` — Quickshell settings window (`SUPER+I`)
+- `wallpapers.jpg` — `SUPER+W` wallpaper picker (hyprquickpaper)
+- `notas.jpg` — notepad window (`SUPER+N`)
+- `escritorios.jpg` — workspace switcher
+- `fastfetch-kitty.jpg` — fastfetch in kitty
 
 How to capture on Hyprland (grim is enough):
 

@@ -25,6 +25,24 @@ Probado en: ASUS Zenbook UX3402VA · Debian 13.7 · Hyprland 0.55.2 · Quickshel
 > El 43PR original apunta a distribuciones basadas en Arch; todo lo específico
 > de Debian está en este repositorio.
 
+## Capturas
+
+Capturas del escritorio real del autor.
+
+![Escritorio con la barra Waybar y el tema 43PR](docs/screenshots/waybar.jpg)
+
+| Lanzador (wofi) | Ajustes de Quickshell (`SUPER+I`) |
+|---|---|
+| ![lanzador wofi](docs/screenshots/wofi.jpg) | ![ventana de ajustes de Quickshell](docs/screenshots/quickshell.jpg) |
+
+| Selector de fondos (`SUPER+W`) | Notas (`SUPER+N`) |
+|---|---|
+| ![selector de fondos hyprquickpaper](docs/screenshots/wallpapers.jpg) | ![ventana de notas](docs/screenshots/notas.jpg) |
+
+| Cambiador de escritorios | fastfetch en kitty |
+|---|---|
+| ![cambiador de escritorios](docs/screenshots/escritorios.jpg) | ![fastfetch en kitty](docs/screenshots/fastfetch-kitty.jpg) |
+
 ## Contenido
 
 | Componente | Notas |
@@ -135,4 +153,5 @@ La adaptación se publica bajo licencia MIT (ver [`LICENSE`](LICENSE)). hyprlogi
 es BSD-3-Clause (© 2024 Hypr Development); el shim IPC de Waybar da soporte a
 dos PRs todavía sin fusionar en upstream; el parche de libfprint hace referencia
 a un proyecto LGPL-2.1 (solo el parche — no se redistribuye código original). No
-se incluye ningún fondo ni imagen personal del setup original.
+se incluye ningún fondo ni imagen personal del setup original; las capturas de
+este README muestran el escritorio real del autor.

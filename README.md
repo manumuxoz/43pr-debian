@@ -24,6 +24,24 @@ Tested on: ASUS Zenbook UX3402VA · Debian 13.7 · Hyprland 0.55.2 · Quickshell
 > documented in [`docs/hardware.md`](docs/hardware.md). Upstream 43PR targets
 > Arch-based distributions; everything Debian-related lives in this repository.
 
+## Screenshots
+
+Captures from the author's real desktop.
+
+![Desktop with the Waybar bar and the 43PR theme](docs/screenshots/waybar.jpg)
+
+| Launcher (wofi) | Quickshell settings (`SUPER+I`) |
+|---|---|
+| ![wofi launcher](docs/screenshots/wofi.jpg) | ![Quickshell settings window](docs/screenshots/quickshell.jpg) |
+
+| Wallpaper picker (`SUPER+W`) | Notepad (`SUPER+N`) |
+|---|---|
+| ![hyprquickpaper wallpaper picker](docs/screenshots/wallpapers.jpg) | ![Notepad window](docs/screenshots/notas.jpg) |
+
+| Workspace switcher | fastfetch in kitty |
+|---|---|
+| ![Workspace switcher](docs/screenshots/escritorios.jpg) | ![fastfetch in kitty](docs/screenshots/fastfetch-kitty.jpg) |
+
 ## What's inside
 
 | Component | Notes |
@@ -133,4 +151,5 @@ The adaptation itself is MIT (see [`LICENSE`](LICENSE)). hyprlogin is
 BSD-3-Clause (© 2024 Hypr Development); the Waybar IPC shim works around two
 unmerged upstream Waybar PRs; the libfprint patch refers to an LGPL-2.1 project
 (patch only — no upstream source is redistributed). No personal wallpapers or
-images from the original setup are included.
+images from the original setup are included in the configuration; the screenshots
+in this README show the author's real desktop as-is.

@@ -30,7 +30,7 @@ licensed by their respective projects and are **not** redistributed here.
 
 ## Assets
 
-No personal images, avatars or wallpapers from the original setup are included.
+No personal images, avatars or wallpapers from the original setup are included in the configuration. The screenshots in the READMEs show the author's real desktop, wallpaper included.
 The avatar in `config/quickshell/comitern.svg` is a neutral placeholder; the
 wallpaper system expects your own images (see `README.md`).
 
