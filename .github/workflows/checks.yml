@@ -38,7 +38,7 @@ jobs:
       - name: Check for personal data
         run: |
           if grep -rInE '/home/manu|munhozvazquez|@gmail\.com|USUARIO=manu|default_user *= *manu' . \
-               --exclude-dir=.git --exclude-dir=LICENSES; then
+               --exclude-dir=.git --exclude-dir=LICENSES --exclude=checks.yml; then
             echo "::error::Personal data found in the repository"
             exit 1
           fi
