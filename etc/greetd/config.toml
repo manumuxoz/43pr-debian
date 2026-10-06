@@ -1,0 +1,8 @@
+[terminal]
+# La unidad de Debian usa la VT 7 (getty@tty7 en conflicto)
+vt = 7
+
+[default_session]
+# Sesión-greeter: Hyprland mínimo + hyprlogin (como usuario _greetd)
+command = "/etc/hyprlogin/start-greeter.sh"
+user = "_greetd"

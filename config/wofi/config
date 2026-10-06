@@ -1,0 +1,13 @@
+show=drun
+prompt=
+width=480
+height=480
+location=center
+matching=contains
+insensitive=true
+allow_images=true
+image_size=28
+lines=9
+columns=1
+gtk_dark=true
+hide_scroll=true

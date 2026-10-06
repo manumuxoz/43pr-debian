@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Shim Debian para "awww" (no empaquetado en Debian).
+# Emula:  awww img <ruta> [-t random --transition-duration 1]
+# Backend principal: swaybg (layer-shell, estable).
+# Motivo (2026-09-30): hyprpaper 0.8.4 de trixie-backports segfaultea al
+# re-aplicar un wallpaper (el cliente hyprctl queda colgado esperando la
+# respuesta); hyprpaper queda solo como último recurso, arrancándolo una vez
+# por cambio y con el IPC nuevo de 0.8+.
+set -u
+
+if [ "${1:-}" != "img" ]; then
+    exit 0
+fi
+shift
+img="${1:-}"
+
+if [ -z "$img" ] || [ ! -f "$img" ]; then
+    echo "awww(shim): imagen no válida: '${img:-<vacía>}'" >&2
+    exit 1
+fi
+
+# 1) swaybg (preferido): reinicia el proceso con la nueva imagen.
+# Modo stretch: ajusta la imagen a los bordes de la pantalla aunque se deforme.
+if command -v swaybg >/dev/null 2>&1; then
+    pkill -x swaybg 2>/dev/null || true
+    sleep 0.2
+    setsid -f swaybg -i "$img" -m stretch >/dev/null 2>&1 || true
+    sleep 0.4
+    if pgrep -x swaybg >/dev/null 2>&1; then
+        exit 0
+    fi
+fi
+
+# 2) Último recurso: hyprpaper (IPC hyprwire de 0.8+, syntax: "mon,path").
+if command -v hyprctl >/dev/null 2>&1 && command -v hyprpaper >/dev/null 2>&1; then
+    if ! pgrep -x hyprpaper >/dev/null 2>&1; then
+        setsid -f hyprpaper >/dev/null 2>&1 || true
+        # Espera a que hyprpaper responda por IPC (máx. ~5 s).
+        for _ in $(seq 1 50); do
+            timeout 1 hyprctl hyprpaper listactive >/dev/null 2>&1 && break
+            sleep 0.1
+        done
+    fi
+    if timeout 8 hyprctl hyprpaper wallpaper ",$img" >/dev/null 2>&1; then
+        pkill -x swaybg 2>/dev/null || true
+        exit 0
+    fi
+fi
+
+echo "awww(shim): ni swaybg ni hyprpaper funcionaron" >&2
+exit 1

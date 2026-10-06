@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Neutral placeholder avatar (replace with your own image if you like). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <rect width="500" height="500" rx="60" fill="#1e2030"/>
+  <circle cx="250" cy="195" r="80" fill="#6c7086"/>
+  <path d="M110 435 c0 -85 63 -140 140 -140 s140 55 140 140 z" fill="#6c7086"/>
+</svg>

@@ -1,0 +1,82 @@
+# ~/.config/dunst/dunstrc — tema oscuro acorde a la paleta 43pr "default"
+# (ver ~/.cache/43pr/palette.json y ~/.config/43pr/themes/default.toml).
+# Aplicar cambios: dunstctl reload
+#   bg/bg_panel #000000/#050505 · bg_card #0d0d0d · border #151515/#2a2a2a
+#   fg #ffffff · fg_soft #e6eaf2 · fg_muted #8b93a7 · highlight #7aa2f7
+#   urgent #f7768e · danger #ff003c
+
+[global]
+    monitor = 0
+    follow = mouse
+    width = 350
+    height = (0, 220)
+    origin = top-right
+    offset = (8, 8)
+    scale = 0
+    notification_limit = 5
+
+    progress_bar = true
+    progress_bar_height = 8
+    progress_bar_frame_width = 1
+    progress_bar_corner_radius = 4
+
+    indicate_hidden = yes
+    transparency = 0
+    gap_size = 8
+    separator_height = 1
+    padding = 12
+    horizontal_padding = 12
+    text_icon_padding = 10
+    frame_width = 1
+    frame_color = "#151515"
+    corner_radius = 12
+
+    font = "Roboto Mono 10"
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    sort = yes
+    idle_threshold = 120
+    history_length = 20
+
+    icon_path = /usr/share/icons/Papirus-Dark:/usr/share/icons/hicolor:/usr/share/pixmaps
+    icon_theme = Papirus-Dark
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 64
+    enable_recursive_icon_lookup = true
+
+    sticky_history = yes
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+    word_wrap = yes
+
+    mouse_left_click = close_current
+    mouse_middle_click = close_all
+    mouse_right_click = do_action
+
+[urgency_low]
+    timeout = 5
+    background = "#050505"
+    foreground = "#8b93a7"
+    frame_color = "#151515"
+    highlight = "#7aa2f7"
+    default_icon = dialog-information
+
+[urgency_normal]
+    timeout = 10
+    background = "#0d0d0d"
+    foreground = "#e6eaf2"
+    frame_color = "#2a2a2a"
+    highlight = "#7aa2f7"
+    default_icon = dialog-information
+
+[urgency_critical]
+    timeout = 0
+    background = "#1c0009"
+    foreground = "#ffffff"
+    frame_color = "#ff003c"
+    highlight = "#f7768e"
+    default_icon = dialog-error

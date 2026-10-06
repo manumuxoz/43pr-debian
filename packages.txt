@@ -1,0 +1,69 @@
+# 43pr-debian — package reference (Debian 13 "trixie")
+#
+# Versions tested: Hyprland 0.55.2, Quickshell 0.3.0, Waybar 0.12.0,
+# greetd 0.10.3, hyprlogin 0.3.0 (custom build, see docs/hyprlogin.md).
+#
+# Repositories used:
+#   deb http://deb.debian.org/debian trixie main contrib non-free-firmware
+#   deb http://deb.debian.org/debian trixie-updates main contrib non-free-firmware
+#   deb http://deb.debian.org/debian trixie-backports main contrib non-free-firmware
+#   deb http://security.debian.org/debian-security trixie-security main contrib non-free-firmware
+#
+# After adding trixie-backports:  sudo apt update
+#
+# ---------------------------------------------------------------------------
+# Hyprland stack (all from trixie-backports)
+# ---------------------------------------------------------------------------
+# hyprland              0.55.2+ds-1~bpo13+1  (Lua config era, start-hyprland)
+# hyprland-guiutils     0.2.2-1~bpo13+1
+# hypridle              0.1.8-1~bpo13+1
+# hyprlock              0.9.6-1~bpo13+1
+# hyprpaper             0.8.4-1~bpo13+1
+# hyprpicker            0.4.7-1~bpo13+1
+# hyprsunset            0.4.0-1~bpo13+1
+# xdg-desktop-portal-hyprland 1.4.1-1~bpo13+1
+# quickshell            0.3.0-1~bpo13+1
+sudo apt install -t trixie-backports \
+  hyprland hyprland-guiutils hypridle hyprlock hyprpaper hyprpicker \
+  hyprsunset xdg-desktop-portal-hyprland quickshell
+
+# ---------------------------------------------------------------------------
+# Desktop / bar / launchers (trixie stable)
+# ---------------------------------------------------------------------------
+# waybar 0.12.0 — needs the IPC shim, see docs/waybar-hyprland-lua-shim.md
+# swaybg is the wallpaper backend (hyprpaper 0.8.4 crashes on re-apply)
+# imagemagick: hyprquickpaper cache + lock wallpaper generation
+sudo apt install \
+  waybar dunst wofi rofi kitty wlogout \
+  grim slurp wl-clipboard cliphist \
+  brightnessctl playerctl network-manager-gnome polkit-kde-agent-1 \
+  swaybg jq imagemagick python3
+
+# ---------------------------------------------------------------------------
+# Login / fingerprint (trixie stable)
+# ---------------------------------------------------------------------------
+sudo apt install greetd          # 0.10.3-4
+sudo apt install fprintd libpam-fprintd   # see docs/fingerprint.md
+
+# Optional rescue display manager
+sudo apt install sddm
+
+# ---------------------------------------------------------------------------
+# matugen (optional; NOT in Debian)
+# ---------------------------------------------------------------------------
+# theme.py works without matugen using the bundled `default` preset.
+# For wallpaper-driven palettes you need matugen 4.x. Options:
+#   1. OBS repo used by the original setup (DankMaterialShell project):
+#        deb https://download.opensuse.org/repositories/home:/AvengeMedia:/danklinux/Debian_13 ./
+#   2. Build from source with cargo:  https://github.com/InioX/matugen
+
+# ---------------------------------------------------------------------------
+# Fonts
+# ---------------------------------------------------------------------------
+# Roboto Mono is bundled in assets/fonts/ (no Debian package needed).
+
+# ---------------------------------------------------------------------------
+# Optional extras NOT packaged in Debian
+# ---------------------------------------------------------------------------
+# wf-recorder (screen recording) — extracted under ~/.local/opt, see
+# config/hypr/SHORTCUTS.md and local/bin/screen-record.sh.

@@ -1,0 +1,43 @@
+diff --git a/src/core/hyprlock.cpp b/src/core/hyprlock.cpp
+index 39cfe9d..22a0a27 100644
+--- a/src/core/hyprlock.cpp
++++ b/src/core/hyprlock.cpp
+@@ -391,7 +391,10 @@ void CHyprlock::run() {
+ 
+ void CHyprlock::unlock() {
+     if (!m_bLocked) {
+-        Log::logger->log(Log::WARN, "Unlock called, but not locked yet.");
++        // Greeter fix (Debian): auth may finish before the `locked` event is
++        // received; queue the unlock instead of dropping it (session hang).
++        Log::logger->log(Log::WARN, "Unlock called, but not locked yet. Queuing unlock.");
++        m_bUnlockQueued = true;
+         return;
+     }
+ 
+@@ -816,6 +819,12 @@ void CHyprlock::onLockLocked() {
+     Log::logger->log(Log::INFO, "onLockLocked called");
+ 
+     m_bLocked = true;
++
++    if (m_bUnlockQueued) {
++        Log::logger->log(Log::INFO, "onLockLocked: running unlock queued before locked event");
++        m_bUnlockQueued = false;
++        unlock();
++    }
+ }
+ 
+ void CHyprlock::onLockFinished() {
+diff --git a/src/core/hyprlock.hpp b/src/core/hyprlock.hpp
+index 8170771..94642e1 100644
+--- a/src/core/hyprlock.hpp
++++ b/src/core/hyprlock.hpp
+@@ -89,6 +89,9 @@ class CHyprlock {
+ 
+     bool                             m_lockAquired = false;
+     bool                             m_bLocked     = false;
++    // Greeter fix (Debian): remember an unlock requested before the compositor's
++    // `locked` event arrived, so the session doesn't hang after auth.
++    bool                             m_bUnlockQueued = false;
+ 
+     bool                             m_bCapsLock = false;
+     bool                             m_bNumLock  = false;
