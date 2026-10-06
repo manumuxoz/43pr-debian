@@ -1,0 +1,47 @@
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run ShellCheck on all shell scripts
+        run: |
+          mapfile -t files < <(find . -type f -name '*.sh' -not -path './.git/*')
+          if [[ ${#files[@]} -gt 0 ]]; then
+            shellcheck --severity=error "${files[@]}"
+          fi
+
+  python:
+    name: Python syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Compile every Python file
+        run: |
+          mapfile -t files < <(find . -type f -name '*.py' -not -path './.git/*')
+          if [[ ${#files[@]} -gt 0 ]]; then
+            python3 -m py_compile "${files[@]}"
+          fi
+
+  repo-hygiene:
+    name: Repo hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check for personal data
+        run: |
+          if grep -rInE '/home/manu|munhozvazquez|@gmail\.com|USUARIO=manu|default_user *= *manu' . \
+               --exclude-dir=.git --exclude-dir=LICENSES; then
+            echo "::error::Personal data found in the repository"
+            exit 1
+          fi
+          echo "No personal data found."
+      - name: Check relative Markdown links
+        run: python3 tools/check-links.py

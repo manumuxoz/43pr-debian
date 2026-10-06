@@ -1,0 +1,56 @@
+name: Hardware report
+description: Report how 43pr-debian works on your machine (laptop, GPU, displays…)
+title: "[hardware] "
+labels: [hardware]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying **43pr-debian**! This port is developed on an ASUS
+        Zenbook UX3402VA, so reports from other machines are very useful.
+        Partial reports are fine — fill in what you know.
+  - type: input
+    id: machine
+    attributes:
+      label: Machine model
+      placeholder: e.g. ASUS Zenbook UX3402VA, ThinkPad T14 Gen 4…
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: "Debian release and package versions, e.g. from: dpkg -l | grep -E 'hyprland|waybar|quickshell'"
+      placeholder: Debian 13.7 · hyprland 0.55.2 · waybar 0.12.0 · quickshell 0.3.0
+    validations:
+      required: true
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU
+      placeholder: e.g. Intel Iris Xe, AMD Radeon 780M, NVIDIA RTX 3050
+    validations:
+      required: false
+  - type: textarea
+    id: works
+    attributes:
+      label: What works
+      placeholder: Hyprland starts from the greeter, Waybar shows workspaces, theme toggle works…
+    validations:
+      required: false
+  - type: textarea
+    id: broken
+    attributes:
+      label: What does not work
+      description: Attach the relevant logs when possible (e.g. `$XDG_RUNTIME_DIR/waybar-ipc-shim.log`, `hyprctl version`, `journalctl --user -b`).
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I read the README and the docs linked from it
+          required: true
+        - label: I ran install.sh (previous configs were backed up)
+          required: false
