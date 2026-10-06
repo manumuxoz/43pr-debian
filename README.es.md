@@ -1,5 +1,10 @@
 # 43PR dotfiles para Debian 13 (trixie)
 
+[![Licencia: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Debian 13](https://img.shields.io/badge/Debian-13-A81D33?logo=debian&logoColor=white)](packages.txt)
+[![Hyprland 0.55](https://img.shields.io/badge/Hyprland-0.55-58E1FF?logo=hyprland&logoColor=black)](#contenido)
+[![Release](https://img.shields.io/badge/release-v1.0.0-blue.svg)](https://github.com/manumuxoz/43pr-debian/releases)
+
 Adaptación a Debian 13 del rice [43PR dotfiles](https://github.com/43PR/dotfiles)
 (*"Hyprland + Quickshell setup"*), funcionando con **Hyprland 0.55 (config en
 Lua)**, **Waybar 0.12** y **Quickshell 0.3**, con pantalla de login
@@ -73,6 +78,8 @@ cd 43pr-debian
 instala Roboto Mono en `~/.local/share/fonts/43pr/` y ejecuta
 `theme.py apply` para generar los archivos que no se versionan (colores, etc.).
 La configuración anterior se respalda en `~/.config-backups/43pr-debian-<fecha>/`.
+Con `./install.sh --dry-run` puedes previsualizar los cambios, y `./uninstall.sh`
+restaura el último respaldo.
 
 ### Después de instalar
 
@@ -104,8 +111,12 @@ etc/         archivos de sistema para el greeter (greetd, hyprlogin, PAM)
 patches/     fix de hyprlogin, fix de compilación de libfprint (egismoc)
 scripts/     utilidades del greeter (sincronización, rescate, instalación)
 docs/        notas de Debian, shim, greeter, huella y hardware
+tools/       upstream-diff.sh (diferencias con 43PR), check-links.py (CI)
+.github/     workflow de CI + plantilla de issue de hardware
 packages.txt referencia de paquetes apt
-install.sh   instalador a nivel de usuario
+install.sh   instalador a nivel de usuario (admite --dry-run)
+uninstall.sh restaura la configuración previa
+CHANGELOG.md notas de versión
 ```
 
 Los archivos generados al instalar (`hyprlock-colors.conf`, `waybar/colors.css`,
