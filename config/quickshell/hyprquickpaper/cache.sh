@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+dir="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 CONFIG="$1/config.json"
 
 expand_home() {
@@ -38,7 +39,14 @@ find "$wallpaper_path" -type f \( \
     fi
 
     echo "Generating thumbnail for $filename"
-    convert "$img" -thumbnail x500 -strip -quality 85 "$out" &
+    if command -v magick >/dev/null 2>&1; then
+        magick "$img" -thumbnail x500 -strip -quality 85 "$out" &
+    elif command -v convert >/dev/null 2>&1; then
+        convert "$img" -thumbnail x500 -strip -quality 85 "$out" &
+    else
+        # Respaldo sin ImageMagick: Pillow (python3-pil).
+        python3 "$dir/thumbnail.py" "$img" "$out" &
+    fi
 
     if (( cache_batch_size > 0 )); then
         while (( $(jobs -rp | wc -l) >= cache_batch_size )); do

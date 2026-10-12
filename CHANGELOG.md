@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Screenshots in the READMEs (`docs/screenshots/`), including a desktop capture
   usable as the GitHub social preview.
 
+### Fixed
+
+- Lock screen and greeter wallpaper are framed like the desktop again: when
+  ImageMagick is not installed, `theme.py` now stretches the lock wallpaper with
+  Pillow (`python3-pil`) instead of falling back to the un-stretched original
+  (which hyprlock cropped).
+- `hyprquickpaper` previews wallpapers again: the thumbnail cache falls back to
+  Pillow (new `thumbnail.py`) when `magick`/`convert` are missing, so the SUPER+W
+  carousel no longer shows "Caching" forever.
+
 ## [1.0.0] - 2026-10-06
 
 First public release: Debian 13 (trixie) adaptation of the

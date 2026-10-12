@@ -32,7 +32,8 @@ sudo apt install -t trixie-backports \
 # ---------------------------------------------------------------------------
 # waybar 0.12.0 — needs the IPC shim, see docs/waybar-hyprland-lua-shim.md
 # swaybg is the wallpaper backend (hyprpaper 0.8.4 crashes on re-apply)
-# imagemagick: hyprquickpaper cache + lock wallpaper generation
+# imagemagick: hyprquickpaper cache + lock wallpaper generation. Opcional:
+#   sin él, ambas tareas usan Pillow (python3-pil) como respaldo.
 sudo apt install \
   waybar dunst wofi rofi kitty wlogout \
   grim slurp wl-clipboard cliphist \

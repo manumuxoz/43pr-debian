@@ -211,30 +211,52 @@ def pick_screen_size():
         return None
 
 
+def _stretch_with_pillow(src, size, dst):
+    """Estira src al tamaño size con Pillow (python3-pil). True si lo consigue."""
+    try:
+        from PIL import Image
+    except ImportError:
+        warn("ni ImageMagick ni Pillow (python3-pil) están disponibles; "
+             "se usa el wallpaper original en el bloqueo/login")
+        return False
+    try:
+        with Image.open(src) as im:
+            im.convert("RGB").resize(size, Image.LANCZOS).save(dst, "JPEG", quality=92)
+        return True
+    except Exception as e:
+        warn(f"Pillow no pudo estirar el fondo de bloqueo/login: {e}")
+        return False
+
+
 def make_lock_wallpaper(src):
     """Estira el wallpaper a la proporción de la pantalla, como `swaybg -m stretch`.
 
     hyprlock/hyprlogin escalan la imagen con recorte (cover); con una copia de la
     misma proporción que la pantalla, el encuadre queda idéntico al del escritorio.
+    Usa ImageMagick si está disponible y, si no, Pillow (python3-pil).
     Devuelve la ruta generada o None si no se puede (se usa el original)."""
     size = pick_screen_size()
-    tool = shutil.which("magick") or shutil.which("convert")
-    if not size or not tool:
+    if not size:
         return None
     dst = CACHE / "lock-wallpaper.jpg"
     tmp = dst.with_name(f".{dst.name}.43pr-tmp")
-    cmd = [tool, str(src), "-strip", "-resize", f"{size[0]}x{size[1]}!",
-           "-quality", "92", str(tmp)]
-    try:
-        r = subprocess.run(cmd, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=60)
-    except Exception as e:
-        warn(f"no se pudo estirar el fondo de bloqueo/login: {e}")
-        return None
-    if r.returncode != 0 or not tmp.is_file():
-        warn(f"no se pudo estirar el fondo de bloqueo/login: {(r.stderr or r.stdout).strip()}")
-        return None
-    os.replace(tmp, dst)
-    return str(dst)
+    tool = shutil.which("magick") or shutil.which("convert")
+    if tool:
+        cmd = [tool, str(src), "-strip", "-resize", f"{size[0]}x{size[1]}!",
+               "-quality", "92", str(tmp)]
+        try:
+            r = subprocess.run(cmd, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=60)
+            if r.returncode == 0 and tmp.is_file():
+                os.replace(tmp, dst)
+                return str(dst)
+            warn(f"{Path(tool).name} no pudo estirar el fondo de bloqueo/login: "
+                 f"{(r.stderr or r.stdout).strip()}")
+        except Exception as e:
+            warn(f"{Path(tool).name} no pudo estirar el fondo de bloqueo/login: {e}")
+    if _stretch_with_pillow(src, size, tmp):
+        os.replace(tmp, dst)
+        return str(dst)
+    return None
 
 
 def sync_greeter(render_vars):
