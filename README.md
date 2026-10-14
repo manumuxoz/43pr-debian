@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Debian 13](https://img.shields.io/badge/Debian-13-A81D33?logo=debian&logoColor=white)](packages.txt)
 [![Hyprland 0.55](https://img.shields.io/badge/Hyprland-0.55-58E1FF?logo=hyprland&logoColor=black)](#whats-inside)
-[![Release](https://img.shields.io/badge/release-v1.0.0-blue.svg)](https://github.com/manumuxoz/43pr-debian/releases)
+[![Release](https://img.shields.io/badge/release-v1.1.0-blue.svg)](https://github.com/manumuxoz/43pr-debian/releases)
 
 A Debian 13 adaptation of the [43PR dotfiles](https://github.com/43PR/dotfiles)
 rice — *"Hyprland + Quickshell setup"* — running on **Hyprland 0.55 (Lua config
@@ -51,6 +51,7 @@ Captures from the author's real desktop.
 | Widgets | Quickshell: volume/brightness screenshot OSDs, settings window, wallpaper picker (`hyprquickpaper`) |
 | Theme engine | `~/.config/43pr/bin/theme.py` — palettes, wallpapers, matugen (optional), greeter sync |
 | Launchers / UI | wofi, rofi, wlogout, dunst, kitty |
+| Camera | `scripts/camera.sh` — V4L2 webcam: floating mpv preview (`SUPER+C`), photo (`s`) and recording (`r`) from inside the window |
 | Login screen | **hyprlogin** (greetd greeter forked from hyprlock) + theme sync + fingerprint PAM |
 | Patches | hyprlogin unlock-race fix, libfprint EGIS/`egismoc` build fix |
 
@@ -114,9 +115,9 @@ restore the latest backup.
 
 See [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Highlights:
 `SUPER+W` wallpaper picker, `SUPER+I` Quickshell settings, `SUPER+N` notepad,
-`SUPER+R` screen recording, `SUPER+SHIFT+D` theme toggle, `SUPER+SHIFT+W`
-toggle Waybar. Everything else is upstream 43PR (vim-style focus, scratchpad,
-screenshots to `~/Imágenes/Capturas`, media keys…).
+`SUPER+R` screen recording, `SUPER+C` webcam preview, `SUPER+SHIFT+D` theme
+toggle, `SUPER+SHIFT+W` toggle Waybar. Everything else is upstream 43PR
+(vim-style focus, scratchpad, screenshots to `~/Imágenes/Capturas`, media keys…).
 
 ## Repository layout
 

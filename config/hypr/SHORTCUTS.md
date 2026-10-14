@@ -4,7 +4,7 @@
 - **Config**: `~/.config/hypr/keybinds.lua`
 - **Recargar tras editar**: `hyprctl reload`
 - **Layout de teclado**: `es` (afecta a los binds de teclas especiales, ver **Notas**)
-- **Total**: 77 binds activos
+- **Total**: 78 binds activos
 
 > Algunas filas agrupan varios binds (los rangos 1–9 / 0 de workspaces).
 
@@ -126,6 +126,21 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + Supr (Delete)` | Captura de pantalla completa con `grim` → `~/Imágenes/Capturas de pantalla/<fecha-hora>.png`; copia al portapapeles (`wl-copy`) y notificación OSD (`qs ipc call screenshot notify`, tolerante a fallos) |
 | `SUPER + SHIFT + Supr (Delete)` | Captura de área: selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación) |
 | `SUPER + R` | Grabar/parar con wf-recorder (monitor eDP-1, audio por defecto) → `~/Videos/rec-<fecha-hora>.mp4`; wrapper `~/.local/bin/screen-record.sh` con PID en `/tmp/osu-rec.pid` |
+
+## Cámara (webcam)
+
+| Atajo | Acción |
+| --- | --- |
+| `SUPER + C` | Vista previa flotante de la webcam — `mpv` (toggle: repetir el atajo cierra la ventana) |
+
+> Con la ventana abierta se controla todo desde dentro (script `camera-mpv.lua`):
+> **`s`** = foto → `~/Imágenes/Camera/<fecha-hora>.jpg`;
+> **`r`** = grabar/parar → `~/Vídeos/Camera/<fecha-hora>.mp4` (H.264).
+> Wrapper `~/.config/hypr/scripts/camera.sh`: captura V4L2 directa con `mpv`
+> (sin paquetes extra). La webcam solo admite un lector a la vez, así que `mpv`
+> es el único que accede al dispositivo: graba a un FIFO y un `ffmpeg` de fondo
+> reencoda a H.264. Autodetecta `/dev/video0`; se puede forzar con `CAMERA_DEVICE`
+> y ajustar `CAMERA_SIZE` (1280x720).
 
 ## Utilidades
 

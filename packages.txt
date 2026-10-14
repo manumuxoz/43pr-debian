@@ -34,8 +34,11 @@ sudo apt install -t trixie-backports \
 # swaybg is the wallpaper backend (hyprpaper 0.8.4 crashes on re-apply)
 # imagemagick: hyprquickpaper cache + lock wallpaper generation. Opcional:
 #   sin él, ambas tareas usan Pillow (python3-pil) como respaldo.
+# mpv + ffmpeg: reproducción de medios y la cámara web
+#   (config/hypr/scripts/camera.sh — vista previa con mpv y foto/grabación;
+#   ver SHORTCUTS.md).
 sudo apt install \
-  waybar dunst wofi rofi kitty wlogout \
+  waybar dunst wofi rofi kitty wlogout mpv ffmpeg \
   grim slurp wl-clipboard cliphist \
   brightnessctl playerctl network-manager-gnome polkit-kde-agent-1 \
   swaybg jq imagemagick python3

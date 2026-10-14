@@ -3,7 +3,7 @@
 [![Licencia: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Debian 13](https://img.shields.io/badge/Debian-13-A81D33?logo=debian&logoColor=white)](packages.txt)
 [![Hyprland 0.55](https://img.shields.io/badge/Hyprland-0.55-58E1FF?logo=hyprland&logoColor=black)](#contenido)
-[![Release](https://img.shields.io/badge/release-v1.0.0-blue.svg)](https://github.com/manumuxoz/43pr-debian/releases)
+[![Release](https://img.shields.io/badge/release-v1.1.0-blue.svg)](https://github.com/manumuxoz/43pr-debian/releases)
 
 Adaptación a Debian 13 del rice [43PR dotfiles](https://github.com/43PR/dotfiles)
 (*"Hyprland + Quickshell setup"*), funcionando con **Hyprland 0.55 (config en
@@ -52,6 +52,7 @@ Capturas del escritorio real del autor.
 | Widgets | Quickshell: OSDs de volumen/brillo/captura, ventana de ajustes, selector de fondos (`hyprquickpaper`) |
 | Motor de temas | `~/.config/43pr/bin/theme.py` — paletas, fondos, matugen (opcional), sincronización con el login |
 | Lanzadores / UI | wofi, rofi, wlogout, dunst, kitty |
+| Cámara | `scripts/camera.sh` — webcam por V4L2: vista previa flotante con mpv (`SUPER+C`), foto (`s`) y grabación (`r`) desde la propia ventana |
 | Pantalla de login | **hyprlogin** (greeter de greetd forkeado de hyprlock) + sincronización de tema + huella por PAM |
 | Parches | fix de carrera en el desbloqueo de hyprlogin, fix de compilación de libfprint (`egismoc`) |
 
@@ -115,9 +116,10 @@ restaura el último respaldo.
 
 Ver [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Destacados:
 `SUPER+W` selector de fondos, `SUPER+I` ajustes de Quickshell, `SUPER+N`
-bloc de notas, `SUPER+R` grabación de pantalla, `SUPER+SHIFT+D` cambio de tema,
-`SUPER+SHIFT+W` ocultar/mostrar Waybar. El resto es el 43PR original (enfoque
-estilo vim, scratchpad, capturas en `~/Imágenes/Capturas`, teclas multimedia…).
+bloc de notas, `SUPER+R` grabación de pantalla, `SUPER+C` vista previa de la
+webcam, `SUPER+SHIFT+D` cambio de tema, `SUPER+SHIFT+W` ocultar/mostrar Waybar.
+El resto es el 43PR original (enfoque estilo vim, scratchpad, capturas en
+`~/Imágenes/Capturas`, teclas multimedia…).
 
 ## Estructura del repositorio
 

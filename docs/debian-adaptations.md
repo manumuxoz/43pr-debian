@@ -102,3 +102,12 @@ dependencies and the local unlock-race patch are documented in
 
 `SHORTCUTS.md` documents extracting the `wf-recorder` binary under
 `~/.local/opt`; `local/bin/screen-record.sh` wraps it for the `SUPER+R` shortcut.
+
+## 14. Camera: V4L2 + mpv/ffmpeg instead of libcamera
+
+The webcam is a standard UVC device, so the PipeWire/libcamera stack is not
+needed: `config/hypr/scripts/camera.sh` captures straight from `/dev/video0`
+with `mpv` — already in the base install — for the `SUPER+C` preview. Photos
+and recordings are driven from inside the window by `camera-mpv.lua`
+(`s` / `r`). Because V4L2 admits a single reader, a recording is remuxed by
+`mpv` to a FIFO and a background `ffmpeg` re-encodes it to H.264 MP4.

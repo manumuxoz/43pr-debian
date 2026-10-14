@@ -7,8 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-15
+
 ### Added
 
+- Webcam support (`config/hypr/scripts/camera.sh` + `camera-mpv.lua`):
+  `SUPER+C` opens a floating `mpv` preview; with the window open, `s` takes a
+  photo and `r` starts/stops a video. It captures straight from the UVC device
+  over V4L2 with the already-installed `mpv`, and recordings are re-encoded by
+  `ffmpeg` from a FIFO so the single-reader device is respected — no extra
+  packages are needed.
 - Screenshots in the READMEs (`docs/screenshots/`), including a desktop capture
   usable as the GitHub social preview.
 
@@ -55,4 +63,5 @@ First public release: Debian 13 (trixie) adaptation of the
 - The Waybar Lua-dispatch fix (upstream PRs #5013, #5231) is not in any released
   Waybar version yet, hence the IPC shim.
 
+[1.1.0]: https://github.com/manumuxoz/43pr-debian/releases/tag/v1.1.0
 [1.0.0]: https://github.com/manumuxoz/43pr-debian/releases/tag/v1.0.0

@@ -46,6 +46,19 @@ The three-finger workspace swipe gesture is also configured there.
 - EgisTech `1c7a:0584` — see [`fingerprint.md`](fingerprint.md) for the
   libfprint fork, the build patch and PAM.
 
+## Camera (webcam)
+
+- Sonix **USB2.0 FHD UVC WebCam** (`3277:0010`), a standard UVC device: it works
+  through V4L2 with no `libcamera` or extra drivers. It exposes `/dev/video0`
+  (capture, MJPEG/YUYV up to 1920x1080) and `/dev/video1` (metadata).
+- `~/.config/hypr/scripts/camera.sh` opens the floating `mpv` preview
+  (`SUPER+C`); with the window open, `s` takes a photo (mpv screenshot) and `r`
+  starts/stops a recording (see `camera-mpv.lua`). A recording is remuxed by
+  `mpv` to a FIFO and a background `ffmpeg` re-encodes it to H.264 MP4, so the
+  single-reader webcam is respected. No extra packages.
+- It picks the first `/dev/videoN` that ffmpeg lists capture formats for; force
+  another one with `CAMERA_DEVICE=/dev/videoN`.
+
 ## Other
 
 - The wallpaper folder defaults to `~/Imágenes/Wallpapers` (Spanish locale) in
