@@ -80,6 +80,10 @@ end)
 -- Screen recorder (wf-recorder en ~/.local/opt; wrapper con pidfile /tmp/osu-rec.pid)
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(home .. "/.local/bin/screen-record.sh"))
 
+-- Cámara (webcam UVC; wrapper en scripts/camera.sh con mpv, sin extras)
+-- SUPER+C abre la vista previa flotante; dentro de la ventana: s = foto, r = grabar/parar.
+hl.bind(mainMod .. " + C", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/camera.sh")) -- Vista previa flotante (toggle)
+
 -- Zoom
 local function zoomfunction(value)
     local zoomvalue = hl.get_config("cursor:zoom_factor")

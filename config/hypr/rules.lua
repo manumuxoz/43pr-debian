@@ -98,3 +98,12 @@ hl.window_rule({
     match = { class = "^(VirtualBox Machine)$" },
     float = true,
 })
+
+-- Cámara: vista previa flotante y centrada (scripts/camera.sh, SUPER+C)
+hl.window_rule({
+    name = "float-camera",
+    match = { class = "^(mpv)$", title = "^(Camara)$" },
+    float = true,
+    size = "960 540",
+    center = true,
+})
