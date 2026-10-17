@@ -9,12 +9,12 @@
     "modules-right": ["custom/mpris-marquee", "pulseaudio", "network", "battery", "custom/power"],
 
     "cpu": {
-        "interval": 1,
+        "interval": 2,
         "format": "CPU {usage}%"
     },
 
     "memory": {
-        "interval": 1,
+        "interval": 2,
         "format": "RAM {percentage}%",
         "tooltip-format": "{used} / {total}GiB"
     },
@@ -22,7 +22,7 @@
     "custom/gpu": {
         "exec": "~/.config/waybar/scripts/gpu_usage.py",
         "format": "GPU {}%",
-        "interval": 1,
+        "interval": 3,
         "tooltip": true,
         "hide-empty-text": true,
         "tooltip-format": "Intel iGPU: {}%"
@@ -70,6 +70,10 @@
         "exec": "~/.config/waybar/scripts/mpris-marquee.sh",
         "return-type": "json",
         "format": "{}",
+        // Desactivamos el tooltip de este módulo: se actualiza en streaming
+        // (cada 0.5 s) y hace que GTK repinte el tooltip constantemente, lo que
+        // degradaba el tooltip del reloj (issue #4917 de Waybar).
+        "tooltip": false,
         "on-click": "playerctl --player=\"$(~/.config/waybar/scripts/playerctl-active.sh)\" play-pause",
         "on-click-right": "playerctl --player=\"$(~/.config/waybar/scripts/playerctl-active.sh)\" next",
         "on-click-middle": "playerctl --player=\"$(~/.config/waybar/scripts/playerctl-active.sh)\" previous"
