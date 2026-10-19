@@ -89,7 +89,6 @@ sudo apt install fonts-jetbrains-mono   # base font; Nerd glyphs are manual
 # ~/.config/btop/btop.conf to use it.
 # cava: the template is included but its target stays disabled, because
 # Debian 13 ships cava 0.10.4, which does not support `theme =` (needs >= 0.10.5).
-# autoclicker (CTRL+ALT+A in keybinds.lua) is not packaged in Debian.
 
 # ---------------------------------------------------------------------------
 # Optional extras NOT packaged in Debian

@@ -137,12 +137,6 @@ else
     say "Wallpaper folder ready: ~/Imágenes/Wallpapers"
 fi
 
-# --- optional tools -------------------------------------------------------------
-if [[ $DRY_RUN -eq 0 ]] && ! command -v autoclicker >/dev/null 2>&1; then
-    warn "autoclicker not found in PATH: the CTRL+ALT+A bind will do nothing"
-    warn "(optional; install it separately or remove the bind from keybinds.lua)."
-fi
-
 # --- helper permissions ---------------------------------------------------------
 if [[ $DRY_RUN -eq 0 ]]; then
     find "$HOME/.config/hypr/scripts" "$HOME/.config/waybar/scripts" \

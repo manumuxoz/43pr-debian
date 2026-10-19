@@ -170,6 +170,3 @@ hl.bind("XF86Search", hl.dsp.exec_cmd("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SI
 hl.bind("XF86Calculator", hl.dsp.exec_cmd("brightnessctl --class=backlight set 5%-"), { locked = true, repeating = true })
 hl.bind("XF86Tools", hl.dsp.exec_cmd("brightnessctl --class=backlight set 5%+"), { locked = true, repeating = true })
 
--- >>> autoclicker (requiere el binario `autoclicker` en PATH) >>>
-hl.bind("CTRL + ALT + A", hl.dsp.exec_cmd("autoclicker --toggle"))
--- <<< autoclicker <<<

@@ -161,7 +161,6 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
 | `SUPER + teclado numérico −` | Zoom del cursor −0.3 (repetible; bind por keycode, funciona en cualquier layout) |
 | `SUPER + teclado numérico +` | Zoom del cursor +0.3 (repetible; bind por keycode, funciona en cualquier layout) |
-| `CTRL + ALT + A` | Autoclicker on/off — `autoclicker --toggle` (requiere el binario `autoclicker` en `PATH`; si falta, el atajo no hace nada) |
 
 ## Notas y avisos
 
