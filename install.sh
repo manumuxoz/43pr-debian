@@ -106,6 +106,8 @@ else
         cp -a "$REPO/config/$d/." "$HOME/.config/$d/"
     done
     say "Configs copied to ~/.config/"
+    # Runtime state of the Quickshell widgets (Todo, PowerMenu, MediaOSD)
+    mkdir -p "$HOME/.config/quickshell/state"
 fi
 
 # --- local/bin ----------------------------------------------------------------

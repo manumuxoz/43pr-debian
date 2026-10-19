@@ -203,6 +203,9 @@ else
     say "No files needed updating."
 fi
 
+# --- runtime state dir (Quickshell: Todo, PowerMenu, MediaOSD) -------------------
+mkdir -p "$HOME/.config/quickshell/state"
+
 # --- fonts --------------------------------------------------------------------
 if [[ $copied -gt 0 ]] && [[ -d "$HOME/.local/share/fonts/43pr" ]]; then
     command -v fc-cache >/dev/null 2>&1 && fc-cache -f >/dev/null 2>&1 || true

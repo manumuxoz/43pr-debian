@@ -17,10 +17,37 @@ PanelWindow {
         item: root.showing ? backdrop : null
     }
     property bool showing: false
+    // The page (Loader) only lives while Settings is open plus keepAliveMs,
+    // so page timers (gpu-usage.py, /proc/net/dev...) stop when it closes.
+    // The window itself stays mapped; mask is null while hidden.
+    property bool mounted: false
+    property int keepAliveMs: 20000
     function show()   { showing = true }
     function hide()   { showing = false }
     function toggle() { showing = !showing }
-    
+
+    onShowingChanged: {
+        if (showing) {
+            unmountTimer.stop()
+            mounted = true
+        } else {
+            searchQuery = ""
+            searchInput.text = ""
+            unmountTimer.restart()
+        }
+    }
+
+    function unmount() {
+        if (root.showing) return
+        root.mounted = false
+    }
+
+    Timer {
+        id: unmountTimer
+        interval: Math.max(600, root.keepAliveMs)
+        onTriggered: root.unmount()
+    }
+
     property real cardMargin: 40
 
     property real cardHeightCenter: Math.min(640, root.height - cardMargin * 2)
@@ -133,6 +160,30 @@ PanelWindow {
     ]
 
     property int selectedIndex: 0
+
+    // ---- search -----------------------------------------------------------
+    property string searchQuery: ""
+
+    // navItems filtered by name; origIndex keeps the real page index
+    property var filteredNavItems: {
+        var q = searchQuery.trim().toLowerCase()
+        var out = []
+        for (var i = 0; i < navItems.length; i++) {
+            if (q === "" || navItems[i].name.toLowerCase().indexOf(q) >= 0)
+                out.push({ name: navItems[i].name, icon: navItems[i].icon,
+                           page: navItems[i].page, origIndex: i })
+        }
+        return out
+    }
+
+    Shortcut {
+        sequence: "Ctrl+F"
+        enabled: root.showing
+        onActivated: {
+            searchInput.forceActiveFocus()
+            searchInput.selectAll()
+        }
+    }
 
     PerspectivePanel {
         id: card
@@ -342,10 +393,58 @@ PanelWindow {
                         color: Theme.border
                     }
 
+                    Rectangle {
+                        id: searchBox
+                        width: parent.width
+                        height: 28
+                        radius: Theme.radius
+                        color: Theme.alpha(Theme.text, 0.06)
+                        border.width: searchInput.activeFocus ? 1 : 0
+                        border.color: Theme.accent
+
+                        Text {
+                            visible: searchInput.text === ""
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            text: "Search"
+                            color: Theme.textFaint
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 12
+                        }
+
+                        TextInput {
+                            id: searchInput
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            verticalAlignment: TextInput.AlignVCenter
+                            color: Theme.text
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 12
+                            clip: true
+                            selectByMouse: true
+                            activeFocusOnTab: true
+                            onTextChanged: root.searchQuery = text
+                            Keys.onEscapePressed: {
+                                if (text !== "") {
+                                    text = ""
+                                    event.accepted = true
+                                } else {
+                                    root.hide()
+                                }
+                            }
+                            Keys.onReturnPressed: {
+                                if (root.filteredNavItems.length > 0)
+                                    root.selectedIndex = root.filteredNavItems[0].origIndex
+                            }
+                        }
+                    }
+
                     Flickable {
                         id: sidebarFlickable
                         width: parent.width
-                        height: Math.max(0, parent.height - 48)
+                        height: Math.max(0, parent.height - 48 - searchBox.height - 12)
                         contentWidth: width
                         contentHeight: navColumn.height
                         clip: true
@@ -367,21 +466,20 @@ PanelWindow {
                             spacing: 4
 
                             Repeater {
-                                model: root.navItems
+                                model: root.filteredNavItems
                                 delegate: Rectangle {
                                     required property var modelData
-                                    required property int index
                                     width: sidebar.width
                                     height: 38
                                     radius: Theme.radius
-                                    color: root.selectedIndex === index
+                                    color: root.selectedIndex === modelData.origIndex
                                         ? Theme.alpha(Theme.accent, 0.12)
                                         : "transparent"
-                                    border.width: root.selectedIndex === index ? 1 : 0
+                                    border.width: root.selectedIndex === modelData.origIndex ? 1 : 0
                                     border.color: Theme.accent
 
                                     Rectangle {
-                                        visible: root.selectedIndex === index
+                                        visible: root.selectedIndex === modelData.origIndex
                                         width: 3
                                         height: parent.height - 10
                                         anchors {
@@ -406,7 +504,7 @@ PanelWindow {
                                             text: modelData.icon
                                             font.family: Theme.iconFont
                                             font.pixelSize: 14
-                                            color: root.selectedIndex === index
+                                            color: root.selectedIndex === modelData.origIndex
                                                 ? Theme.text
                                                 : Theme.textDim
                                         }
@@ -417,7 +515,7 @@ PanelWindow {
                                             text: modelData.name
                                             font.family: Theme.fontFamily
                                             font.pixelSize: 13
-                                            color: root.selectedIndex === index
+                                            color: root.selectedIndex === modelData.origIndex
                                                 ? Theme.text
                                                 : Theme.textDim
                                         }
@@ -425,7 +523,7 @@ PanelWindow {
 
                                     MouseArea {
                                         anchors.fill: parent
-                                        onClicked: root.selectedIndex = index
+                                        onClicked: root.selectedIndex = modelData.origIndex
                                     }
                                 }
                             }
@@ -447,6 +545,7 @@ PanelWindow {
                     Loader {
                         id: pageLoader
                         anchors.fill: parent
+                        active: root.mounted
                         source: "SettingsPages/"
                             + root.navItems[root.selectedIndex].page
                             + ".qml"
