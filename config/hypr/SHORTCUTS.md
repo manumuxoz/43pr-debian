@@ -157,10 +157,13 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + I` | Panel de ajustes — quickshell settings |
 | `SUPER + N` | Bloc de notas — widget de notas (Quickshell), autoguardado; `Ctrl+Shift+S` = «guardar como…» en cualquier ruta (toggle) |
 | `SUPER + SHIFT + T` | Tareas y recordatorios — widget Todo (Quickshell): tareas con recordatorio (`30s`, `45m`, `2h`, `1d`, `14:30`, `tomr 9am`…), avisa con `notify-send` (toggle) |
+| `SUPER + SHIFT + M` | Panel de medios — MediaOSD de Quickshell (carátula, controles, cava) |
 | `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar abre este mismo menú; wlogout sigue en `SUPER + ºª` |
 | `SUPER + Tab` | Bloquear la pantalla — hyprlock |
 | `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
+| Clic en la campana de Waybar | Activa/desactiva No Molestar (`dunstctl set-paused toggle`); clic derecho cierra las notificaciones visibles |
+| Clic en el contador de tareas de Waybar | Abre el widget Todo; el indicador solo aparece si hay tareas pendientes (en rojo si algún recordatorio venció) |
 | `SUPER + teclado numérico −` | Zoom del cursor −0.3 (repetible; bind por keycode, funciona en cualquier layout) |
 | `SUPER + teclado numérico +` | Zoom del cursor +0.3 (repetible; bind por keycode, funciona en cualquier layout) |
 

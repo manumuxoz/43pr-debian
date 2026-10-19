@@ -113,7 +113,8 @@ git pull
 under `~/.config-backups/update-<date>/` (the last five are kept) and re-runs
 `theme.py apply`. It never deletes files, never installs packages and never
 runs `git pull`; missing packages are only reported. Useful flags:
-`--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`, `--restart-shell`.
+`--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`, `--reload-hyprland`,
+`--reload-waybar`, `--restart-shell`.
 
 To undo a full installation, `./uninstall.sh` restores the
 `~/.config-backups/43pr-debian-<date>/` backup. Update backups are per-file and
@@ -137,10 +138,10 @@ are not used by `uninstall.sh`.
 
 See [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Highlights:
 `SUPER+W` wallpaper picker, `SUPER+I` Quickshell settings, `SUPER+N` notepad,
-`SUPER+SHIFT+T` todo list, `SUPER+SHIFT+E` power menu, `SUPER+R` screen
-recording, `SUPER+C` webcam preview, `SUPER+SHIFT+D` theme toggle,
-`SUPER+SHIFT+W` toggle Waybar. Everything else is upstream 43PR (vim-style
-focus, scratchpad, screenshots to `~/Imágenes/Capturas`, media keys…).
+`SUPER+SHIFT+T` todo list, `SUPER+SHIFT+M` media panel, `SUPER+SHIFT+E` power
+menu, `SUPER+R` screen recording, `SUPER+C` webcam preview, `SUPER+SHIFT+D`
+theme toggle, `SUPER+SHIFT+W` toggle Waybar. Everything else is upstream 43PR
+(vim-style focus, scratchpad, screenshots to `~/Imágenes/Capturas`, media keys…).
 
 ## Repository layout
 

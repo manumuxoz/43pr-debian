@@ -114,7 +114,8 @@ git pull
 sobrescrito en `~/.config-backups/update-<fecha>/` (conserva los cinco últimos)
 y vuelve a ejecutar `theme.py apply`. No borra archivos, no instala paquetes y
 no hace `git pull`; solo informa de los paquetes que falten. Opciones útiles:
-`--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`, `--restart-shell`.
+`--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`, `--reload-hyprland`,
+`--reload-waybar`, `--restart-shell`.
 
 Para deshacer una instalación completa, `./uninstall.sh` restaura el respaldo
 `~/.config-backups/43pr-debian-<fecha>/`. Los respaldos del updater son por
@@ -138,9 +139,10 @@ archivo y `uninstall.sh` no los usa.
 
 Ver [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Destacados:
 `SUPER+W` selector de fondos, `SUPER+I` ajustes de Quickshell, `SUPER+N`
-bloc de notas, `SUPER+SHIFT+T` lista de tareas, `SUPER+SHIFT+E` menú de
-energía, `SUPER+R` grabación de pantalla, `SUPER+C` vista previa de la
-webcam, `SUPER+SHIFT+D` cambio de tema, `SUPER+SHIFT+W` ocultar/mostrar Waybar.
+bloc de notas, `SUPER+SHIFT+T` lista de tareas, `SUPER+SHIFT+M` panel de medios,
+`SUPER+SHIFT+E` menú de energía, `SUPER+R` grabación de pantalla, `SUPER+C`
+vista previa de la webcam, `SUPER+SHIFT+D` cambio de tema, `SUPER+SHIFT+W`
+ocultar/mostrar Waybar.
 El resto es el 43PR original (enfoque estilo vim, scratchpad, capturas en
 `~/Imágenes/Capturas`, teclas multimedia…).
 

@@ -52,7 +52,9 @@ The script never deletes files, never installs packages and never runs
   -d, --diff           show a unified diff for each changed file
       --skip-theme     do not run theme.py apply
       --skip-packages  do not report missing apt packages
-      --restart-shell  restart Quickshell (qs) after updating
+      --reload-hyprland  run `hyprctl reload` after copying hypr/ changes
+      --reload-waybar    send SIGUSR2 to Waybar after copying waybar/ changes
+      --restart-shell    restart Quickshell (qs) after updating
   -h, --help           show this help
 EOF
 }
@@ -62,6 +64,8 @@ DRY_RUN=0
 SHOW_DIFF=0
 SKIP_THEME=0
 SKIP_PACKAGES=0
+RELOAD_HYPRLAND=0
+RELOAD_WAYBAR=0
 RESTART_SHELL=0
 for arg in "$@"; do
     case "$arg" in
@@ -70,6 +74,8 @@ for arg in "$@"; do
         -d|--diff)        SHOW_DIFF=1 ;;
         --skip-theme)     SKIP_THEME=1 ;;
         --skip-packages)  SKIP_PACKAGES=1 ;;
+        --reload-hyprland) RELOAD_HYPRLAND=1 ;;
+        --reload-waybar)  RELOAD_WAYBAR=1 ;;
         --restart-shell)  RESTART_SHELL=1 ;;
         -h|--help)        usage; exit 0 ;;
         *)                warn "Unknown option: $arg"; usage; exit 2 ;;
@@ -172,8 +178,14 @@ fi
 
 backed_up=0
 copied=0
+hypr_changed=0
+waybar_changed=0
 for entry in ${CHANGES[@]+"${CHANGES[@]}"}; do
     IFS='|' read -r status label rel src dst <<<"$entry"
+    if [[ "$label" == "config" ]]; then
+        [[ "$rel" == hypr/* ]] && hypr_changed=1
+        [[ "$rel" == waybar/* ]] && waybar_changed=1
+    fi
     mkdir -p "$(dirname -- "$dst")"
     if [[ -e "$dst" ]]; then
         bdir="$BACKUP/$label/$(dirname -- "$rel")"
@@ -247,6 +259,35 @@ if [[ $SKIP_THEME -eq 0 ]] && command -v python3 >/dev/null 2>&1; then
     if ! python3 "$HOME/.config/43pr/bin/theme.py" apply; then
         warn "theme.py failed; fix the error and run:"
         warn "  python3 ~/.config/43pr/bin/theme.py apply"
+    fi
+fi
+
+# --- optional config reloads -----------------------------------------------------
+if [[ $RELOAD_HYPRLAND -eq 1 ]]; then
+    if [[ $hypr_changed -eq 0 ]]; then
+        say "Hyprland config unchanged; nothing to reload."
+    elif [[ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]] || ! command -v hyprctl >/dev/null 2>&1; then
+        warn "Hyprland is not reachable (HYPRLAND_INSTANCE_SIGNATURE); skipping reload."
+    else
+        say "Reloading Hyprland configuration..."
+        if hyprctl reload >/dev/null; then
+            say "Hyprland reloaded."
+        else
+            warn "hyprctl reload failed; review the config with: hyprctl configerrors"
+        fi
+    fi
+fi
+
+if [[ $RELOAD_WAYBAR -eq 1 ]]; then
+    if [[ $waybar_changed -eq 0 ]]; then
+        say "Waybar config unchanged; nothing to reload."
+    elif ! pgrep -x waybar >/dev/null 2>&1; then
+        warn "Waybar is not running; skipping reload."
+    else
+        say "Reloading Waybar..."
+        pkill -SIGUSR2 -x waybar 2>/dev/null || true
+        sleep 1
+        pgrep -x waybar >/dev/null 2>&1 || warn "Waybar did not come back; check its output."
     fi
 fi
 

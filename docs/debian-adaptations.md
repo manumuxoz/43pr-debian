@@ -139,8 +139,9 @@ configuration by itself: run `./update.sh` afterwards. It copies only
 new/changed files, backs them up per file under
 `~/.config-backups/update-<date>/` (never `43pr-debian-*`, so `uninstall.sh`
 keeps working), regenerates the theme and never deletes files or installs
-packages. `--dry-run`, `--diff`, `--skip-theme`, `--skip-packages` and
-`--restart-shell` control its behaviour.
+packages. `--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`,
+`--reload-hyprland`, `--reload-waybar` and `--restart-shell` control its
+behaviour.
 
 ## 18. Pack 3: extra Quickshell widgets and Settings lifecycle
 
@@ -156,6 +157,11 @@ were ported:
   the same menu; logout dispatches `hl.dsp.exit()`.
 - **RecorderOSD** — REC indicator polling `screen-record.sh`'s
   `/tmp/osu-rec.pid` (every 2 s when idle, 1 s while recording).
+
+Waybar gained two custom modules: the bell shows pending notifications (click
+toggles Do Not Disturb through `dunstctl`, right-click closes the visible ones)
+and the todo badge shows pending tasks (red when a reminder is overdue; click
+opens Todo). The full media panel is also available on `SUPER+SHIFT+M`.
 
 Their layer namespaces (`mediaosd`, `mediaosd-settings`, `todo`, `powermenu`,
 `powermenu-settings`, `recorder-osd`) are added to `rules.lua` so they keep the

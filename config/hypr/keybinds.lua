@@ -27,6 +27,8 @@ hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notepad toggle")) -- Blo
 
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("qs ipc call todo toggle")) -- Tareas y recordatorios (widget Quickshell)
 
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("qs ipc call mediaosd media")) -- Panel de medios (Quickshell MediaOSD)
+
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = 0 })) -- Fullscreen
 
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || " .. home .. "/.config/hypr/scripts/opacity.sh")) -- Opacity (toggle)
