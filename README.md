@@ -137,11 +137,13 @@ are not used by `uninstall.sh`.
 ### Keybinds
 
 See [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Highlights:
-`SUPER+W` wallpaper picker, `SUPER+I` Quickshell settings, `SUPER+N` notepad,
-`SUPER+SHIFT+T` todo list, `SUPER+SHIFT+M` media panel, `SUPER+SHIFT+E` power
-menu, `SUPER+R` screen recording, `SUPER+C` webcam preview, `SUPER+SHIFT+D`
-theme toggle, `SUPER+SHIFT+W` toggle Waybar. Everything else is upstream 43PR
-(vim-style focus, scratchpad, screenshots to `~/Imágenes/Capturas`, media keys…).
+`SUPER+W` wallpaper picker, `SUPER+ALT+W` random wallpaper, `SUPER+I`
+Quickshell settings, `SUPER+N` notepad, `SUPER+SHIFT+T` todo list,
+`SUPER+SHIFT+N` notification history, `SUPER+SHIFT+M` media panel,
+`SUPER+SHIFT+E` power menu, `SUPER+R` screen recording, `SUPER+C` webcam
+preview, `SUPER+SHIFT+D` theme toggle, `SUPER+SHIFT+W` toggle Waybar.
+Everything else is upstream 43PR (vim-style focus, scratchpad, screenshots to
+`~/Imágenes/Capturas`, media keys…).
 
 ## Repository layout
 
@@ -153,7 +155,7 @@ etc/         system files for the greeter (greetd, hyprlogin, PAM)
 patches/     hyprlogin unlock-race fix, libfprint egismoc build fix
 scripts/     greeter utilities (theme sync, rescue, install)
 docs/        Debian notes, shim + greeter + fingerprint + hardware docs
-tools/       upstream-diff.sh (diff against 43PR), check-links.py (CI)
+tools/       upstream-diff.sh, doctor.sh (diagnóstico) y check-links.py (CI)
 .github/     CI workflow + hardware-report issue template
 packages.txt apt package reference
 install.sh   user-level installer (supports --dry-run)

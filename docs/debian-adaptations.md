@@ -179,3 +179,25 @@ AUTOREMOVE (`apt-get autoremove --purge`), JOURNAL (`journalctl
 
 `install.sh`/`update.sh` create `~/.config/quickshell/state/` (gitignored); the
 stateful widgets would silently lose their state otherwise.
+
+## 19. Pack 5: annotation, notification history, random wallpaper and doctor
+
+- **Screenshots with annotation.** `swappy` 1.5.1 is packaged in Debian.
+  `screenshot.sh annotate` (bound to `SUPER+CTRL+Delete`) captures an area with
+  `slurp` + `grim` to a temporary file and opens it in swappy; `Ctrl+S` saves to
+  `~/Imágenes/Capturas de pantalla/` and `Ctrl+C` copies the result. The save
+  location is set in `config/swappy/config` (new `CONFIG_DIRS` entry).
+- **Notification history.** `notification-center.sh` (`SUPER+SHIFT+N`) reads
+  `dunstctl history`, shows it in wofi and copies the selected text; the footer
+  restores the last notification (`dunstctl history-pop`) or clears the history
+  after a zenity confirmation. It does not replace dunst.
+- **Random wallpaper.** `random-wallpaper.sh` (`SUPER+ALT+W`) picks an image
+  from the hyprquickpaper folder, skips the current and the last random one, and
+  applies it through the `awww`/swaybg shim. Per the chosen policy it **only
+  changes the image**: it does not recolor the theme or update the lock/login
+  background; it does record the path in `state.json` so `wallpaper-restore.sh`
+  restores it at login.
+- **Doctor.** `tools/doctor.sh` is a read-only diagnostic: session, processes,
+  commands, Quickshell IPC targets, theme outputs, state, wallpapers, Nerd Font,
+  script permissions and Debian packages. Exit code 1 only when a hard check
+  fails; optional packages are warnings.

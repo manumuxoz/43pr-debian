@@ -138,11 +138,12 @@ archivo y `uninstall.sh` no los usa.
 ### Atajos
 
 Ver [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Destacados:
-`SUPER+W` selector de fondos, `SUPER+I` ajustes de Quickshell, `SUPER+N`
-bloc de notas, `SUPER+SHIFT+T` lista de tareas, `SUPER+SHIFT+M` panel de medios,
-`SUPER+SHIFT+E` menú de energía, `SUPER+R` grabación de pantalla, `SUPER+C`
-vista previa de la webcam, `SUPER+SHIFT+D` cambio de tema, `SUPER+SHIFT+W`
-ocultar/mostrar Waybar.
+`SUPER+W` selector de fondos, `SUPER+ALT+W` fondo aleatorio, `SUPER+I`
+ajustes de Quickshell, `SUPER+N` bloc de notas, `SUPER+SHIFT+T` lista de
+tareas, `SUPER+SHIFT+N` historial de notificaciones, `SUPER+SHIFT+M` panel de
+medios, `SUPER+SHIFT+E` menú de energía, `SUPER+R` grabación de pantalla,
+`SUPER+C` vista previa de la webcam, `SUPER+SHIFT+D` cambio de tema,
+`SUPER+SHIFT+W` ocultar/mostrar Waybar.
 El resto es el 43PR original (enfoque estilo vim, scratchpad, capturas en
 `~/Imágenes/Capturas`, teclas multimedia…).
 
@@ -156,7 +157,7 @@ etc/         archivos de sistema para el greeter (greetd, hyprlogin, PAM)
 patches/     fix de hyprlogin, fix de compilación de libfprint (egismoc)
 scripts/     utilidades del greeter (sincronización, rescate, instalación)
 docs/        notas de Debian, shim, greeter, huella y hardware
-tools/       upstream-diff.sh (diferencias con 43PR), check-links.py (CI)
+tools/       upstream-diff.sh, doctor.sh (diagnóstico) y check-links.py (CI)
 .github/     workflow de CI + plantilla de issue de hardware
 packages.txt referencia de paquetes apt
 install.sh   instalador a nivel de usuario (admite --dry-run)
