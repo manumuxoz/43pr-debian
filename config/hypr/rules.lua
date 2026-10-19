@@ -25,6 +25,21 @@ hl.layer_rule({
     ignore_alpha = 0.15,
 })
 
+-- Componentes de Quickshell con namespace propio (MediaOSD, Todo, PowerMenu,
+-- RecorderOSD). Sin estas reglas perderian el blur que reciben hoy por la
+-- regla generica de "quickshell".
+hl.layer_rule({
+    match = { namespace = "^(mediaosd|mediaosd-settings)$" },
+    blur = true,
+    ignore_alpha = 0.15,
+})
+
+hl.layer_rule({
+    match = { namespace = "^(todo|powermenu|powermenu-settings|recorder-osd)$" },
+    blur = true,
+    ignore_alpha = 0.15,
+})
+
 -- Opacity rules: 100% for all windows
 hl.window_rule({
     match = { class = ".*" },

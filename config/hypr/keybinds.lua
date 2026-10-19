@@ -17,11 +17,15 @@ hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("hyprlock")) -- Lock screen
 
 hl.bind(mainMod .. " + code:49", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/wlogout.sh")) -- Power menu (code:49 = tecla GRAVE/ºª con layout es)
 
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("qs ipc call powermenu toggle")) -- Power menu alternativo (Quickshell; wlogout sigue en GRAVE)
+
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("qs ipc call settings toggle")) -- Settings
 
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.config/quickshell/hyprquickpaper/launch.sh")) -- Wallpapers (toggle)
 
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notepad toggle")) -- Bloc de notas (widget Quickshell)
+
+hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("qs ipc call todo toggle")) -- Tareas y recordatorios (widget Quickshell)
 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = 0 })) -- Fullscreen
 

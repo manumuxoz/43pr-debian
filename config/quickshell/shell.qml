@@ -9,7 +9,10 @@ ShellRoot {
     VolumeOsd {}
     BrightnessOsd {}
     ScreenshotOsd {}
+    RecorderOSD {}
     SettingsWindow {}
     NotepadWindow {}
+    Todo {}
+    PowerMenu {}
     SettingsCornerTrigger {}
 }

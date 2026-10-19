@@ -23,7 +23,9 @@ QtObject {
     readonly property int textSizeSmall: 10
 
     property color _bgBase: palette.bg || '#000000'
-    property color bg: alpha(_bgBase, palette.bgAlpha !== undefined ? palette.bgAlpha : 0.7)
+    // Readable by components that need the alpha alone (e.g. MediaOSD art defaults).
+    readonly property real bgAlpha: palette.bgAlpha !== undefined ? palette.bgAlpha : 0.7
+    property color bg: alpha(_bgBase, bgAlpha)
     property color text: palette.text || '#ffffff'
     property color textDim: palette.textDim || '#c2c2c2'
     property color danger: palette.danger || '#ff003c'

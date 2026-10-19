@@ -4,7 +4,7 @@
 - **Config**: `~/.config/hypr/keybinds.lua`
 - **Recargar tras editar**: `hyprctl reload`
 - **Layout de teclado**: `es` (afecta a los binds de teclas especiales, ver **Notas**)
-- **Total**: 78 binds activos
+- **Total**: 80 binds activos
 
 > Algunas filas agrupan varios binds (los rangos 1–9 / 0 de workspaces).
 
@@ -125,7 +125,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | --- | --- |
 | `SUPER + Supr (Delete)` | Captura del monitor con el foco (`grim -o`) → `~/Imágenes/Capturas de pantalla/<fecha-hora>.png`; copia al portapapeles (`wl-copy`) y notificación OSD (`qs ipc call screenshot notify`, tolerante a fallos); wrapper `~/.config/hypr/scripts/screenshot.sh` |
 | `SUPER + SHIFT + Supr (Delete)` | Captura de área: selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación); wrapper `~/.config/hypr/scripts/screenshot.sh area` |
-| `SUPER + R` | Grabar/parar con wf-recorder (monitor con el foco, audio por defecto) → `~/Vídeos/Grabaciones de la pantalla/rec-<fecha-hora>.mp4` (carpeta XDG de vídeos, la misma que usaba GNOME); wrapper `~/.local/bin/screen-record.sh` con PID en `/tmp/osu-rec.pid`; al parar espera a finalizar el MP4 antes de notificar |
+| `SUPER + R` | Grabar/parar con wf-recorder (monitor con el foco, audio por defecto) → `~/Vídeos/Grabaciones de la pantalla/rec-<fecha-hora>.mp4` (carpeta XDG de vídeos, la misma que usaba GNOME); wrapper `~/.local/bin/screen-record.sh` con PID en `/tmp/osu-rec.pid`; al parar espera a finalizar el MP4 antes de notificar. Mientras grabas se muestra un indicador REC arriba a la derecha (`RecorderOSD.qml`) |
 
 ## Cámara (webcam)
 
@@ -156,6 +156,8 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + W` | Fondos de pantalla — quickshell hyprquickpaper |
 | `SUPER + I` | Panel de ajustes — quickshell settings |
 | `SUPER + N` | Bloc de notas — widget de notas (Quickshell), autoguardado; `Ctrl+Shift+S` = «guardar como…» en cualquier ruta (toggle) |
+| `SUPER + SHIFT + T` | Tareas y recordatorios — widget Todo (Quickshell): tareas con recordatorio (`30s`, `45m`, `2h`, `1d`, `14:30`, `tomr 9am`…), avisa con `notify-send` (toggle) |
+| `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; wlogout sigue en `SUPER + ºª` |
 | `SUPER + Tab` | Bloquear la pantalla — hyprlock |
 | `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
