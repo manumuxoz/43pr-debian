@@ -8,10 +8,9 @@ Item {
     // hyprlock con solo pasar el mouse por la esquina superior izquierda.
     property bool hyprlockEnabled: false
     property bool settingsEnabled: true
-    // Desactivados a peticion del usuario: al arrastrar el raton hasta la zona
-    // superior solo debe abrirse el gestor de configuracion, no el lanzador de
-    // aplicaciones (rofi) ni el selector de fondos de pantalla.
-    property bool rofiEnabled: false
+    // Desactivado a peticion del usuario: al arrastrar el raton hasta la zona
+    // superior solo debe abrirse el gestor de configuracion, no el selector de
+    // fondos de pantalla.
     property bool wallpaperEnabled: false
     property bool wlogoutEnabled: true
 
@@ -23,9 +22,6 @@ Item {
     property real settingsFrom: 0.25
     property real settingsTo: 0.40
 
-    property real rofiFrom: 0.45
-    property real rofiTo: 0.55
-    
     property real wallpaperFrom: 0.60
     property real wallpaperTo: 0.75
 
@@ -74,29 +70,6 @@ Item {
             hoverEnabled: true
             onEntered: Quickshell.execDetached([
                 "qs", "ipc", "call", "settings", "toggle"
-            ])
-        }
-    }
-
-    PanelWindow {
-        id: rofiTrigger
-        visible: root.rofiEnabled
-        anchors { top: true; left: true }
-        implicitHeight: root.triggerHeight
-        implicitWidth: screen ? Math.round(screen.width * (root.rofiTo - root.rofiFrom)) : 0
-        margins {
-            left: screen ? Math.round(screen.width * root.rofiFrom) : 0
-            top: 0
-        }
-        color: root.triggerColor
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: Quickshell.execDetached([
-                "rofi", "-show", "drun"
             ])
         }
     }

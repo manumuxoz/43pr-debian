@@ -9,7 +9,7 @@ set -Eeuo pipefail
 UPSTREAM_URL="${UPSTREAM_URL:-https://github.com/43PR/dotfiles.git}"
 CACHE="${UPSTREAM_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/43pr-debian/upstream}"
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell rofi waybar wlogout wofi)
+CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell waybar wlogout wofi)
 
 usage() {
     cat <<'EOF'
@@ -18,7 +18,7 @@ Usage: tools/upstream-diff.sh [component]
 Compares this repo's config/ against the upstream 43PR dotfiles.
 
   component      diff only one component (43pr, dunst, hypr, kitty, matugen,
-                 quickshell, rofi, waybar, wlogout, wofi)
+                 quickshell, waybar, wlogout, wofi)
 
 Environment:
   UPSTREAM_URL    upstream git URL
@@ -76,7 +76,7 @@ cat <<'EOF'
 
 Notes:
   - Generated files (waybar/colors.css, hyprlock-colors.conf, wofi/style.css,
-    rofi/colors.rasi, kitty/matugen.conf, wlogout/colors.css) are not committed
+    kitty/matugen.conf, wlogout/colors.css) are not committed
     here and will always show as missing; theme.py apply regenerates them.
   - Divergences are expected: this port adds Waybar, adapts monitors/keybinds
     and adds the Debian-specific hooks.

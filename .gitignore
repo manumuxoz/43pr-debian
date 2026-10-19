@@ -8,7 +8,6 @@ config/hypr/hyprlock-colors.conf
 config/waybar/colors.css
 config/wlogout/colors.css
 config/wofi/style.css
-config/rofi/colors.rasi
 config/kitty/matugen.conf
 
 # Editor / noise

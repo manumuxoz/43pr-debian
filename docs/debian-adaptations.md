@@ -72,12 +72,12 @@ The panel runs at 1.75 scale. To avoid rounding and blurry X11 apps:
   scales in some cases).
 - `xwayland.force_zero_scaling = true`.
 
-## 9. wofi instead of rofi for menus
+## 9. wofi as the only launcher (rofi dropped)
 
-The rice uses rofi for the launcher; here **wofi** is used for the app launcher
-and the workspace switcher (its cache/ordering is handled by
-`scripts/workspace-switcher.sh`). Rofi is still installed and themed for other
-dialogs.
+The upstream rice uses **rofi** for the launcher; here the launcher and the
+workspace switcher are handled by **wofi** (its cache/ordering is managed by
+`scripts/workspace-switcher.sh`). **rofi is not used at all** in this port, so
+it is not part of the package list nor of the theme engine targets.
 
 ## 10. Waybar 0.12 cannot talk to Hyprland 0.55 Lua dispatchers
 

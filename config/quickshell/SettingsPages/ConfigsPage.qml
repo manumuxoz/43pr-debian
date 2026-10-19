@@ -235,26 +235,6 @@ Item {
                 }
             }
             Text {
-                text: "ROFI"
-                color: Theme.text
-                font.family: Theme.fontFamily
-                font.pixelSize: 16
-                font.letterSpacing: 3
-            }
-            Rectangle {
-                width: parent.width
-                height: 1
-                color: Theme.border
-            }
-            Column {
-                width: parent.width
-                spacing: page.sectionSpacing
-                ConfigButton {
-                    label: "CONFIG"
-                    path: "~/.config/rofi/config.rasi"
-                }
-            }
-            Text {
                 text: "SETTINGS"
                 color: Theme.text
                 font.family: Theme.fontFamily

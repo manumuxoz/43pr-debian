@@ -38,7 +38,7 @@ sudo apt install -t trixie-backports \
 #   (config/hypr/scripts/camera.sh — vista previa con mpv y foto/grabación;
 #   ver SHORTCUTS.md).
 sudo apt install \
-  waybar dunst wofi rofi kitty wlogout mpv ffmpeg \
+  waybar dunst wofi kitty wlogout mpv ffmpeg \
   grim slurp wl-clipboard cliphist \
   brightnessctl playerctl network-manager-gnome polkit-kde-agent-1 \
   swaybg jq imagemagick python3

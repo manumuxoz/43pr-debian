@@ -50,7 +50,7 @@ Captures from the author's real desktop.
 | Bar | Waybar 0.12 + `waybar-ipc-shim.py` (bridges legacy IPC to Hyprland 0.55 Lua dispatchers) |
 | Widgets | Quickshell: volume/brightness screenshot OSDs, settings window, wallpaper picker (`hyprquickpaper`) |
 | Theme engine | `~/.config/43pr/bin/theme.py` — palettes, wallpapers, matugen (optional), greeter sync |
-| Launchers / UI | wofi, rofi, wlogout, dunst, kitty |
+| Launchers / UI | wofi, wlogout, dunst, kitty |
 | Camera | `scripts/camera.sh` — V4L2 webcam: floating mpv preview (`SUPER+C`), photo (`s`) and recording (`r`) from inside the window |
 | Login screen | **hyprlogin** (greetd greeter forked from hyprlock) + theme sync + fingerprint PAM |
 | Patches | hyprlogin unlock-race fix, libfprint EGIS/`egismoc` build fix |
@@ -82,7 +82,7 @@ sudo apt install -t trixie-backports \
   hyprland hyprland-guiutils hypridle hyprlock hyprpaper hyprpicker \
   hyprsunset xdg-desktop-portal-hyprland quickshell
 sudo apt install \
-  waybar dunst wofi rofi kitty wlogout grim slurp wl-clipboard cliphist \
+  waybar dunst wofi kitty wlogout grim slurp wl-clipboard cliphist \
   brightnessctl playerctl network-manager-gnome polkit-kde-agent-1 \
   swaybg jq imagemagick python3 greetd
 
@@ -138,8 +138,8 @@ CHANGELOG.md release notes
 ```
 
 Files generated at install time (`hyprlock-colors.conf`, `waybar/colors.css`,
-`wlogout/colors.css`, `wofi/style.css`, `rofi/colors.rasi`,
-`kitty/matugen.conf`) are **not** committed; `theme.py apply` recreates them.
+`wlogout/colors.css`, `wofi/style.css`, `kitty/matugen.conf`) are **not**
+committed; `theme.py apply` recreates them.
 
 ## Credits and license
 
