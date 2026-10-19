@@ -141,3 +141,35 @@ new/changed files, backs them up per file under
 keeps working), regenerates the theme and never deletes files or installs
 packages. `--dry-run`, `--diff`, `--skip-theme`, `--skip-packages` and
 `--restart-shell` control its behaviour.
+
+## 18. Pack 3: extra Quickshell widgets and Settings lifecycle
+
+Upstream's full MediaOSD replaces the old volume OSD (playerctl + cava, cover
+art, transport controls and its own settings panel; state lives in
+`~/.config/quickshell/state/mediaosd-state.json`). Three more upstream widgets
+were ported:
+
+- **Todo** — task list with reminder parsing, on `SUPER+SHIFT+T`
+  (`qs ipc call todo toggle`).
+- **PowerMenu** — an alternative to wlogout (which stays on `SUPER+ºª`), on
+  `SUPER+SHIFT+E` (`qs ipc call powermenu toggle`); logout dispatches
+  `hl.dsp.exit()`.
+- **RecorderOSD** — REC indicator polling `screen-record.sh`'s
+  `/tmp/osu-rec.pid` (every 2 s when idle, 1 s while recording).
+
+Their layer namespaces (`mediaosd`, `mediaosd-settings`, `todo`, `powermenu`,
+`powermenu-settings`, `recorder-osd`) are added to `rules.lua` so they keep the
+blur that used to come from the generic `quickshell` rule.
+
+Settings keeps its always-mapped design, but the page `Loader` is only active
+while the window is open (`mounted` + `keepAliveMs`, 20 s), so page timers
+(`gpu-usage.py`, `/proc/net/dev`) stop once Settings is closed. The sidebar has
+a search box (type to filter pages, `Ctrl+F` to focus, `Escape` clears/hides,
+`Return` jumps to the first match).
+
+Storage cleanup actions are Debian-native: APT CACHE (`apt-get clean`), APT
+AUTOREMOVE (`apt-get autoremove --purge`), JOURNAL (`journalctl
+--vacuum-time=7d`) and FLATPAK UNUSED, all through `pkexec`.
+
+`install.sh`/`update.sh` create `~/.config/quickshell/state/` (gitignored); the
+stateful widgets would silently lose their state otherwise.
