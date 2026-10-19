@@ -39,6 +39,8 @@ window#waybar {
 #clock,
 #pulseaudio,
 #custom-mpris-marquee,
+#custom-todo,
+#custom-notifications,
 #custom-power,
 #network,
 #battery,
@@ -59,6 +61,26 @@ window#waybar {
 #custom-mpris-marquee {
     color: @wb_text;
     padding: 0 10px;
+}
+
+/* Notifications / Do Not Disturb */
+#custom-notifications {
+    color: @wb_text;
+}
+#custom-notifications.has {
+    color: @wb_ws_active;
+}
+#custom-notifications.paused {
+    color: @wb_ws_idle;
+    opacity: 0.6;
+}
+
+/* Todo badge */
+#custom-todo {
+    color: @wb_text;
+}
+#custom-todo.overdue {
+    color: @wb_critical;
 }
 
 /* Clock */

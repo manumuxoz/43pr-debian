@@ -6,7 +6,7 @@
 
     "modules-left": ["cpu", "custom/gpu", "memory", "hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/mpris-marquee", "pulseaudio", "network", "battery", "custom/power"],
+    "modules-right": ["custom/mpris-marquee", "custom/todo", "custom/notifications", "pulseaudio", "network", "battery", "custom/power"],
 
     "cpu": {
         "interval": 2,
@@ -77,6 +77,25 @@
         "on-click": "playerctl --player=\"$(~/.config/waybar/scripts/playerctl-active.sh)\" play-pause",
         "on-click-right": "playerctl --player=\"$(~/.config/waybar/scripts/playerctl-active.sh)\" next",
         "on-click-middle": "playerctl --player=\"$(~/.config/waybar/scripts/playerctl-active.sh)\" previous"
+    },
+
+    "custom/notifications": {
+        "exec": "~/.config/waybar/scripts/status-notifications.sh",
+        "return-type": "json",
+        "interval": 2,
+        "tooltip": true,
+        "hide-empty-text": true,
+        "on-click": "dunstctl set-paused toggle",
+        "on-click-right": "dunstctl close-all"
+    },
+
+    "custom/todo": {
+        "exec": "~/.config/waybar/scripts/status-todo.sh",
+        "return-type": "json",
+        "interval": 5,
+        "tooltip": true,
+        "hide-empty-text": true,
+        "on-click": "qs ipc call todo toggle"
     },
 
     "pulseaudio": {
