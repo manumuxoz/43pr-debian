@@ -14,7 +14,13 @@ mkdir -p "$dir"
 file="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
 
 if [ "${1:-}" = "area" ]; then
-    geom="$(slurp)" || exit 0
+    geom="$(slurp 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
+    # Rechaza cancelaciones y geometrias 0x0 (slurp puede devolver "0,0 0x0").
+    re='^-?[0-9]+,-?[0-9]+ [1-9][0-9]*x[1-9][0-9]*$'
+    if [[ ! $geom =~ $re ]]; then
+        qs ipc call screenshot cancelled || true
+        exit 0
+    fi
     grim -g "$geom" "$file" || exit 1
 else
     # Monitor con el foco; si la deteccion falla, grim captura todo (sin -o).
@@ -26,5 +32,5 @@ else
     fi
 fi
 
-wl-copy < "$file"
+wl-copy --type image/png < "$file"
 qs ipc call screenshot notify "$file" || true

@@ -329,7 +329,8 @@ def apply_palette(pal, wallpaper=None):
     for h in hooks:                                # 4. reload consumers last
         try:
             r = subprocess.run(h, stdin=subprocess.DEVNULL, capture_output=True, timeout=10)
-            if r.returncode != 0:
+            # pkill(1) returns 1 when no process matched; that is not an error.
+            if r.returncode != 0 and not (h[0] == "pkill" and r.returncode == 1):
                 warn(f"reload {h} exited {r.returncode}")
         except Exception as e:
             warn(f"reload {h} failed: {e}")

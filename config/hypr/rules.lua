@@ -31,6 +31,13 @@ hl.window_rule({
     opacity = "1.0 override",
 })
 
+-- Fullscreen windows stay fully opaque even if the global rule was lowered
+-- with scripts/opacity.sh (SUPER+O).
+hl.window_rule({
+    match = { class = ".*", fullscreen = true },
+    opacity = "1.0 override",
+})
+
 hl.window_rule({
     match = { class = "kitty" },
     suppress_event = "maximize",
@@ -79,6 +86,8 @@ hl.window_rule({
     name = "float-xdg-desktop-portal-gtk",
     match = { class = "^(xdg-desktop-portal-gtk)$" },
     float = true,
+    center = true,
+    size = "900 600",
 })
 
 hl.window_rule({

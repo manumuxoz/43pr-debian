@@ -35,7 +35,9 @@ hl.on("hyprland.start", function()
     -- Adaptacion Debian: restaura el ultimo wallpaper elegido con swaybg
     -- (hyprpaper 0.8.4 de trixie-backports segfaultea al re-aplicar; ver shim ~/.local/bin/awww)
     hl.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/wallpaper-restore.sh")
-    hl.exec_cmd("sleep 2 && qs")
+    -- QSG_RENDER_LOOP=basic reduce el consumo de Quickshell; si se nota
+    -- alguna regresión en animaciones, quitar solo ese token.
+    hl.exec_cmd("sleep 2 && QSG_RENDER_LOOP=basic qs")
 end)
 
 ---- ENVIRONMENT VARIABLES ----

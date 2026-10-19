@@ -20,6 +20,6 @@ if ! grep -qE '^[[:space:]]*opacity[[:space:]]*=[[:space:]]*"[^"]+ override"' "$
     exit 1
 fi
 
-sed -i "0,/opacity = \".* override\"/s//opacity = \"$opacity override\"/" "$rules_file"
+sed -i --follow-symlinks "0,/opacity = \".* override\"/s//opacity = \"$opacity override\"/" "$rules_file"
 
 hyprctl reload

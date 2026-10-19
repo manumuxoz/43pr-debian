@@ -20,6 +20,9 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
+    // Unmap the surface when idle; stay mapped during the fade-out
+    visible: showing || flyout.opacity > 0
+
     mask: Region {
         item: root.showing ? flyout : null
     }
@@ -29,10 +32,22 @@ PanelWindow {
     // -------------------------
 
     property bool showing: false
+    property bool cancelled: false
     property string imagePath: ""
 
+    // Release the decoded pixmap only after the fade-out has finished
+    onVisibleChanged: if (!visible) imagePath = ""
+
     function showOsd(path) {
+        cancelled = false
         imagePath = path
+        showing = true
+        hideTimer.restart()
+    }
+
+    function showCancelled() {
+        cancelled = true
+        imagePath = ""
         showing = true
         hideTimer.restart()
     }
@@ -51,6 +66,7 @@ PanelWindow {
     //
     // Called from your shell scripts like:
     //   qs ipc call screenshot notify "$file"
+    //   qs ipc call screenshot cancelled
     // -------------------------
 
     IpcHandler {
@@ -58,6 +74,10 @@ PanelWindow {
 
         function notify(path: string): void {
             root.showOsd(path)
+        }
+
+        function cancelled(): void {
+            root.showCancelled()
         }
     }
 
@@ -76,7 +96,7 @@ PanelWindow {
         anchors.topMargin: 30
 
         radius: 20
-        color: Theme.alpha(Theme.bg, 0.5)   // was: "#80000000"
+        color: Theme.alpha(Theme.bg, 0.5)
 
         opacity: root.showing ? 1 : 0
         scale: root.showing ? 1 : 0.9
@@ -112,6 +132,7 @@ PanelWindow {
                 Image {
                     anchors.fill: parent
                     source: root.imagePath ? "file://" + root.imagePath : ""
+                    sourceSize: Qt.size(120, 120)
                     fillMode: Image.PreserveAspectCrop
                     asynchronous: true
                     cache: false
@@ -120,7 +141,7 @@ PanelWindow {
                 Text {
                     anchors.centerIn: parent
                     visible: !root.imagePath
-                    text: "󰄀"
+                    text: root.cancelled ? "󰜺" : "󰄀"
                     font.family: "Symbols Nerd Font"
                     font.pixelSize: 22
                     color: Theme.text
@@ -133,13 +154,14 @@ PanelWindow {
                 width: parent.width - thumb.width - parent.spacing
 
                 Text {
-                    text: "Screenshot saved"
+                    text: root.cancelled ? "Screenshot cancelled" : "Screenshot saved"
                     font.pixelSize: 13
                     font.bold: true
                     color: Theme.text
                 }
 
                 Text {
+                    visible: !root.cancelled
                     text: root.imagePath.split("/").pop()
                     font.pixelSize: 11
                     color: Theme.textDim
@@ -148,7 +170,7 @@ PanelWindow {
                 }
 
                 Text {
-                    text: "Copied to clipboard"
+                    text: root.cancelled ? "No area selected" : "Copied to clipboard"
                     font.pixelSize: 10
                     color: Theme.textDim
                 }

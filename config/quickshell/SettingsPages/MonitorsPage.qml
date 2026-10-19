@@ -523,7 +523,7 @@ Item {
 
     Process {
         id: pEditConfig
-        command: ["sh", "-c", "xed ~/.config/hypr/monitors.lua"]
+        command: ["sh", "-c", "xdg-open ~/.config/hypr/monitors.lua"]
         onExited: exitCode => {}
     }
 

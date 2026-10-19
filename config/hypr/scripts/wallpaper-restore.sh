@@ -4,7 +4,7 @@
 # swaybg: hyprpaper 0.8.4 de trixie-backports segfaultea al re-aplicar.
 set -u
 
-state="$HOME/.local/state/43pr/state.json"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/43pr/state.json"
 wp=""
 
 if [ -f "$state" ]; then

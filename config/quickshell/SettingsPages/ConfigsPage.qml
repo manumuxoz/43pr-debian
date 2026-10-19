@@ -15,7 +15,7 @@ Item {
 
     function editConfig(path) {
         Quickshell.execDetached([
-            "xed",
+            "xdg-open",
             path.replace(/^~/, Quickshell.env("HOME"))
         ])
     }

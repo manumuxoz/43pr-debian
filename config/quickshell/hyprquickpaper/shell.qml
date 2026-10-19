@@ -316,6 +316,8 @@ PanelWindow {
                     width: parent.width
                     height: parent.height
                     source: img.source
+                    sourceSize.width: img.sourceSize.width
+                    sourceSize.height: img.sourceSize.height
                     fillMode: Image.PreserveAspectCrop
                     asynchronous: true
                     cache: false
@@ -345,6 +347,8 @@ PanelWindow {
                     cache: false
                     smooth: true
                     source: "file://" + main.cachePath + fileName
+                    sourceSize.width: delegateItem.baseWidth * main.zoomScale
+                    sourceSize.height: delegateItem.height
                     transform: Matrix4x4 { matrix: Qt.matrix4x4(1, main.skewFactor, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1) }
 
                     Timer {
