@@ -7,7 +7,7 @@ Item {
     id: page
     property var drives: []
     property var filesystems: []
-    property var cleanupInfo: ({yay:0, pacman:0, journal:0, trash:0, flatpak:0, cliphist:0, thumbs:0})
+    property var cleanupInfo: ({aptcache:0, autoremove:0, journal:0, trash:0, flatpak:0, cliphist:0, thumbs:0})
     property int contentMargin: 0
     property int contentRightMargin: 46
     property int contentTopMargin: 0
@@ -16,7 +16,7 @@ Item {
     property string pendingTitle: ""
     property string pendingMessage: ""
 
-    readonly property var cleanupDefaults: ({yay:0, pacman:0, journal:0, trash:0, flatpak:0, cliphist:0, thumbs:0})
+    readonly property var cleanupDefaults: ({aptcache:0, autoremove:0, journal:0, trash:0, flatpak:0, cliphist:0, thumbs:0})
     readonly property var sizeUnits: ({
         B:1, K:1024, KB:1024, KIB:1024,
         M:1048576, MB:1048576, MIB:1048576,
@@ -40,9 +40,11 @@ Item {
 
     function parseSize(v) {
         if (!v) return 0
-        var p = v.trim().split(/\s+/)
-        var n = parseFloat(p[0])
-        return isNaN(n) ? 0 : n * (p.length > 1 ? (sizeUnits[p[1].toUpperCase()] || 1) : 1)
+        var m = v.trim().match(/^([0-9.]+)\s*([A-Za-z]*)$/)
+        if (!m) return 0
+        var n = parseFloat(m[1])
+        if (isNaN(n)) return 0
+        return n * (m[2] ? (sizeUnits[m[2].toUpperCase()] || 1) : 1)
     }
 
     function usageColor(p) { return p >= 90 ? Theme.danger : p >= 75 ? Theme.accent2 : Theme.accent }
@@ -136,17 +138,18 @@ Item {
         id: pCleanup
         command: [
             "sh", "-c",
-            "printf 'YAY '; du -sb \"$HOME/.cache/yay\" 2>/dev/null | awk '{print $1}'; " +
-            "printf 'PACMAN '; du -sb /var/cache/pacman/pkg 2>/dev/null | awk '{print $1}'; " +
-            "printf 'JOURNAL '; journalctl --disk-usage 2>/dev/null | grep -oE '[0-9.]+ (B|K|M|G|T)' | tail -1; " +
-            "printf 'TRASH '; du -sb \"$HOME/.local/share/Trash\" 2>/dev/null | awk '{print $1}'; " +
-            "printf 'FLATPAK '; flatpak uninstall --unused --assumeno 2>/dev/null | grep -oE '[0-9.]+ (kB|MB|GB|TB)' | tail -1; " +
-            "printf 'CLIPHIST '; cliphist list 2>/dev/null | wc -l; " +
-            "printf 'THUMBS '; du -sb \"$HOME/.cache/quickshell/thumbs\" 2>/dev/null | awk '{print $1}'"
+            "p() { printf '%s %s\\n' \"$1\" \"${2:-0}\"; }; " +
+            "p APTCACHE \"$(du -sb /var/cache/apt/archives 2>/dev/null | awk '{print $1}')\"; " +
+            "p AUTOREMOVE \"$(apt-get -s autoremove 2>/dev/null | grep -c '^Remv')\"; " +
+            "p JOURNAL \"$(journalctl --disk-usage 2>/dev/null | grep -oE '[0-9.]+ ?[BKMGT]' | tail -1 | tr -d ' ')\"; " +
+            "p TRASH \"$(du -sb \"$HOME/.local/share/Trash\" 2>/dev/null | awk '{print $1}')\"; " +
+            "p FLATPAK \"$(flatpak uninstall --unused --assumeno 2>/dev/null | grep -oE '[0-9.]+ ?(kB|MB|GB|TB)' | tail -1 | tr -d ' ')\"; " +
+            "p CLIPHIST \"$(cliphist list 2>/dev/null | wc -l)\"; " +
+            "p THUMBS \"$(du -sb \"$HOME/.cache/quickshell/thumbs\" 2>/dev/null | awk '{print $1}')\""
         ]
         stdout: StdioCollector {
             onStreamFinished: {
-                var info = {yay: 0, pacman: 0, journal: 0, trash: 0, flatpak: 0, cliphist: 0, thumbs: 0}
+                var info = {aptcache: 0, autoremove: 0, journal: 0, trash: 0, flatpak: 0, cliphist: 0, thumbs: 0}
                 var lines = text.trim().split("\n")
                 for (var i = 0; i < lines.length; ++i) {
                     var p = lines[i].trim().split(/\s+/)
@@ -169,18 +172,18 @@ Item {
     Rectangle {
         id: confirmPopup
         visible: false; anchors.centerIn: parent; z: 100
-        width: Math.min(parent.width - 30, 420); height: 190; radius: Theme.radius
-        color: "#00000000"; border.width: 1; border.color: Theme.border
+        width: Math.min(parent.width - 30, 420); height: 220; radius: Theme.radius
+        color: Theme.bg; border.width: 1; border.color: Theme.accent
 
         Column {
             anchors.fill: parent; anchors.margins: 18; spacing: 12
             Text {
                 text: page.pendingTitle; color: Theme.text
-                font.family: Theme.fontFamily; font.pixelSize: 17; font.bold: true
+                font.family: Theme.fontFamily; font.pixelSize: Theme.textSizeTitle; font.bold: true
             }
             Text {
                 width: parent.width; text: page.pendingMessage; color: Theme.textDim
-                font.family: Theme.fontFamily; font.pixelSize: 13; wrapMode: Text.WordWrap
+                font.family: Theme.fontFamily; font.pixelSize: Theme.textSizeGroup; wrapMode: Text.WordWrap
             }
             Item { width: 1; height: 1 }
             Row {
@@ -386,24 +389,24 @@ Item {
                                 command: "rm -rf -- \"$HOME/.cache/quickshell/thumbs/\"*"
                             },
                             {
-                                key: "yay", label: "YAY CACHE", action: "CLEAN", title: "CLEAR YAY CACHE?",
-                                message: "CACHE_PLACEHOLDER",
-                                command: "rm -rf -- \"$HOME/.cache/yay/\"*"
+                                key: "aptcache", label: "APT CACHE", action: "CLEAN", title: "CLEAN APT CACHE?",
+                                message: "This permanently deletes downloaded .deb files from /var/cache/apt/archives.\n\nCommand: pkexec apt-get clean",
+                                command: "pkexec apt-get clean"
                             },
                             {
-                                key: "pacman", label: "PACMAN CACHE", action: "CLEAN", title: "CLEAN PACMAN CACHE?",
-                                message: "paccache will remove old package versions while keeping the currently installed packages.",
-                                command: "sudo paccache -r"
+                                key: "autoremove", label: "APT AUTOREMOVE", action: "PURGE", title: "REMOVE UNUSED PACKAGES?",
+                                message: "This removes packages that were installed automatically and are no longer needed.\n\nCommand: pkexec apt-get -y autoremove --purge",
+                                command: "pkexec apt-get -y autoremove --purge"
                             },
                             {
                                 key: "journal", label: "JOURNAL", action: "7 DAYS", title: "VACUUM JOURNAL?",
-                                message: "Keep only the last 7 days of system logs.",
-                                command: "sudo journalctl --vacuum-time=7d"
+                                message: "This permanently deletes system journal logs older than 7 days.\n\nCommand: pkexec journalctl --vacuum-time=7d",
+                                command: "pkexec journalctl --vacuum-time=7d"
                             },
                             {
                                 key: "flatpak", label: "FLATPAK UNUSED", action: "CLEAN", title: "REMOVE UNUSED FLATPAKS?",
-                                message: "This removes unused Flatpak runtimes and packages.",
-                                command: "flatpak uninstall --unused"
+                                message: "This removes unused Flatpak runtimes and packages.\n\nCommand: flatpak uninstall --unused -y",
+                                command: "flatpak uninstall --unused -y"
                             }
                         ]
 
@@ -411,15 +414,11 @@ Item {
                             required property var modelData
                             width: list.width
                             label: modelData.label
-                            value: modelData.key === "cliphist" ? page.formatCount(page.cleanupInfo.cliphist) : page.formatBytes(page.cleanupInfo[modelData.key])
+                            value: modelData.key === "cliphist" || modelData.key === "autoremove"
+                                ? page.formatCount(page.cleanupInfo[modelData.key])
+                                : page.formatBytes(page.cleanupInfo[modelData.key])
                             actionText: modelData.action
-                            onClicked: page.confirmAction(
-                                modelData.title,
-                                modelData.message === "CACHE_PLACEHOLDER"
-                                    ? page.formatBytes(page.cleanupInfo.yay) + " currently in ~/.cache/yay"
-                                    : modelData.message,
-                                modelData.command
-                            )
+                            onClicked: page.confirmAction(modelData.title, modelData.message, modelData.command)
                         }
                     }
                 }
