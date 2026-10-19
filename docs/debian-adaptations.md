@@ -111,3 +111,33 @@ with `mpv` — already in the base install — for the `SUPER+C` preview. Photos
 and recordings are driven from inside the window by `camera-mpv.lua`
 (`s` / `r`). Because V4L2 admits a single reader, a recording is remuxed by
 `mpv` to a FIFO and a background `ffmpeg` re-encodes it to H.264 MP4.
+
+## 15. Upstream themes with Waybar and wlogout
+
+Upstream dropped the Waybar (`wb_*`) and wlogout (`wl_*`) colour tokens from
+its presets when it moved to a Quickshell-only shell. This port still renders
+both, so `theme.py merged()` derives those keys from each theme's semantic
+colours (panel, accent, danger…) instead of falling back to `default.toml`.
+The 26 imported presets keep upstream's `override = false`: a wallpaper change
+regenerates the palette. Set `override = true` in a theme TOML to pin it.
+
+Presets are applied with `theme.py preset <id>` or from Settings → Themes.
+btop 1.3.2 is compatible with the generated theme
+(`color_theme = "43pr"` in `~/.config/btop/btop.conf`); cava's target stays
+disabled because Debian 13 ships cava 0.10.4, which lacks `theme =` support.
+
+## 16. Editors: xdg-open instead of xed
+
+`xed` is not packaged in Debian, so the Quickshell config pages open files
+with `xdg-open` (honours the user's default application).
+
+## 17. Updating: copy model, not symlinks
+
+Upstream's `install.sh`/`update.sh` use symlinks and `pacman`. This port keeps
+copying files into `~/.config`, so a `git pull` does not update the live
+configuration by itself: run `./update.sh` afterwards. It copies only
+new/changed files, backs them up per file under
+`~/.config-backups/update-<date>/` (never `43pr-debian-*`, so `uninstall.sh`
+keeps working), regenerates the theme and never deletes files or installs
+packages. `--dry-run`, `--diff`, `--skip-theme`, `--skip-packages` and
+`--restart-shell` control its behaviour.
