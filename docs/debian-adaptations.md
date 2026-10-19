@@ -152,8 +152,8 @@ were ported:
 - **Todo** — task list with reminder parsing, on `SUPER+SHIFT+T`
   (`qs ipc call todo toggle`).
 - **PowerMenu** — an alternative to wlogout (which stays on `SUPER+ºª`), on
-  `SUPER+SHIFT+E` (`qs ipc call powermenu toggle`); logout dispatches
-  `hl.dsp.exit()`.
+  `SUPER+SHIFT+E` (`qs ipc call powermenu toggle`); the Waybar power icon opens
+  the same menu; logout dispatches `hl.dsp.exit()`.
 - **RecorderOSD** — REC indicator polling `screen-record.sh`'s
   `/tmp/osu-rec.pid` (every 2 s when idle, 1 s while recording).
 
