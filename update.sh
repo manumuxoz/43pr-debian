@@ -21,7 +21,7 @@ PACKAGES=(
     hyprland hyprland-guiutils hypridle hyprlock hyprpaper hyprpicker
     hyprsunset xdg-desktop-portal-hyprland quickshell
     waybar dunst wofi kitty wlogout mpv ffmpeg
-    grim slurp wl-clipboard cliphist
+    grim slurp wl-clipboard cliphist swappy
     brightnessctl playerctl network-manager-gnome polkit-kde-agent-1
     swaybg jq imagemagick python3 greetd
     zenity libnotify-bin xdg-desktop-portal-gtk papirus-icon-theme

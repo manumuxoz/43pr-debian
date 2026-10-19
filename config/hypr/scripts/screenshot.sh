@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Capturas de pantalla (grim).
-# Uso: screenshot.sh [area]
+# Uso: screenshot.sh [area|annotate]
 #   sin argumentos -> captura el monitor con el foco (grim -o)
 #   area           -> seleccion libre con slurp (grim -g)
+#   annotate       -> seleccion libre y editor swappy para anotar
 # Guarda en "$XDG_PICTURES/Capturas de pantalla/" (resuelto via xdg-user-dir),
 # copia al portapapeles y notifica por Quickshell (tolerante a fallos).
 set -u
@@ -12,6 +13,24 @@ pictures="$(xdg-user-dir PICTURES 2>/dev/null || true)"
 dir="$pictures/Capturas de pantalla"
 mkdir -p "$dir"
 file="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
+
+if [ "${1:-}" = "annotate" ]; then
+    if ! command -v swappy >/dev/null 2>&1; then
+        notify-send "Captura" "swappy no está instalado" 2>/dev/null || true
+        exit 1
+    fi
+    geom="$(slurp 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
+    re='^-?[0-9]+,-?[0-9]+ [1-9][0-9]*x[1-9][0-9]*$'
+    if [[ ! $geom =~ $re ]]; then
+        qs ipc call screenshot cancelled || true
+        exit 0
+    fi
+    tmp="$(mktemp --suffix=.png)" || exit 1
+    trap 'rm -f "$tmp"' EXIT
+    grim -g "$geom" "$tmp" || exit 1
+    swappy -f "$tmp"
+    exit 0
+fi
 
 if [ "${1:-}" = "area" ]; then
     geom="$(slurp 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }

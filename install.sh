@@ -14,7 +14,7 @@
 set -Eeuo pipefail
 
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell waybar wlogout wofi)
+CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell swappy waybar wlogout wofi)
 STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 BACKUP="$HOME/.config-backups/43pr-debian-$STAMP"
 

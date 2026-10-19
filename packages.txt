@@ -39,7 +39,7 @@ sudo apt install -t trixie-backports \
 #   ver SHORTCUTS.md).
 sudo apt install \
   waybar dunst wofi kitty wlogout mpv ffmpeg \
-  grim slurp wl-clipboard cliphist \
+  grim slurp wl-clipboard cliphist swappy \
   brightnessctl playerctl network-manager-gnome polkit-kde-agent-1 \
   swaybg jq imagemagick python3 \
   zenity libnotify-bin xdg-desktop-portal-gtk papirus-icon-theme \

@@ -23,7 +23,11 @@ hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("qs ipc call settings toggle")) -- Se
 
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.config/quickshell/hyprquickpaper/launch.sh")) -- Wallpapers (toggle)
 
+hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/random-wallpaper.sh")) -- Wallpaper aleatorio (solo imagen)
+
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notepad toggle")) -- Bloc de notas (widget Quickshell)
+
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/notification-center.sh")) -- Historial de notificaciones (dunst + wofi)
 
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("qs ipc call todo toggle")) -- Tareas y recordatorios (widget Quickshell)
 
@@ -51,6 +55,8 @@ hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x
 hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh"))
 -- Screenshot area select (SUPER+SHIFT+Supr)
 hl.bind(mainMod .. " + SHIFT + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh area"))
+
+hl.bind(mainMod .. " + CTRL + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh annotate")) -- Captura de area + anotar (swappy)
 
 -- Keyboard layout
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("hyprctl switchxkblayout current next"))
