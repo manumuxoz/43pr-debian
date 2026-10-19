@@ -70,16 +70,65 @@ def current_mode():
     return os.environ.get("MATUGEN_MODE") or load_state().get("mode_appearance", "dark")
 
 
+@contextmanager
+def forced_mode(mode):
+    """Temporarily force light/dark for one apply, without touching the state."""
+    previous = os.environ.get("MATUGEN_MODE")
+    os.environ["MATUGEN_MODE"] = mode
+    try:
+        yield
+    finally:
+        if previous is None:
+            os.environ.pop("MATUGEN_MODE", None)
+        else:
+            os.environ["MATUGEN_MODE"] = previous
+
+
 # ---------- palettes ----------
+
+# Upstream dropped the wb_* (Waybar) and wl_* (wlogout) tokens from its presets
+# after moving to a Quickshell-only shell. This port still renders both, so the
+# missing keys are derived from each theme's semantic colors instead of falling
+# back to the pinned default.
+DERIVED_COLORS = {
+    "wb_panel_bg": "bg_panel",
+    "wb_text": "fg",
+    "wb_critical": "danger",
+    "wb_ws_idle": "fg",
+    "wb_ws_active": "accent",
+    "wb_ws_urgent": "danger",
+    "wl_window_bg": "bg",
+    "wl_button_bg": "bg_card",
+    "wl_text": "fg",
+    "wl_hover_bg": "accent",
+    "wl_active_bg": "accent",
+    "wl_focus_ring": "accent",
+}
+
 
 def merged(colors):
     """Overlay onto default so presets/matugen may omit keys."""
     base = dict(load_toml(THEMES / "default.toml")["colors"])
     base.update(colors)
+    for key, source in DERIVED_COLORS.items():
+        if key not in colors and source in base:
+            base[key] = base[source]
     bad = {k: v for k, v in base.items() if not (isinstance(v, str) and HEX.match(v))}
     if bad:
         raise ValueError(f"invalid colors: {bad}")
     return {k: v.lower() for k, v in base.items()}
+
+
+def palette_appearance(declared, pal):
+    """light/dark from a theme's `appearance` key, or from its bg luminance."""
+    if declared in ("light", "dark"):
+        return declared
+    try:
+        h = pal["bg"].lstrip("#")
+        r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+        return "light" if (0.2126 * r + 0.7152 * g + 0.0722 * b) > 127.5 else "dark"
+    except Exception:
+        return "dark"
 
 
 def preset_path(name):
@@ -362,12 +411,17 @@ def cmd_wallpaper(a):
             pinned = st.get("mode") == "preset" and \
                 load_toml(preset_path(st["preset"])).get("override", False)
             if pinned:
-                pal = preset_palette(st["preset"])
+                data = load_toml(preset_path(st["preset"]))
+                pal = merged(data.get("colors", {}))
+                mode = palette_appearance(data.get("appearance"), pal)
                 print(f"theme: preset '{st['preset']}' is pinned; keeping it")
+                with forced_mode(mode):
+                    apply_palette(pal, str(p))
+                st["mode_appearance"] = mode
             else:
                 pal = from_wallpaper(p)
                 st["mode"] = "wallpaper"
-            apply_palette(pal, str(p))
+                apply_palette(pal, str(p))
         except Exception as e:
             ensure_fallback()
             die(f"theme unchanged: {e}")
@@ -377,14 +431,19 @@ def cmd_wallpaper(a):
 
 
 def cmd_preset(a):
+    data = load_toml(preset_path(a.name))
+    name = "default" if a.name == "43pr-default" else a.name
+    pal = merged(data.get("colors", {}))
+    mode = palette_appearance(data.get("appearance"), pal)
     with lock():
         try:
-            apply_palette(preset_palette(a.name))
+            with forced_mode(mode):
+                apply_palette(pal)
         except Exception as e:
             ensure_fallback()
             die(f"theme unchanged: {e}")
         st = load_state()
-        st.update(mode="preset", preset="default" if a.name == "43pr-default" else a.name)
+        st.update(mode="preset", preset=name, mode_appearance=mode)
         save_state(st)
     print(f"theme: preset '{a.name}' applied")
 
@@ -431,7 +490,8 @@ def cmd_list(a):
         d = load_toml(p)
         mark = "*" if st.get("mode") == "preset" and st.get("preset") == p.stem else " "
         pin = " [pinned]" if d.get("override") else ""
-        print(f"{mark} {p.stem:<16}{pin} {d.get('description', '')}")
+        app = d.get("appearance", "?")
+        print(f"{mark} {p.stem:<16}{pin} {app:<5} {d.get('description', '')}")
 
 
 def cmd_new(a):
