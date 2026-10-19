@@ -99,13 +99,35 @@ Previous configs are backed up to `~/.config-backups/43pr-debian-<date>/`.
 Use `./install.sh --dry-run` to preview the changes, and `./uninstall.sh` to
 restore the latest backup.
 
+### Updating
+
+This port **copies** the files into your HOME (it does not symlink the repo),
+so pulling the repository does not change the live configuration by itself:
+
+```bash
+git pull
+./update.sh            # --dry-run to preview, --diff to see the changes
+```
+
+`update.sh` copies only new/changed files, backs up every overwritten file
+under `~/.config-backups/update-<date>/` (the last five are kept) and re-runs
+`theme.py apply`. It never deletes files, never installs packages and never
+runs `git pull`; missing packages are only reported. Useful flags:
+`--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`, `--restart-shell`.
+
+To undo a full installation, `./uninstall.sh` restores the
+`~/.config-backups/43pr-debian-<date>/` backup. Update backups are per-file and
+are not used by `uninstall.sh`.
+
 ### After installing
 
 1. Adapt `~/.config/hypr/monitors.lua` to your screens (or use
    `scripts/monitor-ctl.sh`). The repo ships the original layout:
    `eDP-1 2880x1800@90 scale 1.75` + `DP-3 1440x900`.
 2. Check `~/.config/quickshell/hyprquickpaper/config.json` — the wallpaper
-   folder defaults to `$HOME/Imágenes/Wallpapers` (Spanish locale).
+   folder defaults to `$HOME/Imágenes/Wallpapers` (Spanish locale; the
+   installer creates it). Add 26 theme presets to Settings → Themes; to keep
+   them after changing the wallpaper, set `override = true` in the theme TOML.
 3. Log out and start a Hyprland session (`start-hyprland` from a TTY works;
    greetd/hyprlogin is optional).
 4. Optional: `/etc/hyprlogin` greeter (`docs/hyprlogin.md`) and fingerprint
@@ -133,13 +155,15 @@ tools/       upstream-diff.sh (diff against 43PR), check-links.py (CI)
 .github/     CI workflow + hardware-report issue template
 packages.txt apt package reference
 install.sh   user-level installer (supports --dry-run)
+update.sh    copy new/changed files into an existing install (supports --dry-run)
 uninstall.sh restores the pre-install configuration
 CHANGELOG.md release notes
 ```
 
 Files generated at install time (`hyprlock-colors.conf`, `waybar/colors.css`,
-`wlogout/colors.css`, `wofi/style.css`, `kitty/matugen.conf`) are **not**
-committed; `theme.py apply` recreates them.
+`wlogout/colors.css`, `wofi/style.css`, `kitty/matugen.conf`,
+`btop/themes/43pr.theme`) are **not** committed; `theme.py apply` recreates
+them. cava's theme target stays disabled until Debian ships cava >= 0.10.5.
 
 ## Credits and license
 

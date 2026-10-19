@@ -9,6 +9,7 @@ config/waybar/colors.css
 config/wlogout/colors.css
 config/wofi/style.css
 config/kitty/matugen.conf
+config/quickshell/state/
 
 # Editor / noise
 *.swp

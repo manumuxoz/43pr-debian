@@ -129,6 +129,20 @@ else
     say "Roboto Mono installed in ~/.local/share/fonts/43pr/"
 fi
 
+# --- wallpaper folder -----------------------------------------------------------
+if [[ $DRY_RUN -eq 1 ]]; then
+    say "[dry-run] would create ~/Imágenes/Wallpapers (hyprquickpaper path)"
+else
+    mkdir -p "$HOME/Imágenes/Wallpapers"
+    say "Wallpaper folder ready: ~/Imágenes/Wallpapers"
+fi
+
+# --- optional tools -------------------------------------------------------------
+if [[ $DRY_RUN -eq 0 ]] && ! command -v autoclicker >/dev/null 2>&1; then
+    warn "autoclicker not found in PATH: the CTRL+ALT+A bind will do nothing"
+    warn "(optional; install it separately or remove the bind from keybinds.lua)."
+fi
+
 # --- helper permissions ---------------------------------------------------------
 if [[ $DRY_RUN -eq 0 ]]; then
     find "$HOME/.config/hypr/scripts" "$HOME/.config/waybar/scripts" \
@@ -164,10 +178,14 @@ Next steps:
      (or use ~/.config/hypr/scripts/monitor-ctl.sh). The repo ships the
      layout of the original laptop: eDP-1 2880x1800 scale 1.75 + DP-3.
   2. Wallpaper folder: config/quickshell/hyprquickpaper/config.json points to
-     \$HOME/Imágenes/Wallpapers — change it if your folder has another name.
-  3. Log out and start a Hyprland session (greeter, display manager, or
+     \$HOME/Imágenes/Wallpapers (created by this script) — change it if your
+     folder has another name.
+  3. Updates: pull the repo and run ./update.sh (copies only changed files,
+     backs them up under ~/.config-backups/update-<date>/; supports --dry-run
+     and --diff).
+  4. Log out and start a Hyprland session (greeter, display manager, or
      'start-hyprland' from a TTY).
-  4. Optional pieces:
+  5. Optional pieces:
        Waybar/Lua shim ... docs/waybar-hyprland-lua-shim.md
        hyprlogin greeter . docs/hyprlogin.md
        fingerprint ....... docs/fingerprint.md

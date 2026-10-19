@@ -10,15 +10,19 @@ UPSTREAM_URL="${UPSTREAM_URL:-https://github.com/43PR/dotfiles.git}"
 CACHE="${UPSTREAM_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/43pr-debian/upstream}"
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell waybar wlogout wofi)
+ROOT_FILES=(.gitignore install.sh update.sh packages.txt README.md)
 
 usage() {
     cat <<'EOF'
-Usage: tools/upstream-diff.sh [component]
+Usage: tools/upstream-diff.sh [component|root]
 
-Compares this repo's config/ against the upstream 43PR dotfiles.
+Compares this repo's config/ (and selected root files) against the upstream
+43PR dotfiles.
 
   component      diff only one component (43pr, dunst, hypr, kitty, matugen,
                  quickshell, waybar, wlogout, wofi)
+  root           diff only the root files (.gitignore, install.sh, update.sh,
+                 packages.txt, README.md)
 
 Environment:
   UPSTREAM_URL    upstream git URL
@@ -68,6 +72,25 @@ for d in "${CONFIG_DIRS[@]}"; do
     fi
 done
 
+if [[ -z "$FILTER" || "$FILTER" == "root" ]]; then
+    for f in "${ROOT_FILES[@]}"; do
+        src="$CACHE/$f"
+        dst="$REPO/$f"
+        if [[ ! -e "$src" && ! -e "$dst" ]]; then
+            continue
+        elif [[ ! -e "$dst" ]]; then
+            found=1
+            echo "== $f: exists upstream but not in this port"
+        elif [[ ! -e "$src" ]]; then
+            found=1
+            echo "== $f: only in this port (upstream removed it or never had it)"
+        elif ! cmp -s "$src" "$dst"; then
+            found=1
+            echo "== $f (differs; $(diff -u "$src" "$dst" | wc -l) diff lines)"
+        fi
+    done
+fi
+
 if [[ $found -eq 0 ]]; then
     echo "No differences found (for the selected component)."
 fi
@@ -81,4 +104,7 @@ Notes:
   - Divergences are expected: this port adds Waybar, adapts monitors/keybinds
     and adds the Debian-specific hooks.
   - Waybar has no upstream counterpart (upstream uses the Quickshell bar).
+  - Root files (install.sh, update.sh, packages.txt, README.md, .gitignore)
+    are compared file by file because upstream switched to symlinks and Arch
+    package names; their contents are not directly reusable here.
 EOF
