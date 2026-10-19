@@ -25,7 +25,7 @@ hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notepad toggle")) -- Blo
 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = 0 })) -- Fullscreen
 
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/opacity.sh")) -- Opacity
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || " .. home .. "/.config/hypr/scripts/opacity.sh")) -- Opacity (toggle)
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || " .. home .. "/.config/hypr/scripts/workspace-switcher.sh")) -- Conmutador de escritorios (wofi; toggle)
 
@@ -41,10 +41,10 @@ hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("sh -c 'pgrep -x waybar >/dev
 -- Clipboard
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || cliphist list | wofi --dmenu --prompt '' | cliphist decode | wl-copy"))
 
--- Screenshot fullscreen (SUPER+Supr; guarda en Imágenes/Capturas de pantalla)
-hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd("sh -c 'dir=\"" .. home .. "/Imágenes/Capturas de pantalla\"; mkdir -p \"$dir\"; file=\"$dir/$(date +%Y-%m-%d_%H-%M-%S).png\"; if grim \"$file\"; then wl-copy < \"$file\"; qs ipc call screenshot notify \"$file\" || true; fi'"))
+-- Screenshot monitor with focus (SUPER+Supr; wrapper en scripts/screenshot.sh)
+hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh"))
 -- Screenshot area select (SUPER+SHIFT+Supr)
-hl.bind(mainMod .. " + SHIFT + Delete", hl.dsp.exec_cmd("sh -c 'dir=\"" .. home .. "/Imágenes/Capturas de pantalla\"; mkdir -p \"$dir\"; file=\"$dir/$(date +%Y-%m-%d_%H-%M-%S).png\"; if grim -g \"$(slurp)\" \"$file\"; then wl-copy < \"$file\"; qs ipc call screenshot notify \"$file\" || true; fi'"))
+hl.bind(mainMod .. " + SHIFT + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh area"))
 
 -- Keyboard layout
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("hyprctl switchxkblayout current next"))
@@ -169,3 +169,7 @@ hl.bind("XF86Mail", hl.dsp.exec_cmd("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK
 hl.bind("XF86Search", hl.dsp.exec_cmd("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
 hl.bind("XF86Calculator", hl.dsp.exec_cmd("brightnessctl --class=backlight set 5%-"), { locked = true, repeating = true })
 hl.bind("XF86Tools", hl.dsp.exec_cmd("brightnessctl --class=backlight set 5%+"), { locked = true, repeating = true })
+
+-- >>> autoclicker (requiere el binario `autoclicker` en PATH) >>>
+hl.bind("CTRL + ALT + A", hl.dsp.exec_cmd("autoclicker --toggle"))
+-- <<< autoclicker <<<

@@ -10,9 +10,11 @@
 
 -- ==== INICIO gestionado por monitor-ctl.sh (no editar a mano) ====
 PRIMARY_MONITOR = "eDP-1"
-SECONDARY_MONITOR = "DP-3"
+SECONDARY_MONITOR = "HDMI-A-1"
 hl.monitor({ output = "eDP-1", mode = "2880x1800@90.00", position = "0x0", scale = 1.75 })
+hl.monitor({ output = "HDMI-A-1", mode = "1440x900@74.98", position = "auto", scale = 1.0 })
 hl.monitor({ output = "DP-3", mode = "1440x900@74.98", position = "auto", scale = 1.0 })
+hl.monitor({ output = "DP-1", mode = "1440x900@74.98", position = "1646x0", scale = 1.0 })
 PRIMARY_WORKSPACES = 5
 for i = 1, PRIMARY_WORKSPACES do hl.workspace_rule({ workspace = tostring(i), monitor = PRIMARY_MONITOR, default = true, persistent = true }) end
 hl.workspace_rule({ workspace = tostring(PRIMARY_WORKSPACES + 1), monitor = SECONDARY_MONITOR, default = true })

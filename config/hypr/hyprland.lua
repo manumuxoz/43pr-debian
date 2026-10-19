@@ -16,8 +16,8 @@ hl.on("hyprland.start", function()
     -- Adaptacion Debian: actualiza el entorno del gestor systemd de usuario
     -- para que los portales (xdg-desktop-portal-hyprland) funcionen bien.
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
-    -- Adaptacion waybar 0.12 + Hyprland 0.55 (Lua): el wrapper arranca el
-    -- puente IPC que traduce los clics de los iconos de workspace.
+    -- Adaptacion waybar 0.12 + Hyprland 0.55 (Lua): el wrapper waybar-start.sh
+    -- arranca el puente IPC que traduce los clics de los iconos de workspace.
     hl.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/waybar-start.sh")
     hl.exec_cmd("dunst")
     -- Luz nocturna: arranca hyprsunset y reaplica el estado guardado si estaba

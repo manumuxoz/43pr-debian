@@ -123,9 +123,9 @@ Funcionan también con la pantalla bloqueada (`locked`).
 
 | Atajo | Acción |
 | --- | --- |
-| `SUPER + Supr (Delete)` | Captura de pantalla completa con `grim` → `~/Imágenes/Capturas de pantalla/<fecha-hora>.png`; copia al portapapeles (`wl-copy`) y notificación OSD (`qs ipc call screenshot notify`, tolerante a fallos) |
-| `SUPER + SHIFT + Supr (Delete)` | Captura de área: selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación) |
-| `SUPER + R` | Grabar/parar con wf-recorder (monitor eDP-1, audio por defecto) → `~/Videos/rec-<fecha-hora>.mp4`; wrapper `~/.local/bin/screen-record.sh` con PID en `/tmp/osu-rec.pid` |
+| `SUPER + Supr (Delete)` | Captura del monitor con el foco (`grim -o`) → `~/Imágenes/Capturas de pantalla/<fecha-hora>.png`; copia al portapapeles (`wl-copy`) y notificación OSD (`qs ipc call screenshot notify`, tolerante a fallos); wrapper `~/.config/hypr/scripts/screenshot.sh` |
+| `SUPER + SHIFT + Supr (Delete)` | Captura de área: selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación); wrapper `~/.config/hypr/scripts/screenshot.sh area` |
+| `SUPER + R` | Grabar/parar con wf-recorder (monitor con el foco, audio por defecto) → `~/Vídeos/Grabaciones de la pantalla/rec-<fecha-hora>.mp4` (carpeta XDG de vídeos, la misma que usaba GNOME); wrapper `~/.local/bin/screen-record.sh` con PID en `/tmp/osu-rec.pid`; al parar espera a finalizar el MP4 antes de notificar |
 
 ## Cámara (webcam)
 
@@ -151,7 +151,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + D` | Alternar tema claro/oscuro (`theme.py toggle`) |
 | `SUPER + P` | Selector de color — `hyprpicker -a` (copia el color HEX al portapapeles; hyprpicker 0.4.7 instalado) |
 | `SUPER + SHIFT + P` | Luz nocturna on/off — `~/.config/hypr/scripts/nightlight-toggle.sh` (hyprsunset 0.4.0; 4000 K por defecto, temperatura compartida con Ajustes → Display y guardada; `NIGHTLIGHT_TEMP` la fuerza al activar) |
-| `SUPER + O` | Menú de opacidad de la ventana activa (wofi; guarda override en `rules.lua` y recarga) |
+| `SUPER + O` | Menú de opacidad de la ventana activa (wofi; guarda override en `rules.lua` y recarga) — toggle: repetir el atajo cierra el menú |
 | `SUPER + G` | Conmutador de escritorios — wofi con todos los escritorios, nº de ventanas y apps; eliges y salta (toggle: repetir el atajo cierra el menú) |
 | `SUPER + W` | Fondos de pantalla — quickshell hyprquickpaper |
 | `SUPER + I` | Panel de ajustes — quickshell settings |
@@ -161,6 +161,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
 | `SUPER + teclado numérico −` | Zoom del cursor −0.3 (repetible; bind por keycode, funciona en cualquier layout) |
 | `SUPER + teclado numérico +` | Zoom del cursor +0.3 (repetible; bind por keycode, funciona en cualquier layout) |
+| `CTRL + ALT + A` | Autoclicker on/off — `autoclicker --toggle` (requiere el binario `autoclicker` en `PATH`; si falta, el atajo no hace nada) |
 
 ## Notas y avisos
 
@@ -168,7 +169,7 @@ Estado tras la revisión de `keybinds.lua` con Hyprland 0.55.2 (config Lua):
 
 1. **Binds por keycode y `hyprctl`**: los atajos por keycode (`code:49` de wlogout y `code:82/86` del zoom del numpad) funcionan con cualquier layout, pero `hyprctl binds -j` los muestra con el campo `key` vacío; en `hyprctl binds` (salida normal) aparecen como `SUPER + code:49`, etc.
 2. **Notificación de capturas (quickshell)**: si el shell está arrancando, `qs ipc call screenshot notify` puede responder `Not ready to accept queries yet.`; el bind lo tolera (`|| true`) y la captura + copiado no se ven afectados.
-3. **Grabadora**: `gpu-screen-recorder` no está empaquetado en Debian; se usa `wf-recorder` extraído manualmente en `~/.local/opt/wf-recorder` y el wrapper `~/.local/bin/screen-record.sh` (sin sudo, con las libs ffmpeg/pulse del sistema).
+3. **Grabadora**: `gpu-screen-recorder` no está empaquetado en Debian; se usa `wf-recorder` extraído manualmente en `~/.local/opt/wf-recorder` y el wrapper `~/.local/bin/screen-record.sh` (sin sudo, con las libs ffmpeg/pulse del sistema). Los vídeos van a `$(xdg-user-dir VIDEOS)/Grabaciones de la pantalla` (`~/Vídeos/Grabaciones de la pantalla/`), no a `~/Videos`; si la grabación no arranca o no genera fichero, la notificación lo indica y el log está en `/tmp/wf-recorder.log`.
 4. **Teclas de brillo**: Fn+F4/Fn+F5 llegan por el dispositivo ACPI **Video Bus** (no por el teclado interno); antes de añadir los binds no había nada escuchándolas y no hacían nada. El brillo se ajusta con `brightnessctl` (`intel_backlight`, 5 % por pulsación) y también funciona con la pantalla bloqueada (`locked`).
 5. **Utilidades instaladas**: `SUPER + P` (`hyprpicker` 0.4.7) y
    `SUPER + SHIFT + P` (`hyprsunset` 0.4.0) ya están instalados y funcionan

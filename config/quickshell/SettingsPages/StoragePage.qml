@@ -8,7 +8,6 @@ Item {
     property var drives: []
     property var filesystems: []
     property var cleanupInfo: ({yay:0, pacman:0, journal:0, trash:0, flatpak:0, cliphist:0, thumbs:0})
-    property var sdaUsageData: null
     property int contentMargin: 0
     property int contentRightMargin: 46
     property int contentTopMargin: 0
@@ -48,8 +47,8 @@ Item {
 
     function usageColor(p) { return p >= 90 ? Theme.danger : p >= 75 ? Theme.accent2 : Theme.accent }
     function usageWidth(p) { return Math.min(1, Math.max(0, p / 100)) }
-    function ignoredMount(m) { return ["/proc", "/sys", "/run", "/dev"].some(function(x) { return m.indexOf(x) === 0 }) }
-    function ignoredFilesystem(f) { return ["tmpfs", "devtmpfs", "overlay"].some(function(x) { return f.indexOf(x) === 0 }) }
+    function ignoredMount(m) { return ["/proc", "/sys", "/run", "/dev", "/snap", "/var/lib/snapd/snap", "/var/snap"].some(function(x) { return m.indexOf(x) === 0 }) }
+    function ignoredFilesystem(f) { return ["tmpfs", "devtmpfs", "overlay", "squashfs"].some(function(x) { return f.indexOf(x) === 0 }) }
 
     function parseDfLine(line) {
         var f = line.trim().split(/\s+/)
@@ -62,6 +61,15 @@ Item {
         return d
     }
 
+    function collectLeaves(node, acc) {
+        var kids = node.children || []
+        if (kids.length === 0) {
+            acc.push({ name: node.name || "", size: parseInt(node.size) || 0 })
+            return
+        }
+        for (var i = 0; i < kids.length; ++i) collectLeaves(kids[i], acc)
+    }
+
     function parseDriveData(data) {
         var disks = []
         try {
@@ -69,20 +77,31 @@ Item {
             if (!obj.blockdevices) return disks
             for (var i = 0; i < obj.blockdevices.length; ++i) {
                 var d = obj.blockdevices[i]
-                if (d.type === "disk" && d.name === "sda")
-                    disks.push({ name: d.name || "", model: d.model || "", size: parseInt(d.size) || 0, type: d.type || "", tran: d.tran || "" })
+                if (d.type !== "disk" || (parseInt(d.size) || 0) <= 0) continue
+                var parts = []
+                collectLeaves(d, parts)
+                disks.push({ name: d.name || "", model: d.model || "", size: parseInt(d.size) || 0, type: d.type || "", tran: d.tran || "", parts: parts })
             }
         } catch (e) { console.log("lsblk JSON error:", e) }
         return disks
     }
 
-    function findSdaUsage() {
-        var used = 0
+    // Particiones montadas: espacio no disponible = tamano - disponible (df).
+    // Particiones sin montar (Windows/otro SO, reservadas, swap...): se cuentan por
+    // su tamano completo, para que su espacio no aparezca como libre.
+    function findDiskUsage(disk) {
+        var availMap = {}
         for (var i = 0; i < filesystems.length; ++i) {
-            var fs = filesystems[i]
-            if (fs.filesystem.indexOf("/dev/sda") === 0) used += fs.used
+            var dev = filesystems[i].filesystem
+            if (dev.indexOf("/dev/") === 0) availMap[dev.substring(5)] = filesystems[i].available
         }
-        return used > 0 ? {used: used} : null
+        var used = 0
+        var parts = disk.parts || []
+        for (var j = 0; j < parts.length; ++j) {
+            var p = parts[j]
+            used += p.size - (availMap[p.name] || 0)
+        }
+        return { used: used }
     }
 
     function runCommand(c) { commandProcess.command = ["sh", "-c", c]; commandProcess.running = true }
@@ -91,7 +110,7 @@ Item {
 
     Process {
         id: pDrives
-        command: ["sh", "-c", "lsblk -J -b -d -o NAME,MODEL,SIZE,TYPE,TRAN 2>/dev/null"]
+        command: ["sh", "-c", "lsblk -J -b -o NAME,MODEL,SIZE,TYPE,TRAN 2>/dev/null"]
         stdout: StdioCollector { onStreamFinished: page.drives = page.parseDriveData(text) }
         stderr: StdioCollector {}
     }
@@ -108,7 +127,6 @@ Item {
                     if (item) fs.push(item)
                 }
                 page.filesystems = fs
-                page.sdaUsageData = page.findSdaUsage()
             }
         }
         stderr: StdioCollector {}
@@ -234,8 +252,9 @@ Item {
                         model: page.drives
                         delegate: Item {
                             required property var modelData
-                            property bool hasUsage: page.sdaUsageData !== null && modelData.size > 0
-                            property real usedPct: hasUsage ? (page.sdaUsageData.used / modelData.size) * 100 : 0
+                            property var usage: page.findDiskUsage(modelData)
+                            property bool hasUsage: usage !== null && modelData.size > 0
+                            property real usedPct: hasUsage ? (usage.used / modelData.size) * 100 : 0
                             width: list.width; height: 64
 
                             Column {
@@ -270,12 +289,12 @@ Item {
                                 Row {
                                     width: parent.width; height: 13; spacing: 14
                                     Text {
-                                        text: page.sdaUsageData ? page.formatBytes(page.sdaUsageData.used) + " USED" : "-- USED"
+                                        text: usage ? page.formatBytes(usage.used) + " USED" : "-- USED"
                                         color: Theme.textDim; font.family: Theme.fontFamily; font.pixelSize: 11
                                     }
                                     Text {
-                                        text: page.sdaUsageData && modelData.size > page.sdaUsageData.used
-                                            ? page.formatBytes(modelData.size - page.sdaUsageData.used) + " FREE" : "-- FREE"
+                                        text: usage && modelData.size > usage.used
+                                            ? page.formatBytes(modelData.size - usage.used) + " FREE" : "-- FREE"
                                         color: Theme.textDim; font.family: Theme.fontFamily; font.pixelSize: 11
                                     }
                                     Text {
