@@ -23,7 +23,7 @@ hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("qs ipc call settings toggle")) -- Se
 
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.config/quickshell/hyprquickpaper/launch.sh")) -- Wallpapers (toggle)
 
-hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/random-wallpaper.sh")) -- Wallpaper aleatorio (solo imagen)
+hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/random-wallpaper.sh")) -- Wallpaper aleatorio (sin recolorear; incluye bloqueo/login)
 
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notepad toggle")) -- Bloc de notas (widget Quickshell)
 
@@ -52,11 +52,14 @@ hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("sh -c 'pgrep -x waybar >/dev
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || cliphist list | wofi --dmenu --prompt '' | cliphist decode | wl-copy"))
 
 -- Screenshot monitor with focus (SUPER+Supr; wrapper en scripts/screenshot.sh)
-hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh"))
+hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh"),
+        { description = "Screenshot: focused monitor" })
 -- Screenshot area select (SUPER+SHIFT+Supr)
-hl.bind(mainMod .. " + SHIFT + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh area"))
+hl.bind(mainMod .. " + SHIFT + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh area"),
+        { description = "Screenshot: select area" })
 
-hl.bind(mainMod .. " + CTRL + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh annotate")) -- Captura de area + anotar (swappy)
+hl.bind(mainMod .. " + CTRL + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh annotate"),
+        { description = "Screenshot: annotate area" }) -- Captura de area + anotar (swappy)
 
 -- Keyboard layout
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("hyprctl switchxkblayout current next"))

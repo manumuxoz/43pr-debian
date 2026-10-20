@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Cambia a un wallpaper aleatorio de la carpeta del selector (SUPER+ALT+W).
 #
-# DECISIÓN DEL PORT: solo cambia la imagen. NO regenera la paleta del tema ni
-# actualiza el fondo de bloqueo/login; para eso usa el selector (SUPER+W) o
-# `theme.py auto`. La imagen elegida sí se guarda en state.json para que
+# DECISIÓN DEL PORT: cambia la imagen y sincroniza el fondo de bloqueo/login,
+# pero NO regenera la paleta del tema (para eso usa el selector SUPER+W o
+# `theme.py auto`). La imagen se guarda en state.json para que
 # wallpaper-restore.sh la recupere al iniciar sesión.
 #
 # Uso: random-wallpaper.sh [--dry-run]
@@ -94,3 +94,11 @@ with open(cache_dir / "lock", "w") as lock:
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
     os.replace(tmp, state)
 PY
+
+# Actualiza bloqueo/login con la imagen nueva sin recolorear el tema.
+if ! python3 "$HOME/.config/43pr/bin/theme.py" lock-wallpaper "$img" \
+        >>"$cache/theme.log" 2>&1; then
+    notify-send "Fondo" \
+        "Wallpaper aplicado, pero no se pudo actualizar el bloqueo/login" \
+        2>/dev/null || true
+fi

@@ -12,7 +12,8 @@ Item {
     // superior solo debe abrirse el gestor de configuracion, no el selector de
     // fondos de pantalla.
     property bool wallpaperEnabled: false
-    property bool wlogoutEnabled: true
+    // Esquina superior derecha: PowerMenu de Quickshell (ya no wlogout).
+    property bool powerMenuEnabled: true
 
     property int triggerHeight: 10
     property color triggerColor: '#0037ff00'
@@ -25,8 +26,8 @@ Item {
     property real wallpaperFrom: 0.60
     property real wallpaperTo: 0.75
 
-    property real wlogoutFrom: 0.99
-    property real wlogoutTo: 1.0
+    property real powerMenuFrom: 0.99
+    property real powerMenuTo: 1.0
 
     PanelWindow {
         id: hyprlockTrigger
@@ -98,13 +99,13 @@ Item {
     }
 
     PanelWindow {
-        id: wlogoutTrigger
-        visible: root.wlogoutEnabled
+        id: powerMenuTrigger
+        visible: root.powerMenuEnabled
         anchors { top: true; left: true }
         implicitHeight: root.triggerHeight
-        implicitWidth: screen ? Math.round(screen.width * (root.wlogoutTo - root.wlogoutFrom)) : 0
+        implicitWidth: screen ? Math.round(screen.width * (root.powerMenuTo - root.powerMenuFrom)) : 0
         margins {
-            left: screen ? Math.round(screen.width * root.wlogoutFrom) : 0
+            left: screen ? Math.round(screen.width * root.powerMenuFrom) : 0
             top: 0
         }
         color: root.triggerColor
@@ -115,7 +116,7 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: Quickshell.execDetached([
-                ".config/hypr/scripts/wlogout.sh"
+                "qs", "ipc", "call", "powermenu", "toggle"
             ])
         }
     }

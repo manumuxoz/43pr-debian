@@ -11,7 +11,7 @@ set -u
 pictures="$(xdg-user-dir PICTURES 2>/dev/null || true)"
 [ -n "$pictures" ] || pictures="$HOME/Pictures"
 dir="$pictures/Capturas de pantalla"
-mkdir -p "$dir"
+mkdir -p "$dir" || { notify-send "Captura" "No se pudo crear $dir" 2>/dev/null || true; exit 1; }
 file="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
 
 if [ "${1:-}" = "annotate" ]; then
@@ -25,9 +25,9 @@ if [ "${1:-}" = "annotate" ]; then
         qs ipc call screenshot cancelled || true
         exit 0
     fi
-    tmp="$(mktemp --suffix=.png)" || exit 1
+    tmp="$(mktemp --suffix=.png)" || { notify-send "Captura" "No se pudo crear el archivo temporal" 2>/dev/null || true; exit 1; }
     trap 'rm -f "$tmp"' EXIT
-    grim -g "$geom" "$tmp" || exit 1
+    grim -g "$geom" "$tmp" || { notify-send "Captura" "Error al capturar el área" 2>/dev/null || true; exit 1; }
     swappy -f "$tmp"
     exit 0
 fi
@@ -40,16 +40,19 @@ if [ "${1:-}" = "area" ]; then
         qs ipc call screenshot cancelled || true
         exit 0
     fi
-    grim -g "$geom" "$file" || exit 1
+    grim -g "$geom" "$file" || { notify-send "Captura" "Error al capturar el área" 2>/dev/null || true; exit 1; }
 else
     # Monitor con el foco; si la deteccion falla, grim captura todo (sin -o).
     monitor="$(hyprctl -j monitors 2>/dev/null | python3 -c 'import json,sys; print(next((m["name"] for m in json.load(sys.stdin) if m.get("focused")), ""))' 2>/dev/null)"
     if [ -n "$monitor" ]; then
-        grim -o "$monitor" "$file" || exit 1
+        grim -o "$monitor" "$file" || { notify-send "Captura" "Error al capturar $monitor" 2>/dev/null || true; exit 1; }
     else
-        grim "$file" || exit 1
+        grim "$file" || { notify-send "Captura" "Error al capturar la pantalla" 2>/dev/null || true; exit 1; }
     fi
 fi
 
-wl-copy --type image/png < "$file"
-qs ipc call screenshot notify "$file" || true
+if wl-copy --type image/png < "$file"; then
+    qs ipc call screenshot notify "$file" || true
+else
+    notify-send "Captura" "Guardada en $file (no se pudo copiar al portapapeles)" 2>/dev/null || true
+fi

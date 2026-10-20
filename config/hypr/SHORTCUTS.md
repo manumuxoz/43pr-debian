@@ -123,8 +123,8 @@ Funcionan también con la pantalla bloqueada (`locked`).
 
 | Atajo | Acción |
 | --- | --- |
-| `SUPER + Supr (Delete)` | Captura del monitor con el foco (`grim -o`) → `~/Imágenes/Capturas de pantalla/<fecha-hora>.png`; copia al portapapeles (`wl-copy`) y notificación OSD (`qs ipc call screenshot notify`, tolerante a fallos); wrapper `~/.config/hypr/scripts/screenshot.sh` |
-| `SUPER + SHIFT + Supr (Delete)` | Captura de área: selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación); wrapper `~/.config/hypr/scripts/screenshot.sh area` |
+| `SUPER + Supr (Delete)` | Captura del **monitor con el foco** (`grim -o`) → `~/Imágenes/Capturas de pantalla/<fecha-hora>.png`; copia al portapapeles (`wl-copy`) y notificación OSD (`qs ipc call screenshot notify`, tolerante a fallos); wrapper `~/.config/hypr/scripts/screenshot.sh` |
+| `SUPER + SHIFT + Supr (Delete)` | Captura de **área**: selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación); `Esc` cancela sin guardar; wrapper `~/.config/hypr/scripts/screenshot.sh area` |
 | `SUPER + CTRL + Supr (Delete)` | Captura de área + anotación: `slurp` + `grim` a un temporal y editor **swappy** (flechas, texto, difuminado); `Ctrl+S` guarda en `~/Imágenes/Capturas de pantalla/` y `Ctrl+C` copia al portapapeles; wrapper `screenshot.sh annotate` |
 | `SUPER + R` | Grabar/parar con wf-recorder (monitor con el foco, audio por defecto) → `~/Vídeos/Grabaciones de la pantalla/rec-<fecha-hora>.mp4` (carpeta XDG de vídeos, la misma que usaba GNOME); wrapper `~/.local/bin/screen-record.sh` con PID en `/tmp/osu-rec.pid`; al parar espera a finalizar el MP4 antes de notificar. Mientras grabas se muestra un indicador REC arriba a la derecha (`RecorderOSD.qml`) |
 
@@ -160,7 +160,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + T` | Tareas y recordatorios — widget Todo (Quickshell): tareas con recordatorio (`30s`, `45m`, `2h`, `1d`, `14:30`, `tomr 9am`…), avisa con `notify-send` (toggle) |
 | `SUPER + SHIFT + M` | Panel de medios — MediaOSD de Quickshell (carátula, controles, cava) |
 | `SUPER + SHIFT + N` | Historial de notificaciones — menú wofi con el historial de dunst; al elegir copia el texto; el pie permite restaurar la última o limpiar el historial (`~/.config/hypr/scripts/notification-center.sh`) |
-| `SUPER + ALT + W` | Fondo aleatorio — elige una imagen de `~/Imágenes/Wallpapers`; solo cambia la imagen (no recolorea el tema ni el bloqueo/login); `random-wallpaper.sh` |
+| `SUPER + ALT + W` | Fondo aleatorio — elige una imagen de `~/Imágenes/Wallpapers`; actualiza la imagen y el fondo de bloqueo/login, pero no recolorea el tema; `random-wallpaper.sh` |
 | `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar abre este mismo menú; wlogout sigue en `SUPER + ºª` |
 | `SUPER + Tab` | Bloquear la pantalla — hyprlock |
 | `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |

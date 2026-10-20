@@ -336,7 +336,7 @@ def sync_greeter(render_vars):
         warn(f"no se pudo sincronizar el login: {e}")
 
 
-def apply_palette(pal, wallpaper=None):
+def apply_palette(pal, wallpaper=None, only=None, write_palette=True):
     targets = load_toml(TARGETS) if TARGETS.exists() else {}
     CACHE.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=".stage-", dir=CACHE))
@@ -360,6 +360,8 @@ def apply_palette(pal, wallpaper=None):
     try:
         staged = []
         for name, t in targets.items():           # 1. render everything first
+            if only is not None and name not in only:
+                continue
             src, dst = Path(t["input"]).expanduser(), Path(t["output"]).expanduser()
             f = stage / name
             f.write_text(render(src.read_text(), render_vars, name))
@@ -372,7 +374,8 @@ def apply_palette(pal, wallpaper=None):
             shutil.copyfile(f, tmp)
             os.replace(tmp, dst)
         sync_greeter(render_vars)                  # 3. pantalla de login
-        atomic_write(PALETTE, json.dumps(pal, indent=2))
+        if write_palette:
+            atomic_write(PALETTE, json.dumps(pal, indent=2))
     finally:
         shutil.rmtree(stage, ignore_errors=True)
     for h in hooks:                                # 4. reload consumers last
@@ -394,6 +397,27 @@ def ensure_fallback():
 
 
 # ---------- commands ----------
+
+def cmd_lock_wallpaper(a):
+    """Update the lock/login background only; keep palette and state.json."""
+    p = Path(a.path).expanduser()
+    p = (p if p.is_absolute() else Path.cwd() / p).resolve()
+    if not p.is_file():
+        die(f"not a file: {p}")
+    if p.suffix.lower() not in IMG_EXT:
+        die(f"unsupported image type: {p.suffix}")
+    if not os.access(p, os.R_OK):
+        die(f"not readable: {p}")
+    if not PALETTE.exists():
+        die("no current palette; run 'theme.py apply' first")
+    with lock():
+        try:
+            pal = merged(json.loads(PALETTE.read_text()))
+            apply_palette(pal, str(p), only={"hyprlock"}, write_palette=False)
+        except Exception as e:
+            die(f"lock wallpaper failed: {e}")
+    print("theme: lock wallpaper updated")
+
 
 def cmd_wallpaper(a):
     p = Path(a.path).expanduser()
@@ -526,6 +550,7 @@ def cmd_toggle(a):
 def main():
     ap = argparse.ArgumentParser(prog="theme.py")
     sp = ap.add_subparsers(dest="cmd", required=True)
+    s = sp.add_parser("lock-wallpaper"); s.add_argument("path"); s.set_defaults(f=cmd_lock_wallpaper)
     s = sp.add_parser("wallpaper"); s.add_argument("path"); s.set_defaults(f=cmd_wallpaper)
     s = sp.add_parser("preset"); s.add_argument("name"); s.set_defaults(f=cmd_preset)
     s = sp.add_parser("default"); s.set_defaults(f=cmd_preset, name="default")

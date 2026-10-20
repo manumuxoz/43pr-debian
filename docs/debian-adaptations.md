@@ -193,10 +193,10 @@ stateful widgets would silently lose their state otherwise.
   after a zenity confirmation. It does not replace dunst.
 - **Random wallpaper.** `random-wallpaper.sh` (`SUPER+ALT+W`) picks an image
   from the hyprquickpaper folder, skips the current and the last random one, and
-  applies it through the `awww`/swaybg shim. Per the chosen policy it **only
-  changes the image**: it does not recolor the theme or update the lock/login
-  background; it does record the path in `state.json` so `wallpaper-restore.sh`
-  restores it at login.
+  applies it through the `awww`/swaybg shim. Per the chosen policy it **does not
+  recolor the theme**: it reuses the current palette and calls
+  `theme.py lock-wallpaper` to refresh the lock/login background; it also records
+  the path in `state.json` so `wallpaper-restore.sh` restores it at login.
 - **Doctor.** `tools/doctor.sh` is a read-only diagnostic: session, processes,
   commands, Quickshell IPC targets, theme outputs, state, wallpapers, Nerd Font,
   script permissions and Debian packages. Exit code 1 only when a hard check
