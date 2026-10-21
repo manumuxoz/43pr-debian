@@ -319,7 +319,10 @@ Scope {
     IpcHandler {
         target: "powermenu"
         function toggle(): void { root.toggleMenu() }
-        function show(): void { root.openMenu() }
+        // "show" collides with the qs CLI subcommand of the same name, so the
+        // hot corner uses this explicitly named function instead.
+        function open(): void { if (!root.showing) root.openMenu() }
+        function show(): void { if (!root.showing) root.openMenu() }
         function hide(): void { root.closeMenu() }
         function settings(): void { root.openSettings() }
     }

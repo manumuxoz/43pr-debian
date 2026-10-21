@@ -161,7 +161,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + M` | Panel de medios — MediaOSD de Quickshell (carátula, controles, cava) |
 | `SUPER + SHIFT + N` | Historial de notificaciones — menú wofi con el historial de dunst; al elegir copia el texto; el pie permite restaurar la última o limpiar el historial (`~/.config/hypr/scripts/notification-center.sh`) |
 | `SUPER + ALT + W` | Fondo aleatorio — elige una imagen de `~/Imágenes/Wallpapers`; actualiza la imagen y el fondo de bloqueo/login, pero no recolorea el tema; `random-wallpaper.sh` |
-| `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar abre este mismo menú; wlogout sigue en `SUPER + ºª` |
+| `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar y la esquina superior derecha (hot corner) abren este mismo menú; wlogout sigue en `SUPER + ºª` |
 | `SUPER + Tab` | Bloquear la pantalla — hyprlock |
 | `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |

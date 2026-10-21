@@ -116,7 +116,7 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: Quickshell.execDetached([
-                "qs", "ipc", "call", "powermenu", "toggle"
+                "qs", "ipc", "call", "powermenu", "open"
             ])
         }
     }
