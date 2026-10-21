@@ -19,7 +19,12 @@ if [ "${1:-}" = "annotate" ]; then
         notify-send "Captura" "swappy no está instalado" 2>/dev/null || true
         exit 1
     fi
-    geom="$(slurp 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
+    if pgrep -x slurp >/dev/null 2>&1; then
+        notify-send -u low "Captura" "Ya hay una selección en curso" 2>/dev/null || true
+        exit 0
+    fi
+    qs ipc call screenshot selecting >/dev/null 2>&1 || true
+    geom="$(slurp -d -b '#00000080' -c '#ff5555ff' -s '#ff555540' -w 3 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
     re='^-?[0-9]+,-?[0-9]+ [1-9][0-9]*x[1-9][0-9]*$'
     if [[ ! $geom =~ $re ]]; then
         qs ipc call screenshot cancelled || true
@@ -33,7 +38,12 @@ if [ "${1:-}" = "annotate" ]; then
 fi
 
 if [ "${1:-}" = "area" ]; then
-    geom="$(slurp 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
+    if pgrep -x slurp >/dev/null 2>&1; then
+        notify-send -u low "Captura" "Ya hay una selección en curso" 2>/dev/null || true
+        exit 0
+    fi
+    qs ipc call screenshot selecting >/dev/null 2>&1 || true
+    geom="$(slurp -d -b '#00000080' -c '#ff5555ff' -s '#ff555540' -w 3 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
     # Rechaza cancelaciones y geometrias 0x0 (slurp puede devolver "0,0 0x0").
     re='^-?[0-9]+,-?[0-9]+ [1-9][0-9]*x[1-9][0-9]*$'
     if [[ ! $geom =~ $re ]]; then

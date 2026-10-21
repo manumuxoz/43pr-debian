@@ -33,6 +33,7 @@ PanelWindow {
 
     property bool showing: false
     property bool cancelled: false
+    property bool selectingArea: false
     property string imagePath: ""
 
     // Release the decoded pixmap only after the fade-out has finished
@@ -40,15 +41,30 @@ PanelWindow {
 
     function showOsd(path) {
         cancelled = false
+        selectingArea = false
         imagePath = path
         showing = true
+        hideTimer.interval = 2200
         hideTimer.restart()
     }
 
     function showCancelled() {
         cancelled = true
+        selectingArea = false
         imagePath = ""
         showing = true
+        hideTimer.interval = 2200
+        hideTimer.restart()
+    }
+
+    function showSelecting() {
+        cancelled = false
+        selectingArea = true
+        imagePath = ""
+        showing = true
+        // Keep it visible while slurp waits for the user; notify/cancelled
+        // restore the normal timeout.
+        hideTimer.interval = 60000
         hideTimer.restart()
     }
 
@@ -78,6 +94,10 @@ PanelWindow {
 
         function cancelled(): void {
             root.showCancelled()
+        }
+
+        function selecting(): void {
+            root.showSelecting()
         }
     }
 
@@ -154,14 +174,15 @@ PanelWindow {
                 width: parent.width - thumb.width - parent.spacing
 
                 Text {
-                    text: root.cancelled ? "Screenshot cancelled" : "Screenshot saved"
+                    text: root.selectingArea ? "Select an area"
+                        : (root.cancelled ? "Screenshot cancelled" : "Screenshot saved")
                     font.pixelSize: 13
                     font.bold: true
                     color: Theme.text
                 }
 
                 Text {
-                    visible: !root.cancelled
+                    visible: !root.cancelled && !root.selectingArea
                     text: root.imagePath.split("/").pop()
                     font.pixelSize: 11
                     color: Theme.textDim
@@ -170,7 +191,8 @@ PanelWindow {
                 }
 
                 Text {
-                    text: root.cancelled ? "No area selected" : "Copied to clipboard"
+                    text: root.selectingArea ? "Drag to select; Esc cancels"
+                        : (root.cancelled ? "No area selected" : "Copied to clipboard")
                     font.pixelSize: 10
                     color: Theme.textDim
                 }
