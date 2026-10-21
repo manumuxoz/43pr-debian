@@ -25,10 +25,10 @@ Scope {
     readonly property int toolsHeight: 22
 
     readonly property var numSpec: ({
-        mediaScale:    { min: 50,  max: 120,   def: 70,   step: 5,   unit: "%" },
+        mediaScale:    { min: 50,  max: 120,   def: 100,  step: 5,   unit: "%" },
         volScale:      { min: 50,  max: 120,   def: 80,   step: 5,   unit: "%" },
         mediaWidth:    { min: 300, max: 600,   def: 420,  step: 20,  unit: "px" },
-        portraitWidth: { min: 200, max: 400,   def: 260,  step: 20,  unit: "px" },
+        portraitWidth: { min: 200, max: 400,   def: 200,  step: 20,  unit: "px" },
         flyoutWidth:   { min: 200, max: 500,   def: 320,  step: 20,  unit: "px" },
         artSize:       { min: 32,  max: 96,    def: 52,   step: 4,   unit: "px" },
         cardRadius:    { min: 0,   max: 40,    def: 24,   step: 2,   unit: "px" },

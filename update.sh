@@ -284,8 +284,12 @@ if [[ $RELOAD_WAYBAR -eq 1 ]]; then
     elif ! pgrep -x waybar >/dev/null 2>&1; then
         warn "Waybar is not running; skipping reload."
     else
-        say "Reloading Waybar..."
-        pkill -SIGUSR2 -x waybar 2>/dev/null || true
+        say "Restarting Waybar..."
+        # A full restart, not SIGUSR2: Waybar 0.12 can leave GTK tooltips
+        # broken after a reload (upstream issue #4917).
+        pkill -x waybar 2>/dev/null || true
+        sleep 1
+        setsid -f sh "$HOME/.config/hypr/scripts/waybar-start.sh" >/dev/null 2>&1 || true
         sleep 1
         pgrep -x waybar >/dev/null 2>&1 || warn "Waybar did not come back; check its output."
     fi

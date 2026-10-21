@@ -2,10 +2,20 @@
 
 MAX_CHARS=60
 DISPLAY_CHARS=20
-SLEEP=0.5
+SLEEP=1.0
 
 last_text=""
 last_player=""
+last_json=""
+
+# Waybar 0.12 chokes when a module repaints too often (upstream issue #4917).
+# Only emit when the JSON actually changed; paused/stopped/empty states then
+# stop refreshing entirely.
+emit_json() {
+    [[ "$1" == "$last_json" ]] && return
+    printf '%s\n' "$1"
+    last_json="$1"
+}
 
 # PID de waybar (proceso ancestro). Si waybar muere, este bucle debe salir;
 # de lo contrario queda huerfano y se acumula en cada reinicio de la barra
@@ -68,11 +78,11 @@ while true; do
         output="${marquee:$pos}${marquee:0:$pos}"
         output="${output:0:$DISPLAY_CHARS}"
 
-        jq -cn \
+        emit_json "$(jq -cn \
             --arg text "♪  $output" \
             --arg class "playing" \
             --arg tooltip "$text" \
-            '{text:$text, class:$class, tooltip:$tooltip}'
+            '{text:$text, class:$class, tooltip:$tooltip}')"
 
     else
 
@@ -84,26 +94,26 @@ while true; do
 
             if [[ "$STATUS" == "Paused" ]]; then
 
-                jq -cn \
+                emit_json "$(jq -cn \
                     --arg text "♪  $last_text" \
                     --arg class "paused" \
                     --arg tooltip "$last_text" \
-                    '{text:$text, class:$class, tooltip:$tooltip}'
+                    '{text:$text, class:$class, tooltip:$tooltip}')"
 
             else
 
-                jq -cn \
+                emit_json "$(jq -cn \
                     --arg text "♪  $last_text" \
                     --arg class "stopped" \
                     --arg tooltip "$last_text" \
-                    '{text:$text, class:$class, tooltip:$tooltip}'
+                    '{text:$text, class:$class, tooltip:$tooltip}')"
             fi
 
         else
 
             # No player has ever been detected
-            jq -cn \
-                '{text:"", class:"empty", tooltip:""}'
+            emit_json "$(jq -cn \
+                '{text:"", class:"empty", tooltip:""}')"
         fi
     fi
 
