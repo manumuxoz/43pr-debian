@@ -59,7 +59,6 @@ window#waybar {
 /* MPRIS */
 #custom-mpris-marquee {
     color: @wb_text;
-    padding: 0 10px;
 }
 
 /* Notifications / Do Not Disturb */
@@ -202,8 +201,6 @@ tooltip label {
 
 #network {
     color: @wb_text;
-    padding: 0 10px;
-    margin: 0 2px;
     font-size: 13px;
 }
 #pulseaudio {
@@ -218,6 +215,19 @@ tooltip label {
 }
 #memory {
     color: @wb_text;
+}
+
+/* Right side: slightly tighter than the default module rhythm so it visually
+   matches the CPU / GPU / RAM spacing on the left. */
+#custom-mpris-marquee,
+#custom-todo,
+#custom-notifications,
+#pulseaudio,
+#network,
+#battery,
+#custom-power {
+    padding: 0 8px;
+    margin: 0 2px;
 }
 
 /* Battery */
