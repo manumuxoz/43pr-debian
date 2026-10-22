@@ -13,7 +13,8 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 
-hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("hyprlock")) -- Lock screen
+hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("hyprlock")) -- Lock screen
+hl.bind(mainMod .. " + Tab", hl.dsp.focus({ workspace = "previous" })) -- Alternar entre el escritorio actual y el anterior
 
 hl.bind(mainMod .. " + code:49", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/wlogout.sh")) -- Power menu (code:49 = tecla GRAVE/ºª con layout es)
 

@@ -162,7 +162,8 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + N` | Panel de notificaciones — Quickshell: toasts, historial persistente, No Molestar y sonido; clic en la campana también lo abre |
 | `SUPER + ALT + W` | Fondo aleatorio — elige una imagen de `~/Imágenes/Wallpapers`; actualiza la imagen y el fondo de bloqueo/login, pero no recolorea el tema; `random-wallpaper.sh` |
 | `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar y la esquina superior derecha (hot corner) abren este mismo menú; wlogout sigue en `SUPER + ºª` |
-| `SUPER + Tab` | Bloquear la pantalla — hyprlock |
+| `SUPER + SHIFT + Tab` | Bloquear la pantalla — hyprlock |
+| `SUPER + Tab` | Alternar entre el escritorio actual y el anterior utilizado |
 | `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
 | Clic en la campana de Waybar | Abre el panel de notificaciones de Quickshell; clic derecho activa/desactiva No Molestar; clic central limpia el historial |
