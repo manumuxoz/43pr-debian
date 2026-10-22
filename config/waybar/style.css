@@ -233,6 +233,9 @@ tooltip label {
 /* Battery */
 #battery {
     color: @wb_text;
+    /* Un poco más de aire entre el icono de wifi y la batería: los glifos de
+       iconos tienen menos separación visual que los módulos de texto. */
+    margin-left: 10px;
 }
 
 /* Umbrales definidos en "states" del config */
