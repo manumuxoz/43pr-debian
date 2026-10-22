@@ -48,9 +48,9 @@ Captures from the author's real desktop.
 |---|---|
 | Hyprland config | Lua files (`hyprland.lua`, `keybinds.lua`, `look.lua`, `monitors.lua`, `rules.lua`) |
 | Bar | Waybar 0.12 + `waybar-ipc-shim.py` (bridges legacy IPC to Hyprland 0.55 Lua dispatchers) |
-| Widgets | Quickshell: media OSD (volume + media), brightness/screenshot/recorder OSDs, todo list, power menu, settings window, wallpaper picker (`hyprquickpaper`) |
+| Widgets | Quickshell: media OSD (volume + media), notification panel, brightness/screenshot/recorder OSDs, todo list, power menu, settings window, wallpaper picker (`hyprquickpaper`) |
 | Theme engine | `~/.config/43pr/bin/theme.py` — palettes, wallpapers, matugen (optional), greeter sync |
-| Launchers / UI | wofi, wlogout, dunst, kitty |
+| Launchers / UI | wofi, wlogout, kitty (dunst is kept only as a fallback) |
 | Camera | `scripts/camera.sh` — V4L2 webcam: floating mpv preview (`SUPER+C`), photo (`s`) and recording (`r`) from inside the window |
 | Login screen | **hyprlogin** (greetd greeter forked from hyprlock) + theme sync + fingerprint PAM |
 | Patches | hyprlogin unlock-race fix, libfprint EGIS/`egismoc` build fix |
@@ -139,7 +139,7 @@ are not used by `uninstall.sh`.
 See [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Highlights:
 `SUPER+W` wallpaper picker, `SUPER+ALT+W` random wallpaper, `SUPER+I`
 Quickshell settings, `SUPER+N` notepad, `SUPER+SHIFT+T` todo list,
-`SUPER+SHIFT+N` notification history, `SUPER+SHIFT+M` media panel,
+`SUPER+SHIFT+N` notification panel, `SUPER+SHIFT+M` media panel,
 `SUPER+SHIFT+E` power menu, `SUPER+R` screen recording, `SUPER+C` webcam
 preview, `SUPER+SHIFT+D` theme toggle, `SUPER+SHIFT+W` toggle Waybar.
 Everything else is upstream 43PR (vim-style focus, scratchpad, screenshots to

@@ -50,7 +50,7 @@ else
 fi
 
 section "Procesos"
-for proc in qs waybar dunst swaybg hypridle; do
+for proc in qs waybar swaybg hypridle; do
     if pgrep -x "$proc" >/dev/null 2>&1; then
         pass "$proc en ejecución"
     else
@@ -83,7 +83,7 @@ done
 
 section "IPC de Quickshell"
 if pgrep -x qs >/dev/null 2>&1; then
-    for target in screenshot settings notepad todo powermenu mediaosd; do
+    for target in screenshot settings notepad todo powermenu mediaosd notifications; do
         # Una función inexistente distingue "target existe" (Function not found)
         # de "target no registrado" (Target not found) sin abrir ninguna UI.
         reply="$(qs ipc call "$target" __doctor__ 2>&1 || true)"
@@ -186,7 +186,7 @@ else
 fi
 
 section "Scripts ejecutables"
-for rel in hypr/scripts/screenshot.sh hypr/scripts/notification-center.sh \
+for rel in hypr/scripts/screenshot.sh \
            hypr/scripts/random-wallpaper.sh hypr/scripts/wallpaper-restore.sh; do
     if [ -x "$HOME/.config/$rel" ]; then
         pass "$rel"

@@ -85,8 +85,9 @@
         "interval": 2,
         "tooltip": true,
         "hide-empty-text": true,
-        "on-click": "dunstctl set-paused toggle",
-        "on-click-right": "dunstctl close-all"
+        "on-click": "qs ipc call notifications toggle",
+        "on-click-right": "qs ipc call notifications dnd",
+        "on-click-middle": "qs ipc call notifications clear"
     },
 
     "custom/todo": {

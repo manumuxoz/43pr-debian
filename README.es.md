@@ -49,9 +49,9 @@ Capturas del escritorio real del autor.
 |---|---|
 | Config de Hyprland | Archivos Lua (`hyprland.lua`, `keybinds.lua`, `look.lua`, `monitors.lua`, `rules.lua`) |
 | Barra | Waybar 0.12 + `waybar-ipc-shim.py` (traduce el IPC antiguo a los dispatchers Lua de Hyprland 0.55) |
-| Widgets | Quickshell: OSD de medios (volumen + media), OSDs de brillo/captura/grabación, lista de tareas, menú de energía, ventana de ajustes, selector de fondos (`hyprquickpaper`) |
+| Widgets | Quickshell: OSD de medios (volumen + media), panel de notificaciones, OSDs de brillo/captura/grabación, lista de tareas, menú de energía, ventana de ajustes, selector de fondos (`hyprquickpaper`) |
 | Motor de temas | `~/.config/43pr/bin/theme.py` — paletas, fondos, matugen (opcional), sincronización con el login |
-| Lanzadores / UI | wofi, wlogout, dunst, kitty |
+| Lanzadores / UI | wofi, wlogout, kitty (dunst se mantiene solo como respaldo) |
 | Cámara | `scripts/camera.sh` — webcam por V4L2: vista previa flotante con mpv (`SUPER+C`), foto (`s`) y grabación (`r`) desde la propia ventana |
 | Pantalla de login | **hyprlogin** (greeter de greetd forkeado de hyprlock) + sincronización de tema + huella por PAM |
 | Parches | fix de carrera en el desbloqueo de hyprlogin, fix de compilación de libfprint (`egismoc`) |
@@ -140,7 +140,7 @@ archivo y `uninstall.sh` no los usa.
 Ver [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Destacados:
 `SUPER+W` selector de fondos, `SUPER+ALT+W` fondo aleatorio, `SUPER+I`
 ajustes de Quickshell, `SUPER+N` bloc de notas, `SUPER+SHIFT+T` lista de
-tareas, `SUPER+SHIFT+N` historial de notificaciones, `SUPER+SHIFT+M` panel de
+tareas, `SUPER+SHIFT+N` panel de notificaciones, `SUPER+SHIFT+M` panel de
 medios, `SUPER+SHIFT+E` menú de energía, `SUPER+R` grabación de pantalla,
 `SUPER+C` vista previa de la webcam, `SUPER+SHIFT+D` cambio de tema,
 `SUPER+SHIFT+W` ocultar/mostrar Waybar.

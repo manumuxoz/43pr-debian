@@ -158,10 +158,10 @@ were ported:
 - **RecorderOSD** — REC indicator polling `screen-record.sh`'s
   `/tmp/osu-rec.pid` (every 2 s when idle, 1 s while recording).
 
-Waybar gained two custom modules: the bell shows pending notifications (click
-toggles Do Not Disturb through `dunstctl`, right-click closes the visible ones)
-and the todo badge shows pending tasks (red when a reminder is overdue; click
-opens Todo). The full media panel is also available on `SUPER+SHIFT+M`.
+Waybar gained two custom modules: the bell opens the Quickshell notification
+panel (right-click toggles Do Not Disturb, middle-click clears the history) and
+the todo badge shows pending tasks (red when a reminder is overdue; click opens
+Todo). The full media panel is also available on `SUPER+SHIFT+M`.
 
 Their layer namespaces (`mediaosd`, `mediaosd-settings`, `todo`, `powermenu`,
 `powermenu-settings`, `recorder-osd`) are added to `rules.lua` so they keep the
@@ -187,10 +187,8 @@ stateful widgets would silently lose their state otherwise.
   `slurp` + `grim` to a temporary file and opens it in swappy; `Ctrl+S` saves to
   `~/Imágenes/Capturas de pantalla/` and `Ctrl+C` copies the result. The save
   location is set in `config/swappy/config` (new `CONFIG_DIRS` entry).
-- **Notification history.** `notification-center.sh` (`SUPER+SHIFT+N`) reads
-  `dunstctl history`, shows it in wofi and copies the selected text; the footer
-  restores the last notification (`dunstctl history-pop`) or clears the history
-  after a zenity confirmation. It does not replace dunst.
+- **Notification history.** This was replaced by the Quickshell notification
+  panel; see section 20.
 - **Random wallpaper.** `random-wallpaper.sh` (`SUPER+ALT+W`) picks an image
   from the hyprquickpaper folder, skips the current and the last random one, and
   applies it through the `awww`/swaybg shim. Per the chosen policy it **does not
@@ -201,3 +199,17 @@ stateful widgets would silently lose their state otherwise.
   commands, Quickshell IPC targets, theme outputs, state, wallpapers, Nerd Font,
   script permissions and Debian packages. Exit code 1 only when a hard check
   fails; optional packages are warnings.
+
+## 20. Quickshell notifications replace dunst
+
+The port now uses upstream `Notifications.qml` as the single notification
+daemon. `NotificationServer` owns `org.freedesktop.Notifications`, so
+`notify-send` and application notifications keep working; toasts appear at the
+top-right and the panel (`SUPER+SHIFT+N` or the Waybar bell) shows the
+persistent history, Do Not Disturb and sound controls. History is stored in
+`~/.cache/43pr/notifications.json` (up to 100 entries) and the panel state in
+`~/.config/quickshell/state/notifications-state.json`. The bell opens the panel,
+right-click toggles DND and middle-click clears the history. The `dunst`
+autostart line was removed from `hyprland.lua`; `dunst` remains installed only
+as a fallback and must not run at the same time. The old wofi history script was
+removed.

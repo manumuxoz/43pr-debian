@@ -110,32 +110,35 @@ tooltip label {
     margin: 0;
 }
 
-/* Interactive hover effect */
+/* Interactive hover: only the colour changes. Resizing modules on hover moved
+   the tooltip anchor and made the clock calendar unreliable (Waybar #4917). */
 #cpu,
 #memory,
 #custom-gpu,
 #temperature,
+#clock,
 #pulseaudio,
 #network,
 #battery,
-#custom-mpris-marquee {
-    transition: font-size 0.15s ease;
+#custom-mpris-marquee,
+#custom-todo,
+#custom-notifications,
+#custom-power {
+    transition: color 0.15s ease;
 }
 
 #cpu:hover,
 #memory:hover,
 #custom-gpu:hover,
 #temperature:hover,
+#clock:hover,
 #pulseaudio:hover,
 #network:hover,
 #battery:hover,
-#custom-mpris-marquee:hover {
-    font-size: 15px;
-}
-
-/* Keep the clock width stable: resizing it on hover moved the tooltip anchor
-   and made the calendar tooltip unreliable (Waybar #4917). */
-#clock:hover {
+#custom-mpris-marquee:hover,
+#custom-todo:hover,
+#custom-notifications:hover,
+#custom-power:hover {
     color: @wb_ws_active;
 }
 

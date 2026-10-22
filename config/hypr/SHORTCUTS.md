@@ -159,13 +159,13 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + N` | Bloc de notas — widget de notas (Quickshell), autoguardado; `Ctrl+Shift+S` = «guardar como…» en cualquier ruta (toggle) |
 | `SUPER + SHIFT + T` | Tareas y recordatorios — widget Todo (Quickshell): tareas con recordatorio (`30s`, `45m`, `2h`, `1d`, `14:30`, `tomr 9am`…), avisa con `notify-send` (toggle) |
 | `SUPER + SHIFT + M` | Panel de medios — MediaOSD de Quickshell (carátula, controles, cava) |
-| `SUPER + SHIFT + N` | Historial de notificaciones — menú wofi con el historial de dunst; al elegir copia el texto; el pie permite restaurar la última o limpiar el historial (`~/.config/hypr/scripts/notification-center.sh`) |
+| `SUPER + SHIFT + N` | Panel de notificaciones — Quickshell: toasts, historial persistente, No Molestar y sonido; clic en la campana también lo abre |
 | `SUPER + ALT + W` | Fondo aleatorio — elige una imagen de `~/Imágenes/Wallpapers`; actualiza la imagen y el fondo de bloqueo/login, pero no recolorea el tema; `random-wallpaper.sh` |
 | `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar y la esquina superior derecha (hot corner) abren este mismo menú; wlogout sigue en `SUPER + ºª` |
 | `SUPER + Tab` | Bloquear la pantalla — hyprlock |
 | `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
-| Clic en la campana de Waybar | Activa/desactiva No Molestar (`dunstctl set-paused toggle`); clic derecho cierra las notificaciones visibles |
+| Clic en la campana de Waybar | Abre el panel de notificaciones de Quickshell; clic derecho activa/desactiva No Molestar; clic central limpia el historial |
 | Clic en el contador de tareas de Waybar | Abre el widget Todo; el indicador solo aparece si hay tareas pendientes (en rojo si algún recordatorio venció) |
 | `SUPER + teclado numérico −` | Zoom del cursor −0.3 (repetible; bind por keycode, funciona en cualquier layout) |
 | `SUPER + teclado numérico +` | Zoom del cursor +0.3 (repetible; bind por keycode, funciona en cualquier layout) |

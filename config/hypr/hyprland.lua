@@ -19,7 +19,9 @@ hl.on("hyprland.start", function()
     -- Adaptacion waybar 0.12 + Hyprland 0.55 (Lua): el wrapper waybar-start.sh
     -- arranca el puente IPC que traduce los clics de los iconos de workspace.
     hl.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/waybar-start.sh")
-    hl.exec_cmd("dunst")
+    -- Notificaciones: las gestiona Quickshell (Notifications.qml); dunst ya no
+    -- se arranca para que NotificationServer sea el dueno de
+    -- org.freedesktop.Notifications. El paquete dunst queda como respaldo.
     -- Luz nocturna: arranca hyprsunset y reaplica el estado guardado si estaba
     -- encendida (el script lo arranca si hace falta y conserva el estado "on").
     hl.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/nightlight-toggle.sh --restore")

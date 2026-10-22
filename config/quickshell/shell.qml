@@ -10,6 +10,7 @@ ShellRoot {
     BrightnessOsd {}
     ScreenshotOsd {}
     RecorderOSD {}
+    Notifications {}
     SettingsWindow {}
     NotepadWindow {}
     Todo {}

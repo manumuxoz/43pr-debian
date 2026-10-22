@@ -27,7 +27,7 @@ hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/
 
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notepad toggle")) -- Bloc de notas (widget Quickshell)
 
-hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/notification-center.sh")) -- Historial de notificaciones (dunst + wofi)
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("qs ipc call notifications toggle")) -- Panel de notificaciones (Quickshell)
 
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("qs ipc call todo toggle")) -- Tareas y recordatorios (widget Quickshell)
 
