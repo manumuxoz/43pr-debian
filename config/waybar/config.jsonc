@@ -129,10 +129,10 @@
             "warning": 20,
             "critical": 10
         },
-        "format": "{icon}  {capacity}%",
-        "format-charging": "󰂄  {capacity}%",
-        "format-plugged": "󰂄  {capacity}%",
-        "format-full": "󰁹  {capacity}%",
+        "format": "{icon}",
+        "format-charging": "󰂄",
+        "format-plugged": "󰂄",
+        "format-full": "󰁹",
         "format-icons": [
             "󰁺", "󰁻", "󰁼", "󰁽", "󰁾",
             "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"

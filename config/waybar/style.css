@@ -54,7 +54,6 @@ window#waybar {
 #custom-power {
     color: @wb_text;
     font-size: 15px;
-    margin-right: 10px;
 }
 
 /* MPRIS */
@@ -203,7 +202,6 @@ tooltip label {
 
 #network {
     color: @wb_text;
-    transition: font-size 0.15s ease;
     padding: 0 10px;
     margin: 0 2px;
     font-size: 13px;
@@ -211,9 +209,6 @@ tooltip label {
 #pulseaudio {
     color: @wb_text;
     font-size: 13px;
-    padding-right: 0;
-    margin-right: 0;
-
 }
 #cpu {
     color: @wb_text;
@@ -228,7 +223,6 @@ tooltip label {
 /* Battery */
 #battery {
     color: @wb_text;
-    transition: font-size 0.15s ease;
 }
 
 /* Umbrales definidos en "states" del config */
