@@ -4,7 +4,7 @@
 - **Config**: `~/.config/hypr/keybinds.lua`
 - **Recargar tras editar**: `hyprctl reload`
 - **Layout de teclado**: `es` (afecta a los binds de teclas especiales, ver **Notas**)
-- **Total**: 84 binds activos
+- **Total**: 85 binds activos
 
 > Algunas filas agrupan varios binds (los rangos 1–9 / 0 de workspaces).
 
