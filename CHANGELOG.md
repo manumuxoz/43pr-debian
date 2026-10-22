@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Quickshell notification panel replaces dunst as the session daemon: native
+  `NotificationServer`, top-right toasts, persistent history
+  (`~/.cache/43pr/notifications.json`, last 100 entries), Do Not Disturb, sound
+  toggle and battery alerts. `SUPER+SHIFT+N` or the Waybar bell opens the panel;
+  right-click toggles DND and middle-click clears the history.
+- Quickshell widgets: MediaOSD with cover art, player controls and cava; Todo
+  list with natural-language reminders; PowerMenu (also reachable from the
+  top-right hot corner and the Waybar power icon); RecorderOSD for `wf-recorder`.
+- Lazy page loading for the Settings window (the page is destroyed 20 seconds
+  after closing) and sidebar search with `Ctrl+F`.
+- Debian-native storage cleanup: APT cache and autoremove, journal, Flatpak,
+  trash, clipboard history and thumbnails.
+- Theme catalogue with 26 upstream presets plus a btop target. The theme engine
+  derives the Waybar/wlogout tokens (`wb_*`/`wl_*`) and updates the appearance
+  mode without touching the global GTK configuration.
+- Copy-model `update.sh` with `--dry-run`, `--diff`, per-file backups, a package
+  report and optional Hyprland, Waybar and Quickshell reloads.
+- Read-only `tools/doctor.sh`.
+- Screenshot annotation with swappy (`SUPER+CTRL+Delete`), area-selection
+  feedback in the Quickshell OSD, and random wallpaper (`SUPER+ALT+W`) that also
+  refreshes the lock and login backgrounds.
+- Waybar notification/DND and Todo badges; MediaOSD shortcut
+  (`SUPER+SHIFT+M`).
+
+### Changed
+
+- Waybar: the battery shows only its icon; right-side modules share consistent
+  spacing; hover changes color only (no `font-size` changes); the MPRIS marquee
+  updates every second and skips duplicate JSON.
+- Lock is now `SUPER+SHIFT+Tab`; `SUPER+Tab` switches between the current and
+  previous workspace.
+- `SUPER+SHIFT+N` opens the notification panel instead of the old wofi history.
+- `xed` was replaced by `xdg-open`.
+- `update.sh --reload-waybar` now performs a full Waybar restart.
+
+### Removed
+
+- Rofi configuration and theme targets, plus the unused autoclicker bind.
+- Dunst is no longer started; it stays installed only as a fallback.
+- The old wofi notification-history helper.
+
+### Fixed
+
+- The clock calendar tooltip no longer races with hover resizing (Waybar
+  #4917).
+- The top-right hot corner reliably opens the PowerMenu through the new
+  `powermenu open` IPC (`show` collided with the `qs ipc show` subcommand).
+- Screenshot selection gives immediate feedback, rejects stacked `slurp`
+  overlays and uses a high-contrast overlay.
+- Random wallpaper updates the lock/login background without recoloring the
+  palette.
+- The theme engine no longer warns when `pkill` finds no process, respects
+  `XDG_STATE_HOME`, and fullscreen windows stay opaque when the opacity menu is
+  used.
+
 ## [1.1.0] - 2026-10-15
 
 ### Added
