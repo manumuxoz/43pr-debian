@@ -143,7 +143,7 @@ Quickshell settings, `SUPER+N` notepad, `SUPER+SHIFT+T` todo list,
 `SUPER+SHIFT+E` power menu, `SUPER+R` screen recording, `SUPER+C` webcam
 preview, `SUPER+SHIFT+D` theme toggle, `SUPER+SHIFT+W` toggle Waybar.
 Everything else is upstream 43PR (vim-style focus, scratchpad, screenshots to
-`~/Imágenes/Capturas`, media keys…).
+`~/Imágenes/Capturas de pantalla`, media keys…).
 
 ## Repository layout
 

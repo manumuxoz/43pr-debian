@@ -145,7 +145,7 @@ medios, `SUPER+SHIFT+E` menú de energía, `SUPER+R` grabación de pantalla,
 `SUPER+C` vista previa de la webcam, `SUPER+SHIFT+D` cambio de tema,
 `SUPER+SHIFT+W` ocultar/mostrar Waybar.
 El resto es el 43PR original (enfoque estilo vim, scratchpad, capturas en
-`~/Imágenes/Capturas`, teclas multimedia…).
+`~/Imágenes/Capturas de pantalla`, teclas multimedia…).
 
 ## Estructura del repositorio
 
