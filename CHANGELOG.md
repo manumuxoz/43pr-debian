@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Waybar no longer stacks duplicate bars on the external monitor. Applying a
+  theme used to send `SIGUSR2`; in Waybar 0.12 that reload re-registers the
+  monitor callbacks, so every later DPMS cycle or monitor source change added
+  another bar (upstream #3344 and #4336). The theme engine now performs a full
+  restart through `hypr/scripts/waybar-restart.sh`.
 - Area screenshots (`SUPER+SHIFT+Delete` and `SUPER+CTRL+Delete`) no longer
   include `slurp`'s selection overlay: the wrapper waits 200 ms after the
   selection so Hyprland repaints without it before running `grim`.

@@ -8,7 +8,10 @@ reload = ["pkill", "-USR1", "-x", "kitty"]
 [waybar]
 input  = "~/.config/43pr/templates/waybar-colors.css"
 output = "~/.config/waybar/colors.css"
-reload = ["pkill", "-SIGUSR2", "waybar"]
+# Reinicio completo, no SIGUSR2: en Waybar 0.12 el reload re-registra los
+# callbacks de monitor y acaba apilando barras en el monitor externo tras un
+# apagado/reconexion (upstream #3344 y #4336).
+reload = ["sh", "-c", "exec \"$HOME/.config/hypr/scripts/waybar-restart.sh\""]
 [hyprlock]
 input  = "~/.config/43pr/templates/hyprlock-colors.conf"
 output = "~/.config/hypr/hyprlock-colors.conf"

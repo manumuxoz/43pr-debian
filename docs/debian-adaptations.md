@@ -122,7 +122,11 @@ The 26 imported presets keep upstream's `override = false`: a wallpaper change
 regenerates the palette. Set `override = true` in a theme TOML to pin it.
 
 Presets are applied with `theme.py preset <id>` or from Settings → Themes.
-btop 1.3.2 is compatible with the generated theme
+After writing `~/.config/waybar/colors.css`, the engine restarts Waybar through
+`hypr/scripts/waybar-restart.sh` instead of sending `SIGUSR2`: in Waybar 0.12
+the reload re-registers the monitor callbacks, so a later DPMS cycle or monitor
+source change stacks extra bars on the external output (upstream #3344 and
+#4336). btop 1.3.2 is compatible with the generated theme
 (`color_theme = "43pr"` in `~/.config/btop/btop.conf`); cava's target stays
 disabled because Debian 13 ships cava 0.10.4, which lacks `theme =` support.
 
