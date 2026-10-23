@@ -5,6 +5,19 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- The `slurp` area-selection guide uses a neutral white fill and border over
+  the dark veil instead of a red highlight.
+
+### Fixed
+
+- Area screenshots (`SUPER+SHIFT+Delete` and `SUPER+CTRL+Delete`) no longer
+  include `slurp`'s selection overlay: the wrapper waits 200 ms after the
+  selection so Hyprland repaints without it before running `grim`.
+
 ## [1.2.0] - 2026-10-23
 
 ### Added

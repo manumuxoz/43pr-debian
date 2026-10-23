@@ -182,3 +182,8 @@ Estado tras la revisión de `keybinds.lua` con Hyprland 0.55.2 (config Lua):
 5. **Utilidades instaladas**: `SUPER + P` (`hyprpicker` 0.4.7) y
    `SUPER + SHIFT + P` (`hyprsunset` 0.4.0) ya están instalados y funcionan
    (binarios en `/usr/bin/hyprpicker` y `/usr/bin/hyprsunset`).
+6. **Capturas de área y overlay de `slurp`**: la guía de selección usa blanco
+   translúcido sobre un velo oscuro (sin tinte rojo). Tras soltar la selección,
+   `screenshot.sh` espera 200 ms antes de lanzar `grim`; sin esa espera,
+   Hyprland todavía conserva el último frame con el overlay de `slurp` y la
+   captura sale con el borde de la selección incrustado.

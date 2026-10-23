@@ -14,6 +14,16 @@ dir="$pictures/Capturas de pantalla"
 mkdir -p "$dir" || { notify-send "Captura" "No se pudo crear $dir" 2>/dev/null || true; exit 1; }
 file="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
 
+# Guia de seleccion neutra (blanco sobre velo oscuro, sin tinte rojo).
+slurp_guide=(-d -b '#00000080' -c '#ffffffff' -s '#ffffff40' -w 3)
+
+# slurp deja su overlay (velo + relleno/borde de seleccion) en el ultimo frame
+# compuesto: al salir, Hyprland aun no ha repintado y un grim inmediato captura
+# ese frame con el overlay incrustado. Espera a que se repinte sin el.
+settle_after_slurp() {
+    sleep 0.2
+}
+
 if [ "${1:-}" = "annotate" ]; then
     if ! command -v swappy >/dev/null 2>&1; then
         notify-send "Captura" "swappy no está instalado" 2>/dev/null || true
@@ -24,12 +34,13 @@ if [ "${1:-}" = "annotate" ]; then
         exit 0
     fi
     qs ipc call screenshot selecting >/dev/null 2>&1 || true
-    geom="$(slurp -d -b '#00000080' -c '#ff5555ff' -s '#ff555540' -w 3 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
+    geom="$(slurp "${slurp_guide[@]}" 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
     re='^-?[0-9]+,-?[0-9]+ [1-9][0-9]*x[1-9][0-9]*$'
     if [[ ! $geom =~ $re ]]; then
         qs ipc call screenshot cancelled || true
         exit 0
     fi
+    settle_after_slurp
     tmp="$(mktemp --suffix=.png)" || { notify-send "Captura" "No se pudo crear el archivo temporal" 2>/dev/null || true; exit 1; }
     trap 'rm -f "$tmp"' EXIT
     grim -g "$geom" "$tmp" || { notify-send "Captura" "Error al capturar el área" 2>/dev/null || true; exit 1; }
@@ -43,13 +54,14 @@ if [ "${1:-}" = "area" ]; then
         exit 0
     fi
     qs ipc call screenshot selecting >/dev/null 2>&1 || true
-    geom="$(slurp -d -b '#00000080' -c '#ff5555ff' -s '#ff555540' -w 3 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
+    geom="$(slurp "${slurp_guide[@]}" 2>/dev/null)" || { qs ipc call screenshot cancelled || true; exit 0; }
     # Rechaza cancelaciones y geometrias 0x0 (slurp puede devolver "0,0 0x0").
     re='^-?[0-9]+,-?[0-9]+ [1-9][0-9]*x[1-9][0-9]*$'
     if [[ ! $geom =~ $re ]]; then
         qs ipc call screenshot cancelled || true
         exit 0
     fi
+    settle_after_slurp
     grim -g "$geom" "$file" || { notify-send "Captura" "Error al capturar el área" 2>/dev/null || true; exit 1; }
 else
     # Monitor con el foco; si la deteccion falla, grim captura todo (sin -o).
