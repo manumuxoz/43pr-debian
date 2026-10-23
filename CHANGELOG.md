@@ -43,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SUPER+SHIFT+N` opens the notification panel instead of the old wofi history.
 - `xed` was replaced by `xdg-open`.
 - `update.sh --reload-waybar` now performs a full Waybar restart.
+- MediaOSD now picks up every MPRIS player instead of a hardcoded list of music
+  apps, so video players (Stremio, VLC, mpv, …) and any other media app show up
+  too. The "Music players only" filter was removed.
 
 ### Removed
 

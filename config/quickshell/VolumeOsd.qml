@@ -50,7 +50,7 @@ Scope {
 
     readonly property var boolDefaults: ({
         showTips: true, showTitle: true, showArtist: true, showBar: true, showVisualizer: true,
-        trackChangeOsd: true, showArt: true, showControls: true, musicOnly: true, artistBelow: false,
+        trackChangeOsd: true, showArt: true, showControls: true, artistBelow: false,
         portrait: true, showBorder: false, accentBars: false, scrollVolume: true
     })
     readonly property var boolKeys: Object.keys(boolDefaults)
@@ -76,7 +76,7 @@ Scope {
     property bool showArtist: boolDefaults.showArtist; property bool showBar: boolDefaults.showBar
     property bool showVisualizer: boolDefaults.showVisualizer; property bool trackChangeOsd: boolDefaults.trackChangeOsd
     property bool showArt: boolDefaults.showArt; property bool showControls: boolDefaults.showControls
-    property bool musicOnly: boolDefaults.musicOnly; property bool artistBelow: boolDefaults.artistBelow
+    property bool artistBelow: boolDefaults.artistBelow
     property bool portrait: boolDefaults.portrait; property bool showBorder: boolDefaults.showBorder
     property bool accentBars: boolDefaults.accentBars; property bool scrollVolume: boolDefaults.scrollVolume
 
@@ -92,41 +92,16 @@ Scope {
     readonly property string statePath: Quickshell.env("HOME") + "/.config/quickshell/state/mediaosd-state.json"
 
     // ---- player detection --------------------------------------------------
-    readonly property var musicPlayers: [
-        "spotify", "spotifyd", "spotify_player", "spotify-launcher", "mpd", "mopidy", "cmus",
-        "rhythmbox", "strawberry", "amberol", "lollypop", "deadbeef", "audacious",
-        "quodlibet", "clementine", "elisa", "youtube-music", "ncspot"
-    ]
-    readonly property var browserPlayers: [
-        "firefox", "librewolf", "zen", "chromium", "chrome", "google-chrome", "brave",
-        "vivaldi", "opera", "edge", "microsoft-edge", "plasma-browser-integration"
-    ]
-    readonly property var musicSites: [
-        "music.youtube.com", "open.spotify.com", "soundcloud.com", "bandcamp.com",
-        "music.apple.com", "tidal.com", "deezer.com", "music.amazon.", "pandora.com",
-        "qobuz.com", "listen.tidal.com", "radio.", "last.fm"
-    ]
     readonly property string playerFormat:
         "{{playerName}}\t{{status}}\t{{title}}\t{{artist}}\t{{album}}\t{{position}}\t{{mpris:length}}\t{{mpris:artUrl}}\t{{xesam:url}}"
-
-    function isMusic(p) {
-        var name = p.player.split(".")[0].toLowerCase()
-        if (musicPlayers.indexOf(name) >= 0) return true
-        if (browserPlayers.indexOf(name) < 0) return false
-        if (p.album !== "") return true
-        var u = p.url.toLowerCase()
-        return musicSites.some(s => u.indexOf(s) >= 0)
-    }
 
     function parsePlayer(line) {
         if (!line) return null
         var f = line.split("\t")
         if (f.length < 3) return null
         while (f.length < 9) f.push("")
-        var p = { player: f[0], status: f[1], title: f[2], artist: f[3], album: f[4],
-                  position: parseFloat(f[5]) || 0, length: parseFloat(f[6]) || 0, art: f[7], url: f[8] }
-        p.music = isMusic(p)
-        return p
+        return { player: f[0], status: f[1], title: f[2], artist: f[3], album: f[4],
+                 position: parseFloat(f[5]) || 0, length: parseFloat(f[6]) || 0, art: f[7], url: f[8] }
     }
 
     function mediaCmd(cmd) {
@@ -154,7 +129,7 @@ Scope {
     }
 
     function pickPlayer(text) {
-        var pool = text.trim().split("\n").map(parsePlayer).filter(p => p && (!musicOnly || p.music))
+        var pool = text.trim().split("\n").map(parsePlayer).filter(p => p)
         return pool.find(p => p.status === "Playing") ?? pool[0] ?? null
     }
 
@@ -334,7 +309,7 @@ Scope {
         stdout: SplitParser {
             onRead: data => {
                 var p = root.parsePlayer(data.trim())
-                if (!p || (root.musicOnly && !p.music)) return
+                if (!p) return
 
                 var trackChanged = p.title !== root.title || p.artist !== root.artist
                 root.applyPlayer(p, false)
@@ -887,7 +862,6 @@ Scope {
                         SliderRow { key: "barDimOpacity"; label: "Bars / progress (remaining)"; enabled: root.showBar }
 
                         SectionHeader { text: "Behavior" }
-                        ToggleRow { key: "musicOnly"; label: "Music players only" }
                         ToggleRow { key: "trackChangeOsd"; label: "Pop up on track change" }
                         SliderRow { key: "mediaTimeout"; label: "Media hide after" }
                         ToggleRow { key: "scrollVolume"; label: "Scroll to change volume" }
