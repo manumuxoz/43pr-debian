@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2026-10-23
 
 ### Added
 
@@ -123,5 +123,6 @@ First public release: Debian 13 (trixie) adaptation of the
 - The Waybar Lua-dispatch fix (upstream PRs #5013, #5231) is not in any released
   Waybar version yet, hence the IPC shim.
 
+[1.2.0]: https://github.com/manumuxoz/43pr-debian/releases/tag/v1.2.0
 [1.1.0]: https://github.com/manumuxoz/43pr-debian/releases/tag/v1.1.0
 [1.0.0]: https://github.com/manumuxoz/43pr-debian/releases/tag/v1.0.0

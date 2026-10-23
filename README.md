@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Debian 13](https://img.shields.io/badge/Debian-13-A81D33?logo=debian&logoColor=white)](packages.txt)
 [![Hyprland 0.55](https://img.shields.io/badge/Hyprland-0.55-58E1FF?logo=hyprland&logoColor=black)](#whats-inside)
-[![Release](https://img.shields.io/badge/release-v1.1.0-blue.svg)](https://github.com/manumuxoz/43pr-debian/releases)
+[![Release](https://img.shields.io/badge/release-v1.2.0-blue.svg)](https://github.com/manumuxoz/43pr-debian/releases)
 
 A Debian 13 adaptation of the [43PR dotfiles](https://github.com/43PR/dotfiles)
 rice — *"Hyprland + Quickshell setup"* — running on **Hyprland 0.55 (Lua config
