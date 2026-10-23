@@ -147,8 +147,10 @@ behaviour.
 
 Upstream's full MediaOSD replaces the old volume OSD (playerctl + cava, cover
 art, transport controls and its own settings panel; state lives in
-`~/.config/quickshell/state/mediaosd-state.json`). Three more upstream widgets
-were ported:
+`~/.config/quickshell/state/mediaosd-state.json`). It accepts every MPRIS
+player, not only music apps: video players (VLC, mpv, Stremio) and browser media
+appear as soon as they expose an MPRIS interface. The old "Music players only"
+toggle was removed. Three more upstream widgets were ported:
 
 - **Todo** — task list with reminder parsing, on `SUPER+SHIFT+T`
   (`qs ipc call todo toggle`).

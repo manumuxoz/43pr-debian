@@ -48,7 +48,7 @@ Captures from the author's real desktop.
 |---|---|
 | Hyprland config | Lua files (`hyprland.lua`, `keybinds.lua`, `look.lua`, `monitors.lua`, `rules.lua`) |
 | Bar | Waybar 0.12 + `waybar-ipc-shim.py` (bridges legacy IPC to Hyprland 0.55 Lua dispatchers) |
-| Widgets | Quickshell: media OSD (volume + media), notification panel, brightness/screenshot/recorder OSDs, todo list, power menu, settings window, wallpaper picker (`hyprquickpaper`) |
+| Widgets | Quickshell: media OSD (volume + media, any MPRIS player), notification panel, brightness/screenshot/recorder OSDs, todo list, power menu, settings window, wallpaper picker (`hyprquickpaper`) |
 | Theme engine | `~/.config/43pr/bin/theme.py` — palettes, wallpapers, matugen (optional), greeter sync |
 | Launchers / UI | wofi, wlogout, kitty (dunst is kept only as a fallback) |
 | Camera | `scripts/camera.sh` — V4L2 webcam: floating mpv preview (`SUPER+C`), photo (`s`) and recording (`r`) from inside the window |
