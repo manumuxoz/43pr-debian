@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Settings → System now has a **CPU MODE** selector (Power Saver / Balanced /
+  Performance) that writes the ACPI `platform_profile` directly, bypassing
+  `power-profiles-daemon`. Available modes are read from the kernel, the
+  active one is highlighted, and the CPU badge above the graph refreshes after
+  each change. Switching modes is passwordless once the narrow rule from
+  `scripts/install-cpu-profile-sudoers.sh` is installed (one-time `sudo`/`pkexec`).
 - `SUPER+ALT+Tab` focuses the previously active window, mirroring the
   `SUPER+Tab` previous-workspace toggle. It uses Hyprland's
   `focuscurrentorlast` dispatcher, so pressing it again returns to the window

@@ -91,6 +91,10 @@ sudo apt install \
 git clone https://github.com/manumuxoz/43pr-debian.git
 cd 43pr-debian
 ./install.sh
+
+# 3. Opcional: permite que Ajustes → Sistema → CPU MODE cambie de perfil sin
+#    contraseña (instala una regla sudoers estrecha; solo una vez):
+sudo bash scripts/install-cpu-profile-sudoers.sh
 ```
 
 `install.sh` copia las configs a `~/.config/`, los scripts a `~/.local/bin/`,

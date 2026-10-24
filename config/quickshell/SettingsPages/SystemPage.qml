@@ -24,7 +24,7 @@ Item {
     property string cpuTemp: "—"
     property string gpuTemp: "—"
     property string cpuFreq: "—"
-    property string cpuGovernor: "—"
+    property string cpuPlatformProfile: "—"
     property string gpuFreq: "—"
     property int nproc: 0
 
@@ -58,6 +58,44 @@ Item {
     property int rightMargin: 46
 
     property string currentTime: ""
+
+    // Manual CPU platform profile (ACPI platform_profile), independent of
+    // power-profiles-daemon. Values are read from the kernel at startup.
+    // NOTE: if power-profiles-daemon is running it can overwrite the profile
+    // on AC/battery events; mask it if this selector must be authoritative.
+    property var availablePlatformProfiles: []
+    property bool platformProfileChecked: false
+    property bool platformProfileAvailable: false
+
+    function platformProfileLabel(id) {
+        if (id === "quiet") return "POWER SAVER"
+        if (id === "balanced") return "BALANCED"
+        if (id === "performance") return "PERFORMANCE"
+        return id ? id.toUpperCase() : "—"
+    }
+
+    function updatePlatformProfiles(text) {
+        var raw = text.trim().split(/\s+/)
+        var values = []
+        for (var i = 0; i < raw.length; i++) {
+            var id = raw[i].trim()
+            if (id !== "" && values.indexOf(id) === -1) values.push(id)
+        }
+        page.availablePlatformProfiles = values
+        page.platformProfileAvailable = values.length > 0
+        page.platformProfileChecked = true
+    }
+
+    function setPlatformProfile(id) {
+        if (page.availablePlatformProfiles.indexOf(id) === -1) return
+        if (pSetPlatformProfile.running) return
+
+        // The narrow NOPASSWD rule installed by
+        // scripts/install-cpu-profile-sudoers.sh allows this exact command.
+        pSetPlatformProfile.pendingProfile = id
+        pSetPlatformProfile.stdinEnabled = true
+        pSetPlatformProfile.running = true
+    }
 
     // --- helpers -----------------------------------------------------
 
@@ -190,7 +228,7 @@ Item {
 
         var ghz = parseFloat(lines[0])
         page.cpuFreq = isNaN(ghz) ? "—" : ghz.toFixed(2) + " GHz"
-        page.cpuGovernor = lines[1].trim() || "—"
+        page.cpuPlatformProfile = lines[1].trim() || "—"
 
         var mhz = parseFloat(lines[2])
         page.gpuFreq = isNaN(mhz) ? "—" : mhz > 0 ? (mhz / 1000).toFixed(2) + " GHz" : "idle"
@@ -446,6 +484,44 @@ Item {
         }
     }
 
+    component ProfileButton: Rectangle {
+        id: button
+
+        property string label: ""
+        property bool selected: false
+        property bool buttonEnabled: true
+
+        signal clicked()
+
+        height: 28
+        radius: Theme.radius
+        opacity: buttonEnabled ? 1.0 : 0.35
+        color: selected
+            ? Theme.alpha(Theme.accent, 0.10)
+            : (buttonMouse.containsMouse ? Theme.alpha(Theme.accent, 0.08) : "transparent")
+        border.width: 1
+        border.color: selected || buttonMouse.containsMouse ? Theme.accent : Theme.border
+
+        Text {
+            anchors.centerIn: parent
+            text: button.label
+            color: button.selected ? Theme.accent : Theme.text
+            font.family: Theme.fontFamily
+            font.pixelSize: 11
+            font.bold: true
+            font.letterSpacing: 1
+        }
+
+        MouseArea {
+            id: buttonMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            enabled: button.buttonEnabled
+            cursorShape: Qt.PointingHandCursor
+            onClicked: button.clicked()
+        }
+    }
+
     // --- processes -------------------------------------------------
 
     Process {
@@ -570,14 +646,46 @@ Item {
 
     Process {
         id: pFreq
-        // Average CPU core frequency (kHz -> GHz), governor, and the iGPU
-        // actual clock. LC_ALL=C keeps awk's decimal point locale-independent.
+        // Average CPU core frequency (kHz -> GHz), ACPI platform profile,
+        // and the iGPU actual clock. LC_ALL=C keeps awk's decimal point
+        // locale-independent.
         command: [
             "sh", "-c",
-            "LC_ALL=C awk '{s+=$1;n++} END {if (n) printf \"%.2f\", s/n/1000000}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq; echo; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor; cat /sys/class/drm/card0/gt_act_freq_mhz"
+            "LC_ALL=C awk '{s+=$1;n++} END {if (n) printf \"%.2f\", s/n/1000000}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq; echo; cat /sys/firmware/acpi/platform_profile; cat /sys/class/drm/card0/gt_act_freq_mhz"
         ]
         running: true
         stdout: StdioCollector { onStreamFinished: page.updateFreqs(text) }
+    }
+
+    Process {
+        id: pPlatformProfileChoices
+        command: ["cat", "/sys/firmware/acpi/platform_profile_choices"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: page.updatePlatformProfiles(text) }
+    }
+
+    Process {
+        id: pSetPlatformProfile
+        property string pendingProfile: ""
+
+        command: ["sudo", "-n", "/usr/bin/tee", "/sys/firmware/acpi/platform_profile"]
+        stdinEnabled: false
+        running: false
+
+        onStarted: {
+            write(pendingProfile + "\n")
+            stdinEnabled = false
+        }
+
+        onExited: function(exitCode) {
+            pendingProfile = ""
+            // Refresh the header/badge as soon as the privileged write ends.
+            if (exitCode === 0) {
+                pFreq.running = true
+            } else {
+                console.warn("CPU platform profile change failed with code", exitCode)
+            }
+        }
     }
 
     Process {
@@ -759,8 +867,65 @@ Item {
                 icon: "󰍛"
                 label: "CPU"
                 valueText: page.cpu
-                badges: [Math.round(page.cpuUsage) + "%", page.cpuTemp, page.cpuFreq, page.cpuGovernor]
+                badges: [Math.round(page.cpuUsage) + "%", page.cpuTemp, page.cpuFreq, page.platformProfileLabel(page.cpuPlatformProfile)]
                 history: page.cpuHistory
+            }
+
+            Column {
+                width: parent.width
+                spacing: 10
+
+                Item {
+                    width: parent.width
+                    height: 24
+
+                    Row {
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 12
+
+                        Text {
+                            text: "󰍛  CPU MODE"
+                            color: Theme.textDim
+                            font.family: page.mono
+                            font.pixelSize: page.hardwareLabelSize
+                            font.letterSpacing: 2
+                        }
+
+                        Text {
+                            text: page.platformProfileLabel(page.cpuPlatformProfile)
+                            color: Theme.accent2
+                            font.family: Theme.fontFamily
+                            font.pixelSize: page.hardwareTextSize
+                        }
+                    }
+                }
+
+                Row {
+                    id: platformProfileRow
+                    width: parent.width
+                    spacing: 8
+
+                    Repeater {
+                        model: page.availablePlatformProfiles
+
+                        delegate: ProfileButton {
+                            required property var modelData
+                            width: (platformProfileRow.width - platformProfileRow.spacing * (page.availablePlatformProfiles.length - 1)) / page.availablePlatformProfiles.length
+                            label: page.platformProfileLabel(modelData)
+                            selected: page.cpuPlatformProfile === modelData
+                            buttonEnabled: page.platformProfileAvailable && !pSetPlatformProfile.running
+                            onClicked: page.setPlatformProfile(modelData)
+                        }
+                    }
+                }
+
+                Text {
+                    visible: page.platformProfileChecked && !page.platformProfileAvailable
+                    text: "platform_profile no disponible"
+                    color: Theme.textDim
+                    font.family: Theme.fontFamily
+                    font.pixelSize: page.hardwareTextSize
+                }
             }
 
             HardwareGraph {
