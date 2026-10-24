@@ -130,8 +130,11 @@ source change stacks extra bars on the external output (upstream #3344 and
 (`color_theme = "43pr"` in `~/.config/btop/btop.conf`); cava's target stays
 disabled because Debian 13 ships cava 0.10.4, which lacks `theme =` support.
 Hyprland borders are generated too: `theme.py` writes `hypr/colors.lua` with the
-theme's `accent` and `bg_hover` colours, and `look.lua` reads it with a neutral
-fallback before setting `border_size = 1`.
+theme's `accent` colour at 50% for active windows and 25% for inactive ones,
+and `look.lua` reads it with a neutral fallback before setting `border_size = 1`.
+Hyprland only supports integer border widths, so 1 px is the thinnest available;
+the half-opacity accent adds presence without returning to the original bright
+border.
 
 ## 16. Editors: xdg-open instead of xed
 

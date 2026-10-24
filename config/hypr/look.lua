@@ -1,8 +1,8 @@
 -- ~/.config/hypr/look.lua
 ---- LOOK AND FEEL ----
 -- Colores de borde generados por theme.py. Si colors.lua no existe (primer
--- arranque o instalacion incompleta), se usan estos valores neutros.
-local colors = { active = "rgba(ffffffff)", inactive = "rgba(33333366)" }
+-- arranque o instalacion incompleta), se usa un gris neutro discreto.
+local colors = { active = "rgba(808080ff)", inactive = "rgba(80808040)" }
 local ok, c = pcall(dofile, os.getenv("HOME") .. "/.config/hypr/colors.lua")
 if ok and type(c) == "table" then
     if type(c.active) == "string" then colors.active = c.active end
