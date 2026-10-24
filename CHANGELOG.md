@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Notification sound and Do Not Disturb toggles now reach every running
+  Quickshell instance. With a leftover session on another VT, the oldest
+  instance keeps owning `org.freedesktop.Notifications` and kept its own
+  in-memory state, so turning sound off in the active session had no effect.
+  The state file is now watched and reloaded on change. `doctor.sh` also warns
+  when more than one Quickshell is running.
 - Waybar no longer stacks duplicate bars on the external monitor. Applying a
   theme used to send `SIGUSR2`; in Waybar 0.12 that reload re-registers the
   monitor callbacks, so every later DPMS cycle or monitor source change added
@@ -22,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Area screenshots (`SUPER+SHIFT+Delete` and `SUPER+CTRL+Delete`) no longer
   include `slurp`'s selection overlay: the wrapper waits 200 ms after the
   selection so Hyprland repaints without it before running `grim`.
+- The gap between the Waybar notification bell and the volume indicator now
+  matches the spacing of the other right-side modules. The bell glyph leaves
+  more side bearing inside its box than the speaker, so it looked tighter.
 
 ## [1.2.0] - 2026-10-23
 

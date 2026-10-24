@@ -161,6 +161,13 @@ Scope {
         id: stateFile
         path: root.home + "/.config/quickshell/state/notifications-state.json"
         printErrors: false
+        // The user bus is shared by every session of the same user. If a stale
+        // Quickshell (e.g. a leftover session on another VT) owns
+        // org.freedesktop.Notifications, toggles made from this panel only
+        // reached the state file and that instance kept playing sounds. Watch
+        // the file so every instance applies the same sound/DND state.
+        watchChanges: true
+        onFileChanged: reload()
         // Tiny file, written only on user actions: block so the write is on disk
         // before we return (nothing lost if the session is killed right after).
         blockWrites: true

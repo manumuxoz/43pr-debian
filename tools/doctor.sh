@@ -63,6 +63,11 @@ else
     printf '  %sINFO%s hyprsunset inactivo (luz nocturna apagada)\n' "$B" "$N"
 fi
 
+qs_instances="$(pgrep -xc qs 2>/dev/null || true)"
+if [ "${qs_instances:-0}" -gt 1 ]; then
+    warn "$qs_instances instancias de Quickshell: comparten org.freedesktop.Notifications; cierra la sesión más antigua si los avisos no aparecen o el sonido/DND no responde"
+fi
+
 section "Comandos imprescindibles"
 for cmd in hyprctl qs waybar dunst wofi grim slurp wl-copy cliphist jq \
            python3 playerctl brightnessctl swaybg xdg-user-dir notify-send swappy; do
