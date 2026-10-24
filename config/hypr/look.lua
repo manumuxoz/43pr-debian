@@ -1,7 +1,8 @@
 -- ~/.config/hypr/look.lua
 ---- LOOK AND FEEL ----
--- Colores de borde generados por theme.py. Si colors.lua no existe (primer
--- arranque o instalacion incompleta), se usa un gris neutro discreto.
+-- Sin bordes de ventana: separacion solo por gaps, redondeo y sombra. Los
+-- colores de borde siguen generandose por theme.py por si se reactivan
+-- (border_size > 0). Si colors.lua no existe, se usa un gris neutro discreto.
 local colors = { active = "rgba(808080ff)", inactive = "rgba(80808040)" }
 local ok, c = pcall(dofile, os.getenv("HOME") .. "/.config/hypr/colors.lua")
 if ok and type(c) == "table" then
@@ -19,7 +20,7 @@ hl.config({
             bottom = 8,
             left = 8,
         },
-        border_size = 1,
+        border_size = 0,
         col = {
             active_border   = colors.active,
             inactive_border = colors.inactive,

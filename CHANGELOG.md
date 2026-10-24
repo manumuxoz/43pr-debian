@@ -13,14 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `SUPER+Tab` previous-workspace toggle. It uses Hyprland's
   `focuscurrentorlast` dispatcher, so pressing it again returns to the window
   you came from.
-- Hyprland window borders now follow the active 43PR theme. `theme.py` renders
-  `~/.config/hypr/colors.lua` from the palette (`accent` at 50% for the active
-  window and 25% for inactive ones) and reloads Hyprland; `look.lua` keeps a
-  neutral fallback when the generated file is missing. The border stays at
-  1 px because Hyprland only accepts integer widths.
+- `theme.py` renders `~/.config/hypr/colors.lua` from the active palette
+  (`accent` at 50% for the active window and 25% for inactive ones) and reloads
+  Hyprland; `look.lua` keeps a neutral fallback when the generated file is
+  missing.
 
 ### Changed
 
+- Hyprland window borders are disabled (`border_size = 0`): windows are
+  separated only by gaps, with rounding and shadows still marking their edges.
+  The generated border colours stay available for anyone re-enabling borders in
+  `look.lua`.
 - `config/hypr/monitors.lua` is now user-owned: `update.sh` no longer
   overwrites the per-machine monitor layout. Manual overrides can live in
   `~/.config/hypr/monitors.local.lua`, which is loaded last.
