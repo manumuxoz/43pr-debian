@@ -230,6 +230,13 @@ tooltip label {
     margin: 0 2px;
 }
 
+/* El glifo de la campana deja más aire dentro de su caja que el del altavoz,
+   así que el hueco campana → volumen se veía más estrecho que el resto.
+   Añadimos esa diferencia al margen derecho para igualar la separación. */
+#custom-notifications {
+    margin-right: 5px;
+}
+
 /* Battery */
 #battery {
     color: @wb_text;
