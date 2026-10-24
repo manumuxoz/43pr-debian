@@ -165,6 +165,21 @@ Item {
 
     function monitorMode(mon) { return mon.width + "x" + mon.height + "@" + mon.refreshRate.toFixed(2) }
 
+    // Un modo es soportado solo si aparece exactamente en el EDID de la salida.
+    // Hyprland acepta modos inventados, pero el panel puede quedar en negro.
+    function modeSupported(mon) {
+        if (!mon) return true
+        const modes = page.parseAvailableModes(mon)
+        for (let i = 0; i < modes.length; i++) {
+            if (modes[i].width === mon.width &&
+                modes[i].height === mon.height &&
+                Math.abs(modes[i].rate - mon.refreshRate) <= 0.02) {
+                return true
+            }
+        }
+        return false
+    }
+
     function luaString(value) { return String(value).replace(/\\/g, "\\\\").replace(/"/g, "\\\"") }
 
     function monitorLua(mon, options = {}) {
@@ -271,11 +286,10 @@ Item {
             page.monitors = updated
         }
 
+        // Pasa por monitor-ctl.sh: valida el modo contra availableModes y, si el
+        // modo vivo no es soportado, aplica uno seguro junto con la escala.
         pApply.pendingMon = mon
-        pApply.command = [
-            "hyprctl", "eval",
-            monitorLua(mon, { mode: monitorMode(mon), position: mon.x + "x" + mon.y, scale: applied })
-        ]
+        pApply.command = page.monitorCtl(["scale", mon.name, applied.toFixed(2)])
         pApply.running = true
     }
 
@@ -430,6 +444,17 @@ Item {
     function applyRate(mon, rate) {
         if (!mon) return
         page.applyMode(mon, mon.width, mon.height, rate)
+    }
+
+    // Restablece el modo nativo del EDID (opcion segura si el actual no aparece
+    // en availableModes).
+    function applyPreferred(mon) {
+        if (!mon || !mon.name || pMode.running) {
+            return
+        }
+        pMode.command = page.monitorCtl(["mode", mon.name, "preferred"])
+        pMode.running = true
+        applyTimer.restart()
     }
 
     // Aplica WxH@RR via monitor-ctl.sh (valida contra availableModes y persiste).
@@ -727,6 +752,52 @@ Item {
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: page.setPrimary(monCard.modelData)
+                                    }
+                                }
+                            }
+
+                            Row {
+                                visible: !page.modeSupported(monCard.modelData)
+                                width: parent.width
+                                height: 26
+                                spacing: 10
+
+                                Text {
+                                    width: Math.max(0, parent.width - 160)
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: "MODO NO SOPORTADO: el panel puede quedarse en negro"
+                                    color: Theme.danger
+                                    elide: Text.ElideRight
+                                    font.family: Theme.fontFamily; font.pixelSize: 11
+                                }
+
+                                Rectangle {
+                                    id: preferredBtn
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    readonly property bool hovered: preferredHover.containsMouse
+                                    width: preferredLabel.implicitWidth + 20
+                                    height: 22
+                                    radius: Theme.radius
+                                    color: preferredBtn.hovered
+                                        ? Theme.alpha(Theme.danger, 0.12) : "#00000000"
+                                    border.width: 1
+                                    border.color: Theme.danger
+
+                                    Text {
+                                        id: preferredLabel
+                                        anchors.centerIn: parent
+                                        text: "USAR PREFERIDO"
+                                        color: Theme.text
+                                        font.family: Theme.fontFamily; font.pixelSize: 10
+                                        font.bold: true; font.letterSpacing: 1
+                                    }
+
+                                    MouseArea {
+                                        id: preferredHover
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: page.applyPreferred(monCard.modelData)
                                     }
                                 }
                             }

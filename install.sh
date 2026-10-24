@@ -105,6 +105,12 @@ else
         mkdir -p "$HOME/.config/$d"
         cp -a "$REPO/config/$d/." "$HOME/.config/$d/"
     done
+    # The monitor layout is per-machine: keep the previous file on reinstall.
+    # A fresh install still gets the repo default (see above).
+    if [[ -f "$BACKUP/config/hypr/monitors.lua" ]]; then
+        cp -a "$BACKUP/config/hypr/monitors.lua" "$HOME/.config/hypr/monitors.lua"
+        say "Kept existing ~/.config/hypr/monitors.lua (user-owned monitor layout)."
+    fi
     say "Configs copied to ~/.config/"
     # Runtime state of the Quickshell widgets (Todo, PowerMenu, MediaOSD)
     mkdir -p "$HOME/.config/quickshell/state"
@@ -171,8 +177,10 @@ cat <<EOF
 
 Next steps:
   1. Monitors: adapt ~/.config/hypr/monitors.lua for your screens
-     (or use ~/.config/hypr/scripts/monitor-ctl.sh). The repo ships the
-     layout of the original laptop: eDP-1 2880x1800 scale 1.75 + DP-3.
+     (or use ~/.config/hypr/scripts/monitor-ctl.sh mode/scale/primary/reconcile).
+     The repo ships the original laptop layout: eDP-1 2880x1800 scale 1.75
+     + ASUS VW199 external (HDMI-A-1 or DP-3) at 1440x900@74.98 scale 1.0.
+     Never force 1920x1080@120 on this panel: it is not in the EDID.
   2. Wallpaper folder: config/quickshell/hyprquickpaper/config.json points to
      \$HOME/Imágenes/Wallpapers (created by this script) — change it if your
      folder has another name.

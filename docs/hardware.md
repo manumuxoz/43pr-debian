@@ -6,10 +6,26 @@ hardware-specific; if your machine differs, this is what to edit.
 ## Displays
 
 - Internal panel: `eDP-1`, 2880x1800 @ 90 Hz, **scale 1.75**.
-- External monitor used: `DP-3`, 1440x900 @ 74.98 Hz, scale 1.0.
-- Managed block in `~/.config/hypr/monitors.lua`; edit it directly or use
-  `~/.config/hypr/scripts/monitor-ctl.sh` (mode/scale/primary; it persists the
-  changes back into `monitors.lua`).
+- External monitor used: ASUS VW199, 1440x900. It appears as `HDMI-A-1` when
+  connected through the laptop HDMI port or as `DP-3` through USB-C. The repo
+  preset uses `HDMI-A-1` at 1440x900 @ 74.98 Hz, scale 1.0.
+- Safe modes for this panel: `1440x900@74.98`, `1440x900@59.89` (EDID
+  preferred) and `1920x1080@60.00`. **Never force `1920x1080@120`**: the EDID
+  does not advertise it, Hyprland may accept it anyway and the panel stays
+  powered on with a black screen.
+- The managed block lives in `~/.config/hypr/monitors.lua`. Use
+  `~/.config/hypr/scripts/monitor-ctl.sh` (`mode`, `scale`, `primary`,
+  `reconcile`) instead of editing it by hand: exact modes are validated against
+  `availableModes` before they are applied or persisted. `reconcile` also
+  adopts new outputs and repairs unsupported modes after a port change or
+  hotplug.
+- If the external panel is black after an update or a manual experiment, run
+  `monitor-ctl.sh mode HDMI-A-1 1440x900@74.98` (or `mode HDMI-A-1 preferred`).
+- `monitors.lua` is user-owned: `update.sh` does not overwrite it. For a
+  manual override that survives `monitor-ctl.sh` rewrites, create
+  `~/.config/hypr/monitors.local.lua`; it is loaded last.
+- Any output without an explicit rule uses its EDID preferred mode through the
+  wildcard `output = ""` fallback in `monitors.lua`.
 - Fractional scale 1.75 requires `debug.disable_scale_checks` and
   `xwayland.force_zero_scaling` (see `docs/debian-adaptations.md`).
 

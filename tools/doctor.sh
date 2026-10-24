@@ -49,6 +49,32 @@ else
     fail "hyprctl no está instalado o no está en PATH"
 fi
 
+section "Monitores"
+if have hyprctl && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+    if monitors_json="$(hyprctl monitors -j 2>/dev/null)" && jq -e . >/dev/null 2>&1 <<<"$monitors_json"; then
+        bad_modes="$(jq -r '
+            .[] | select((.disabled // false) | not) | . as $m
+            | ([.availableModes[]?
+                | capture("^(?<w>[0-9]+)x(?<h>[0-9]+)@(?<r>[0-9.]+)Hz$")
+                | select((.w|tonumber) == $m.width
+                    and (.h|tonumber) == $m.height
+                    and (((.r|tonumber) - $m.refreshRate) | fabs) < 0.02)
+               ] | length) as $n
+            | select($n == 0)
+            | "\(.name): \(.width)x\(.height)@\(.refreshRate)"' <<<"$monitors_json")"
+        if [ -z "$bad_modes" ]; then
+            pass "todos los monitores activos usan un modo anunciado en el EDID"
+        else
+            fail "modo no soportado (pantalla potencialmente negra): $bad_modes"
+            printf '       corrige con: %s/.config/hypr/scripts/monitor-ctl.sh mode <salida> preferred\n' "$HOME"
+        fi
+    else
+        warn "no pude leer hyprctl monitors -j"
+    fi
+else
+    warn "Hyprland no accesible; comprobación de monitores omitida"
+fi
+
 section "Procesos"
 for proc in qs waybar swaybg hypridle; do
     if pgrep -x "$proc" >/dev/null 2>&1; then
@@ -191,7 +217,7 @@ else
 fi
 
 section "Scripts ejecutables"
-for rel in hypr/scripts/screenshot.sh \
+for rel in hypr/scripts/screenshot.sh hypr/scripts/monitor-ctl.sh \
            hypr/scripts/random-wallpaper.sh hypr/scripts/wallpaper-restore.sh; do
     if [ -x "$HOME/.config/$rel" ]; then
         pass "$rel"

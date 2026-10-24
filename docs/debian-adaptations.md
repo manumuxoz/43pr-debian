@@ -145,7 +145,10 @@ new/changed files, backs them up per file under
 keeps working), regenerates the theme and never deletes files or installs
 packages. `--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`,
 `--reload-hyprland`, `--reload-waybar` and `--restart-shell` control its
-behaviour.
+behaviour. `config/hypr/monitors.lua` is the exception: it is per-machine
+layout and is never overwritten by `update.sh` (or by a reinstall). Change it
+with `hypr/scripts/monitor-ctl.sh mode/scale/primary/reconcile` or use
+`~/.config/hypr/monitors.local.lua` for manual overrides.
 
 ## 18. Pack 3: extra Quickshell widgets and Settings lifecycle
 

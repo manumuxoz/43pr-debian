@@ -123,8 +123,10 @@ are not used by `uninstall.sh`.
 ### After installing
 
 1. Adapt `~/.config/hypr/monitors.lua` to your screens (or use
-   `scripts/monitor-ctl.sh`). The repo ships the original layout:
-   `eDP-1 2880x1800@90 scale 1.75` + `DP-3 1440x900`.
+   `scripts/monitor-ctl.sh mode/scale/primary/reconcile`). The repo ships the
+   original layout: `eDP-1 2880x1800@90 scale 1.75` + ASUS VW199 external
+   (`HDMI-A-1` or `DP-3`) at `1440x900@74.98` scale 1.0. Do not force
+   `1920x1080@120`: the EDID does not advertise it and the panel goes black.
 2. Check `~/.config/quickshell/hyprquickpaper/config.json` — the wallpaper
    folder defaults to `$HOME/Imágenes/Wallpapers` (Spanish locale; the
    installer creates it). Add 26 theme presets to Settings → Themes; to keep

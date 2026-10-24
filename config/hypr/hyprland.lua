@@ -136,5 +136,31 @@ require("keybinds")
 require("look")
 require("rules")
 
+-- Reconciliacion de monitores: si un modo guardado dejo de existir en el EDID
+-- (p.ej. tras cambiar de puerto o de monitor), lo corrige a uno soportado.
+-- No se engancha monitor.layout_changed: hl.monitor lo provoca y se repetiria.
+local monitors_ready = false
+
+local function reconcile_monitors(delay)
+    if not monitors_ready then
+        return
+    end
+    hl.exec_cmd("sleep " .. delay .. "; " .. os.getenv("HOME")
+        .. "/.config/hypr/scripts/monitor-ctl.sh reconcile --quiet")
+end
+
+hl.on("hyprland.start", function()
+    monitors_ready = true
+    reconcile_monitors(1)
+end)
+
+hl.on("monitor.added", function(_)
+    reconcile_monitors(1.2)
+end)
+
+hl.on("monitor.removed", function(_)
+    reconcile_monitors(1.2)
+end)
+
 -- HyprMod managed settings
 require("hyprland-gui")

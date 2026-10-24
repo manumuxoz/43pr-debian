@@ -102,6 +102,16 @@ is_generated() {
     esac
 }
 
+# Per-machine layout: never overwrite it on update. Use monitor-ctl.sh to
+# change modes/scales, or create monitors.local.lua for manual overrides.
+is_user_owned() {
+    case "$1" in
+        config/hypr/monitors.lua|config/hypr/monitors.local.lua)
+            return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 # Scan $1 into $2 and store "status|label|rel|src|dst" entries in CHANGES.
 scan_tree() {
     local src_root="$1" dst_root="$2" label="$3"
@@ -110,6 +120,7 @@ scan_tree() {
     while IFS= read -r -d '' src; do
         rel="${src#"$src_root"/}"
         is_generated "${src#"$REPO"/}" && continue
+        is_user_owned "${src#"$REPO"/}" && continue
         dst="$dst_root/$rel"
         if [[ ! -e "$dst" ]]; then
             status="new"
@@ -135,6 +146,7 @@ done
 
 say "Checkout: $REPO"
 say "Changes: $added new, $updated updated"
+say "Monitor layout is user-owned; config/hypr/monitors.lua is not overwritten."
 if [[ ${#CHANGES[@]} -gt 0 ]]; then
     for entry in "${CHANGES[@]}"; do
         IFS='|' read -r status label rel src dst <<<"$entry"

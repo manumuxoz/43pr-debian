@@ -2,20 +2,25 @@
 # monitor-ctl.sh — gestion de monitores en Hyprland 0.55 (config Lua).
 #
 # Uso:
-#   monitor-ctl.sh mode <salida> <WxH@RR>   -> p.ej. mode eDP-1 2880x1800@90.00
+#   monitor-ctl.sh mode <salida> <WxH@RR|preferred|highrr|highres>
+#                                           -> p.ej. mode eDP-1 2880x1800@90.00
 #   monitor-ctl.sh scale <salida> <factor>  -> p.ej. scale DP-1 1.0
 #   monitor-ctl.sh primary <salida>         -> hace principal esa salida (0x0, escritorios fijos del principal)
 #   monitor-ctl.sh primary                  -> imprime SOLO la salida principal actual
+#   monitor-ctl.sh reconcile [--quiet]      -> adopta salidas nuevas y corrige modos no soportados
 #
 # Aplica en vivo con `hyprctl eval` (hl.monitor) usando el modo/posicion/escala
 # vigentes de cada salida, y persiste el bloque gestionado en:
 #   ~/.config/hypr/monitors.lua        (obligatorio)
 #
 # Cualquier salida conectada que no este en el bloque se adopta
-# automaticamente con su estado en vivo (al cambiar de puerto, p.ej.
-# DP-3 <-> HDMI-A-1, no hay que editar nombres a mano).
+# automaticamente (al cambiar de puerto, p.ej. DP-3 <-> HDMI-A-1, no hay que
+# editar nombres a mano). La adopcion conserva el modo vivo solo si aparece
+# en availableModes; si no, usa "preferred".
 #
-# El modo se valida contra availableModes de la salida (hyprctl -j monitors).
+# Los modos exactos se validan contra availableModes (hyprctl -j monitors).
+# Hyprland acepta modos que el EDID no anuncia, pero el panel puede quedar
+# encendido y en negro; por eso tambien se revisan los modos ya aplicados.
 # Idempotente (si ya esta asi no reescribe nada) y atomico (tmp + rename).
 # Salida 0 = ok; errores a stderr con codigo != 0.
 
@@ -39,8 +44,10 @@ BLOCK_RE = re.compile(re.escape(BEGIN) + r"\n.*?\n" + re.escape(END), re.DOTALL)
 PRIMARY_RE = re.compile(r'^[ \t]*PRIMARY_MONITOR\s*=\s*"([^"]+)"[ \t]*$', re.MULTILINE)
 SECONDARY_RE = re.compile(r'^[ \t]*SECONDARY_MONITOR\s*=\s*"([^"]+)"[ \t]*$', re.MULTILINE)
 WORKSPACES_RE = re.compile(r'^[ \t]*PRIMARY_WORKSPACES\s*=\s*(\d+)[ \t]*$', re.MULTILINE)
+SYMBOLIC_MODES = ("preferred", "highres", "highrr", "maxwidth")
+MODE_VALUE = r"(?:preferred|highres|highrr|maxwidth|\d+x\d+@\d+(?:\.\d+)?)"
 RULE_RE = re.compile(
-    r'^[ \t]*hl\.monitor\(\{\s*output\s*=\s*"([^"]+)"\s*,\s*mode\s*=\s*"([^"]+)"\s*,\s*'
+    r'^[ \t]*hl\.monitor\(\{\s*output\s*=\s*"([^"]+)"\s*,\s*mode\s*=\s*"(' + MODE_VALUE + r')"\s*,\s*'
     r'position\s*=\s*"([^"]+)"\s*,\s*scale\s*=\s*([0-9.]+)\s*\}\)[ \t]*$',
     re.MULTILINE,
 )
@@ -90,8 +97,8 @@ def parse_managed(path):
     rules = {}
     for name, mode, position, scale in RULE_RE.findall(block):
         rules[name] = {"mode": mode, "position": position, "scale": float(scale)}
-    if len(rules) < 2:
-        die("el bloque gestionado de %s tiene menos de 2 salidas" % path)
+    if not rules:
+        die("el bloque gestionado de %s no contiene ninguna regla de monitor" % path)
     return rules, primary_match.group(1), secondary_match.group(1), primary_ws
 
 
@@ -225,41 +232,97 @@ def live_position(mon):
     return "%dx%d" % (mon["x"], mon["y"])
 
 
+def available_modes(mon):
+    modes = []
+    for entry in mon.get("availableModes") or []:
+        parsed = AVAIL_MODE_RE.match(entry)
+        if not parsed:
+            continue
+        modes.append((int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3))))
+    return modes
+
+
+def mode_is_supported(mon, mode):
+    # Los modos simbolicos los resuelve Hyprland contra el EDID.
+    if mode in SYMBOLIC_MODES:
+        return True
+    parsed = MODE_ARG_RE.match(mode or "")
+    if not parsed:
+        return False
+    want_w, want_h, want_rr = int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3))
+    return any(width == want_w and height == want_h and abs(rate - want_rr) <= 0.02
+               for width, height, rate in available_modes(mon))
+
+
+def live_mode_supported(mon):
+    return mode_is_supported(mon, live_mode(mon))
+
+
+def mode_matches(mon, mode):
+    if mode in SYMBOLIC_MODES:
+        return live_mode_supported(mon)
+    parsed = MODE_ARG_RE.match(mode or "")
+    if not parsed:
+        return False
+    return mode_is_supported(mon, mode) and (
+        mon["width"] == int(parsed.group(1))
+        and mon["height"] == int(parsed.group(2))
+        and abs(float(mon["refreshRate"]) - float(parsed.group(3))) <= 0.02
+    )
+
+
+def find_available_mode(mon, want_w, want_h, want_rr):
+    candidates = []
+    for width, height, rate in available_modes(mon):
+        if width == want_w and height == want_h and abs(rate - want_rr) <= 0.005:
+            candidates.append((width, height, rate))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: (abs(item[2] - want_rr), item[2]))
+    width, height, rate = candidates[0]
+    return "%dx%d@%.2f" % (width, height, rate)
+
+
+def best_safe_mode(mon, wanted=None):
+    """Modo aplicable sin arriesgar un panel negro.
+
+    Respeta el modo pedido si existe en availableModes; si no, conserva el
+    modo vivo cuando es valido y, como ultimo recurso, usa "preferred".
+    """
+    if wanted in SYMBOLIC_MODES:
+        return wanted
+    parsed = MODE_ARG_RE.match(wanted or "")
+    if parsed:
+        found = find_available_mode(mon, int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3)))
+        if found:
+            return found
+    if live_mode_supported(mon):
+        return live_mode(mon)
+    return "preferred"
+
+
 def adopt_output(rules, live, output):
-    # Salida conectada que no esta en el bloque gestionado: se adopta con su
-    # estado en vivo (no mueve nada) para poder gestionarla sin editar nombres.
+    # Salida conectada que no esta en el bloque gestionado: se adopta sin mover
+    # nada, pero nunca se persiste un modo que el EDID no anuncie.
     if output in rules:
         return False
     mon = live[output]
     if mon.get("disabled") or int(mon.get("width") or 0) <= 0 or int(mon.get("height") or 0) <= 0:
         die("salida desactivada o sin modo activo: %s (no se puede adoptar)" % output)
     rules[output] = {
-        "mode": live_mode(mon),
+        "mode": live_mode(mon) if live_mode_supported(mon) else "preferred",
         "position": live_position(mon),
         "scale": float(mon.get("scale") or 1.0),
     }
     return True
 
 
-def parse_mode(mode):
-    parsed = MODE_ARG_RE.match(mode)
-    return int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3))
-
-
 def pick_available_mode(mon, want_w, want_h, want_rr, raw):
-    candidates = []
-    for entry in mon.get("availableModes") or []:
-        parsed = AVAIL_MODE_RE.match(entry)
-        if not parsed:
-            continue
-        width, height, rate = int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3))
-        if width == want_w and height == want_h and abs(rate - want_rr) <= 0.005:
-            candidates.append((entry[:-2], rate))
-    if not candidates:
+    found = find_available_mode(mon, want_w, want_h, want_rr)
+    if not found:
         die("modo no disponible en %s: %s (mira availableModes con 'hyprctl -j monitors')"
             % (mon["name"], raw))
-    candidates.sort(key=lambda item: (abs(item[1] - want_rr), item[0]))
-    return candidates[0][0]
+    return found
 
 
 def ensure_scale_checks():
@@ -280,19 +343,27 @@ def eval_monitor(output, mode, position, scale):
             % (output, result.stderr.strip() or result.stdout.strip() or "sin salida"))
 
 
+def rollback(prev):
+    for output, mode, position, scale in prev:
+        try:
+            eval_monitor(output, mode, position, scale)
+        except SystemExit:
+            pass
+
+
 def apply_and_verify(desired, prev, check, what):
     ensure_scale_checks()
-    for timeout in (2.5, 1.5):
-        for output, mode, position, scale in desired:
-            eval_monitor(output, mode, position, scale)
-        current = wait_for(check, timeout)
-        if check(current):
-            return
     try:
-        for output, mode, position, scale in prev:
-            eval_monitor(output, mode, position, scale)
+        for timeout in (2.5, 1.5):
+            for output, mode, position, scale in desired:
+                eval_monitor(output, mode, position, scale)
+            current = wait_for(check, timeout)
+            if check(current):
+                return
     except SystemExit:
-        pass
+        rollback(prev)
+        raise
+    rollback(prev)
     die("no pude confirmar %s; intente revertir en vivo (revisa 'hyprctl monitors')" % what)
 
 
@@ -300,7 +371,8 @@ def apply_and_verify(desired, prev, check, what):
 
 args = sys.argv[1:]
 if not args:
-    die("uso: monitor-ctl.sh {mode <salida> <WxH@RR> | scale <salida> <factor> | primary [salida]}")
+    die("uso: monitor-ctl.sh {mode <salida> <WxH@RR|preferred|highrr|highres> | "
+        "scale <salida> <factor> | primary [salida] | reconcile [--quiet]}")
 
 command = args[0]
 
@@ -311,23 +383,28 @@ if command == "primary" and len(args) == 1:
 
 if command == "mode":
     if len(args) != 3:
-        die("uso: monitor-ctl.sh mode <salida> <WxH@RR>")
+        die("uso: monitor-ctl.sh mode <salida> <WxH@RR|preferred|highrr|highres>")
     output, mode_arg = args[1], args[2]
-    parsed = MODE_ARG_RE.match(mode_arg)
-    if not parsed:
-        die("modo invalido: %s (formato WxH@RR, p.ej. 2880x1800@90.00)" % mode_arg)
+    if mode_arg not in SYMBOLIC_MODES and not MODE_ARG_RE.match(mode_arg):
+        die("modo invalido: %s (formato WxH@RR o preferred/highrr/highres)" % mode_arg)
     rules, primary, secondary, primary_ws = parse_managed(MONITORS_LUA)
     live = read_live()
     if output not in live:
         die("salida no conectada o inactiva: " + output)
     adopted = adopt_output(rules, live, output)
     current = live[output]
-    want_w, want_h, want_rr = int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3))
-    new_mode = pick_available_mode(current, want_w, want_h, want_rr, mode_arg)
-    mode_w, mode_h, mode_rr = parse_mode(new_mode)
-    same_live = (current["width"] == mode_w and current["height"] == mode_h
-                 and abs(float(current["refreshRate"]) - mode_rr) <= 0.02)
-    same_stored = rules[output]["mode"] == new_mode
+    old_stored = rules[output]["mode"]
+    if mode_arg in SYMBOLIC_MODES:
+        new_mode = mode_arg
+        # No se puede saber cual resolera "preferred" sin leer el EDID: se
+        # aplica siempre y se verifica que el resultado sea un modo valido.
+        same_live = False
+    else:
+        parsed = MODE_ARG_RE.match(mode_arg)
+        new_mode = pick_available_mode(
+            current, int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3)), mode_arg)
+        same_live = mode_matches(current, new_mode)
+    same_stored = old_stored == new_mode
     if same_live and same_stored and not adopted:
         note("%s ya esta en %s (sin cambios)" % (output, new_mode))
         sys.exit(0)
@@ -335,13 +412,14 @@ if command == "mode":
     changes = prepare_changes(primary, secondary, rules, primary_ws)
     prev = []
 
-    def check_mode(live_now, output=output, mode_w=mode_w, mode_h=mode_h, mode_rr=mode_rr):
+    def check_mode(live_now, output=output, new_mode=new_mode):
         mon = live_now.get(output)
-        return bool(mon and mon["width"] == mode_w and mon["height"] == mode_h
-                    and abs(float(mon["refreshRate"]) - mode_rr) <= 0.02)
+        return bool(mon and mode_matches(mon, new_mode))
 
     if not same_live:
-        prev = [(output, live_mode(current), live_position(current), current["scale"])]
+        prev_mode = (live_mode(current) if live_mode_supported(current)
+                     else best_safe_mode(current, old_stored))
+        prev = [(output, prev_mode, live_position(current), current["scale"])]
         apply_and_verify(
             [(output, new_mode, live_position(current), current["scale"])],
             prev, check_mode, "%s en modo %s" % (output, new_mode))
@@ -368,27 +446,42 @@ if command == "scale":
         die("salida no conectada o inactiva: " + output)
     adopted = adopt_output(rules, live, output)
     current = live[output]
-    same_live = abs(float(current["scale"]) - factor) <= 0.01
+    old_stored = rules[output]["mode"]
+    live_ok = live_mode_supported(current)
+    target_mode = live_mode(current) if live_ok else best_safe_mode(current, old_stored)
+    mode_fixed = not live_ok
+    # Si el modo guardado era exacto y no existe en el EDID, se corrige al
+    # mismo tiempo que la escala; si era simbolico, se conserva el simbolo.
+    stored_fixed = (old_stored not in SYMBOLIC_MODES
+                    and not mode_is_supported(current, old_stored))
+    if stored_fixed:
+        rules[output]["mode"] = target_mode
+    same_live = abs(float(current["scale"]) - factor) <= 0.01 and not mode_fixed
     same_stored = abs(rules[output]["scale"] - factor) <= 0.005
-    if same_live and same_stored and not adopted:
+    if same_live and same_stored and not stored_fixed and not adopted:
         note("%s ya usa escala %s (sin cambios)" % (output, fmt_scale(factor)))
         sys.exit(0)
     rules[output]["scale"] = factor
     changes = prepare_changes(primary, secondary, rules, primary_ws)
     prev = []
 
-    def check_scale(live_now, output=output, factor=factor):
+    def check_scale(live_now, output=output, factor=factor, mode_fixed=mode_fixed,
+                    target_mode=target_mode):
         mon = live_now.get(output)
-        return bool(mon and abs(float(mon["scale"]) - factor) <= 0.01)
+        if not (mon and abs(float(mon["scale"]) - factor) <= 0.01):
+            return False
+        return not mode_fixed or mode_matches(mon, target_mode)
 
     if not same_live:
-        prev = [(output, live_mode(current), live_position(current), current["scale"])]
+        prev = [(output, target_mode, live_position(current), current["scale"])]
         apply_and_verify(
-            [(output, live_mode(current), live_position(current), factor)],
+            [(output, target_mode, live_position(current), factor)],
             prev, check_scale, "%s con escala %s" % (output, fmt_scale(factor)))
     written = write_or_rollback(changes, prev, "%s scale=%s" % (output, fmt_scale(factor)))
-    note("%s scale=%s%s (%s; %s)" % (
+    note("%s scale=%s%s%s (%s; %s)" % (
         output, fmt_scale(factor),
+        ", modo corregido a " + target_mode if mode_fixed
+        else (", modo guardado corregido a " + target_mode if stored_fixed else ""),
         " (salida adoptada)" if adopted else "",
         "aplicado en vivo" if not same_live else "en vivo ya estaba",
         "persistido en " + written if changes else "sin cambios en ficheros"))
@@ -413,7 +506,23 @@ if command == "primary":
         other = primary
     target = live[output]
     other_mon = live.get(other)
-    already = (target["x"] == 0 and target["y"] == 0
+    target_old_stored = rules[output]["mode"]
+    target_mode = (live_mode(target) if live_mode_supported(target)
+                   else best_safe_mode(target, target_old_stored))
+    if (target_old_stored not in SYMBOLIC_MODES
+            and not mode_is_supported(target, target_old_stored)):
+        rules[output]["mode"] = target_mode
+    other_mode = None
+    if other in rules and other_mon is not None:
+        other_old_stored = rules[other]["mode"]
+        other_mode = (live_mode(other_mon) if live_mode_supported(other_mon)
+                      else best_safe_mode(other_mon, other_old_stored))
+        if (other_old_stored not in SYMBOLIC_MODES
+                and not mode_is_supported(other_mon, other_old_stored)):
+            rules[other]["mode"] = other_mode
+    mode_fixed = (not live_mode_supported(target)
+                  or (other_mon is not None and not live_mode_supported(other_mon)))
+    already = (target["x"] == 0 and target["y"] == 0 and not mode_fixed
                and (other_mon is None or other_mon["x"] != 0 or other_mon["y"] != 0))
     rules[output]["position"] = "0x0"
     if other in rules:
@@ -422,19 +531,25 @@ if command == "primary":
     if already and primary == output and not changes and not adopted:
         note("%s ya es la principal (sin cambios)" % output)
         sys.exit(0)
-    prev = [(output, live_mode(target), live_position(target), target["scale"])]
-    desired = [(output, live_mode(target), "0x0", target["scale"])]
+    prev = [(output, target_mode, live_position(target), target["scale"])]
+    desired = [(output, target_mode, "0x0", target["scale"])]
     if other_mon is not None:
-        prev.insert(0, (other, live_mode(other_mon), live_position(other_mon), other_mon["scale"]))
-        desired.insert(0, (other, live_mode(other_mon), "auto", other_mon["scale"]))
+        prev.insert(0, (other, other_mode, live_position(other_mon), other_mon["scale"]))
+        desired.insert(0, (other, other_mode, "auto", other_mon["scale"]))
 
-    def check_primary(live_now, output=output, other=other, other_was_live=other_mon is not None):
+    def check_primary(live_now, output=output, other=other, other_was_live=other_mon is not None,
+                      mode_fixed=mode_fixed, target_mode=target_mode, other_mode=other_mode):
         tgt = live_now.get(output)
         if not (tgt and tgt["x"] == 0 and tgt["y"] == 0):
             return False
+        if mode_fixed and not mode_matches(tgt, target_mode):
+            return False
         if other_was_live:
             oth = live_now.get(other)
-            return bool(oth and (oth["x"] != 0 or oth["y"] != 0))
+            if not (oth and (oth["x"] != 0 or oth["y"] != 0)):
+                return False
+            if mode_fixed and other_mode is not None and not mode_matches(oth, other_mode):
+                return False
         return True
 
     live_changed = not already or adopted
@@ -447,6 +562,61 @@ if command == "primary":
         "aplicado en vivo" if live_changed else "en vivo ya estaba",
         "persistido en " + written if changes else "sin cambios en ficheros"))
     sys.exit(0)
+
+if command == "reconcile":
+    quiet = "--quiet" in args[1:]
+    unknown = [arg for arg in args[1:] if arg != "--quiet"]
+    if unknown:
+        die("uso: monitor-ctl.sh reconcile [--quiet]")
+    rules, primary, secondary, primary_ws = parse_managed(MONITORS_LUA)
+    live = read_live()
+    desired = []
+    prev = []
+    fixed = []
+    adopted_any = False
+    for output in sorted(live):
+        mon = live[output]
+        if (mon.get("disabled") or int(mon.get("width") or 0) <= 0
+                or int(mon.get("height") or 0) <= 0):
+            continue
+        if adopt_output(rules, live, output):
+            adopted_any = True
+        rule = rules[output]
+        stored_invalid = (rule["mode"] not in SYMBOLIC_MODES
+                          and not mode_is_supported(mon, rule["mode"]))
+        safe = best_safe_mode(mon, rule["mode"])
+        if stored_invalid:
+            rule["mode"] = safe
+        if not live_mode_supported(mon):
+            desired.append((output, safe, rule["position"], rule["scale"]))
+            prev.append((output, safe, live_position(mon), mon["scale"]))
+            fixed.append("%s: %s -> %s" % (output, live_mode(mon), safe))
+    changes = prepare_changes(primary, secondary, rules, primary_ws)
+    if not desired and not changes:
+        if not quiet:
+            note("todos los monitores conectados usan modos soportados (sin cambios)")
+        sys.exit(0)
+    if desired:
+        def check_reconcile(live_now, desired=desired):
+            for output, mode, _position, _scale in desired:
+                mon = live_now.get(output)
+                if not mon or not mode_matches(mon, mode):
+                    return False
+            return True
+
+        apply_and_verify(desired, prev, check_reconcile, "reconcile de monitores")
+    written = write_or_rollback(changes, prev, "reconcile de monitores")
+    if not quiet:
+        for line in fixed:
+            note("modo corregido " + line)
+        if adopted_any:
+            note("salidas nuevas adoptadas en el bloque gestionado")
+        if changes:
+            note("reconcile completado; persistido en " + written)
+        else:
+            note("reconcile completado; sin cambios en ficheros")
+    sys.exit(0)
+
 
 die("orden desconocida: " + command)
 PY

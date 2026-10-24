@@ -124,8 +124,10 @@ archivo y `uninstall.sh` no los usa.
 ### Después de instalar
 
 1. Adapta `~/.config/hypr/monitors.lua` a tus pantallas (o usa
-   `scripts/monitor-ctl.sh`). El repo trae el layout original:
-   `eDP-1 2880x1800@90 scale 1.75` + `DP-3 1440x900`.
+   `scripts/monitor-ctl.sh mode/scale/primary/reconcile`). El repo trae el
+   layout original: `eDP-1 2880x1800@90 scale 1.75` + externo ASUS VW199
+   (`HDMI-A-1` o `DP-3`) a `1440x900@74.98` scale 1.0. No fuerces
+   `1920x1080@120`: no está en el EDID y deja el panel en negro.
 2. Revisa `~/.config/quickshell/hyprquickpaper/config.json`: la carpeta de
    fondos es `$HOME/Imágenes/Wallpapers` (la crea el instalador). Ajustes →
    Temas incluye 26 presets; para que persistan al cambiar el fondo, pon

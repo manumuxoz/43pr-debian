@@ -9,10 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `config/hypr/monitors.lua` is now user-owned: `update.sh` no longer
+  overwrites the per-machine monitor layout. Manual overrides can live in
+  `~/.config/hypr/monitors.local.lua`, which is loaded last.
 - The `slurp` area-selection guide uses a neutral white fill and border over
   the dark veil instead of a red highlight.
 
 ### Fixed
+
+- The external ASUS VW199 no longer stays powered on with a black screen. The
+  repo preset forced `1920x1080@120`, a mode the EDID does not advertise;
+  Hyprland accepted it and the panel could not display it. The default is now
+  `1440x900@74.98`, with a wildcard `preferred` fallback for unknown outputs.
+  `monitor-ctl.sh` validates every exact mode against `availableModes`,
+  refuses to persist unsupported live modes, repairs them in `scale`/`primary`,
+  and has a new `reconcile` command that runs on start and monitor hotplug. The
+  Quickshell monitor page warns when the current mode is unsupported and offers
+  a one-click "Preferred" reset.
 
 - Notification sound and Do Not Disturb toggles now reach every running
   Quickshell instance. With a leftover session on another VT, the oldest
