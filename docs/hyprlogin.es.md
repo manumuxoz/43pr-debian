@@ -11,11 +11,11 @@ Versión compilada: 0.3.0, commit `b11d764` (15-sep-2026).
 
 ## Dónde está todo
 - Binario:            /usr/bin/hyprlogin   (copia de seguridad local; no incluido en el repo)
-- Config del greeter: /etc/hyprlogin/hyprlogin.conf
+- Config del greeter: /etc/hyprlogin/hyprlogin.conf  (la plantilla deja `default_user` vacío)
 - Sesión Hyprland:    /etc/hyprlogin/hyprland-greeter.lua
 - Colores (43pr):     /etc/hyprlogin/colors.conf         -> /var/lib/hyprlogin/colors.conf
 - Fondo:              /usr/share/hyprlogin/wallpaper.jpg -> /var/lib/hyprlogin/wallpaper.jpg
-- Datos del login:    /var/lib/hyprlogin  (root:TU_USUARIO 775; lo escribe theme.py)
+- Datos del login:    /var/lib/hyprlogin  (root:<tu-usuario> 775; lo escribe theme.py)
 - Config greetd:      /etc/greetd/config.toml  (VT 7, usuario `_greetd`)
 - Fuente:             /usr/local/share/fonts/43pr/RobotoMono-*.ttf
 - Utilidades:         /usr/local/bin/login-a-sddm | login-a-greetd | sincronizar-login
@@ -58,6 +58,38 @@ sola en el siguiente inicio de sesión.
 
 - Activar (una sola vez):  `sudo bash scripts/greeter/activar-sync-login.sh (en este repo)`
 - Respaldo manual:         `sudo sincronizar-login`
+
+## Problema: el login rechaza la contraseña correcta
+
+Síntoma: el greeter pide la contraseña y rechaza la correcta, pero esa misma
+contraseña funciona en una TTY (`Ctrl+Alt+F3`) y en la pantalla de bloqueo. En
+el journal de greetd aparece:
+
+```
+pam_unix(greetd:auth): check pass; user unknown
+greetd[...]: error: authentication error: pam_authenticate: AUTH_ERR
+```
+
+Causa: `sessions:default_user` en `/etc/hyprlogin/hyprlogin.conf` apunta a un
+usuario que no existe, normalmente porque se copió literalmente el placeholder
+`TU_USUARIO` de la plantilla. Desde la 0.3.0, hyprlogin inicia la conversación
+con greetd en cuanto conoce el usuario, así que prueba ese usuario antes de que
+puedas cambiarlo y luego sigue reintentando con el mismo. La pantalla de bloqueo
+y la TTY no se ven afectadas porque autentican al usuario ya conectado con sus
+propios servicios PAM (`hyprlock` / `login`).
+
+Solución: edita `/etc/hyprlogin/hyprlogin.conf` y pon en `default_user` tu
+usuario real, o déjalo vacío (el greeter pedirá el usuario). Después:
+
+```bash
+sudo systemctl restart greetd
+```
+
+Comprueba que greetd ya no registra `user unknown`:
+
+```bash
+journalctl -b -u greetd --no-pager
+```
 
 ## Recordatorios de uso
 - El login se sincroniza solo (ver arriba); respaldo manual: `sudo sincronizar-login`

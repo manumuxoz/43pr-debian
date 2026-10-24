@@ -60,11 +60,45 @@ sudo install -m755 build/hyprlogin /usr/bin/hyprlogin
 | `etc/pam.d/greetd` | `/etc/pam.d/greetd` | password + fingerprint (see [`fingerprint.md`](fingerprint.md)) |
 | `assets/fonts/` | `/usr/local/share/fonts/43pr/` or `~/.local/share/fonts/43pr/` | Roboto Mono for the greeter |
 
-Remember to replace `default_user = TU_USUARIO` in `hyprlogin.conf` with your
-user before installing it.
+The template leaves `sessions:default_user` empty on purpose: the greeter then
+asks for the username. If you want it prefilled, set it to your real user (the
+output of `id -un`). Never leave a nonexistent placeholder there: the greeter
+would try to authenticate that user and reject every password.
 
 **VT note:** Debian's `getty@tty7` uses the same virtual terminal as greetd,
 hence the explicit `vt = 7` and the warning in the config.
+
+## Troubleshooting: the greeter rejects the correct password
+
+Symptom: the greeter asks for a password and rejects the correct one, while the
+same password works on a TTY (`Ctrl+Alt+F3`) and on the lock screen. greetd
+logs show:
+
+```
+pam_unix(greetd:auth): check pass; user unknown
+greetd[...]: error: authentication error: pam_authenticate: AUTH_ERR
+```
+
+Cause: `sessions:default_user` in `/etc/hyprlogin/hyprlogin.conf` points to a
+user that does not exist, typically because the `TU_USUARIO` placeholder from
+the template was copied literally. Since 0.3.0, hyprlogin starts the greetd
+conversation as soon as the username is known, so it tries that user before you
+can change it and then keeps retrying the same one. The lock screen and a TTY
+are not affected because they authenticate the already logged-in user through
+their own PAM services (`hyprlock` / `login`).
+
+Fix: edit `/etc/hyprlogin/hyprlogin.conf` and either set `default_user` to your
+real user or leave it empty (the greeter will ask for the username). Then:
+
+```bash
+sudo systemctl restart greetd
+```
+
+Verify that greetd no longer logs `user unknown`:
+
+```bash
+journalctl -b -u greetd --no-pager
+```
 
 ## Theme synchronization (`/var/lib/hyprlogin`)
 
