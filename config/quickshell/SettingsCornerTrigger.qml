@@ -29,95 +29,118 @@ Item {
     property real powerMenuFrom: 0.99
     property real powerMenuTo: 1.0
 
-    PanelWindow {
-        id: hyprlockTrigger
-        visible: root.hyprlockEnabled
-        anchors { top: true; left: true }
-        implicitHeight: root.triggerHeight
-        implicitWidth: screen ? Math.round(screen.width * (root.hyprlockTo - root.hyprlockFrom)) : 0
-        margins {
-            left: screen ? Math.round(screen.width * root.hyprlockFrom) : 0
-            top: 0
-        }
-        color: root.triggerColor
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
+    // Una copia de cada zona por monitor. Variants recrea los delegates cuando
+    // cambia Quickshell.screens (monitor conectado/desconectado o reconfigurado),
+    // así los triggers no se quedan pegados al monitor con el que arrancó el shell.
+    Variants {
+        model: Quickshell.screens
 
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: Quickshell.execDetached([
-                "hyprlock"
-            ])
-        }
-    }
+        delegate: PanelWindow {
+            required property var modelData
+            screen: modelData
+            visible: root.hyprlockEnabled
+            anchors { top: true; left: true }
+            implicitHeight: root.triggerHeight
+            implicitWidth: Math.round(modelData.width * (root.hyprlockTo - root.hyprlockFrom))
+            margins {
+                left: Math.round(modelData.width * root.hyprlockFrom)
+                top: 0
+            }
+            color: root.triggerColor
+            exclusionMode: ExclusionMode.Ignore
+            WlrLayershell.layer: WlrLayer.Overlay
 
-    PanelWindow {
-        id: settingsTrigger
-        visible: root.settingsEnabled
-        anchors { top: true; left: true }
-        implicitHeight: root.triggerHeight
-        implicitWidth: screen ? Math.round(screen.width * (root.settingsTo - root.settingsFrom)) : 0
-        margins {
-            left: screen ? Math.round(screen.width * root.settingsFrom) : 0
-            top: 0
-        }
-        color: root.triggerColor
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: Quickshell.execDetached([
-                "qs", "ipc", "call", "settings", "toggle"
-            ])
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: Quickshell.execDetached([
+                    "hyprlock"
+                ])
+            }
         }
     }
 
-    PanelWindow {
-        id: wallpaperTrigger
-        visible: root.wallpaperEnabled
-        anchors { top: true; left: true }
-        implicitHeight: root.triggerHeight
-        implicitWidth: screen ? Math.round(screen.width * (root.wallpaperTo - root.wallpaperFrom)) : 0
-        margins {
-            left: screen ? Math.round(screen.width * root.wallpaperFrom) : 0
-            top: 0
-        }
-        color: root.triggerColor
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
+    Variants {
+        model: Quickshell.screens
 
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: Quickshell.execDetached([
-                "sh", "-c", "qs -n -p ~/.config/quickshell/hyprquickpaper"
-            ])
+        delegate: PanelWindow {
+            required property var modelData
+            screen: modelData
+            visible: root.settingsEnabled
+            anchors { top: true; left: true }
+            implicitHeight: root.triggerHeight
+            implicitWidth: Math.round(modelData.width * (root.settingsTo - root.settingsFrom))
+            margins {
+                left: Math.round(modelData.width * root.settingsFrom)
+                top: 0
+            }
+            color: root.triggerColor
+            exclusionMode: ExclusionMode.Ignore
+            WlrLayershell.layer: WlrLayer.Overlay
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: Quickshell.execDetached([
+                    "qs", "ipc", "call", "settings", "toggleOn", modelData.name
+                ])
+            }
         }
     }
 
-    PanelWindow {
-        id: powerMenuTrigger
-        visible: root.powerMenuEnabled
-        anchors { top: true; left: true }
-        implicitHeight: root.triggerHeight
-        implicitWidth: screen ? Math.round(screen.width * (root.powerMenuTo - root.powerMenuFrom)) : 0
-        margins {
-            left: screen ? Math.round(screen.width * root.powerMenuFrom) : 0
-            top: 0
-        }
-        color: root.triggerColor
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
+    Variants {
+        model: Quickshell.screens
 
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: Quickshell.execDetached([
-                "qs", "ipc", "call", "powermenu", "open"
-            ])
+        delegate: PanelWindow {
+            required property var modelData
+            screen: modelData
+            visible: root.wallpaperEnabled
+            anchors { top: true; left: true }
+            implicitHeight: root.triggerHeight
+            implicitWidth: Math.round(modelData.width * (root.wallpaperTo - root.wallpaperFrom))
+            margins {
+                left: Math.round(modelData.width * root.wallpaperFrom)
+                top: 0
+            }
+            color: root.triggerColor
+            exclusionMode: ExclusionMode.Ignore
+            WlrLayershell.layer: WlrLayer.Overlay
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: Quickshell.execDetached([
+                    "sh", "-c", "qs -n -p ~/.config/quickshell/hyprquickpaper"
+                ])
+            }
+        }
+    }
+
+    Variants {
+        model: Quickshell.screens
+
+        delegate: PanelWindow {
+            required property var modelData
+            screen: modelData
+            visible: root.powerMenuEnabled
+            anchors { top: true; left: true }
+            implicitHeight: root.triggerHeight
+            implicitWidth: Math.round(modelData.width * (root.powerMenuTo - root.powerMenuFrom))
+            margins {
+                left: Math.round(modelData.width * root.powerMenuFrom)
+                top: 0
+            }
+            color: root.triggerColor
+            exclusionMode: ExclusionMode.Ignore
+            WlrLayershell.layer: WlrLayer.Overlay
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: Quickshell.execDetached([
+                    "qs", "ipc", "call", "powermenu", "open"
+                ])
+            }
         }
     }
 }

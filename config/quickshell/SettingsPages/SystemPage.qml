@@ -5,6 +5,9 @@ import "../"
 Item {
     id: page
 
+    // SettingsWindow pauses the periodic samplers while the panel is closed.
+    property bool live: true
+
     property string homeDir: ""
     property string uptime: "..."
     property string os: "..."
@@ -623,7 +626,8 @@ Item {
 
     Timer {
         interval: 1000
-        running: true
+        running: page.live
+        triggeredOnStart: true
         repeat: true
         onTriggered: {
             page.updateClock()
@@ -637,7 +641,8 @@ Item {
 
     Timer {
         interval: 2000
-        running: true
+        running: page.live
+        triggeredOnStart: true
         repeat: true
         onTriggered: {
             pMemory.running = true
@@ -649,7 +654,8 @@ Item {
 
     Timer {
         interval: 5000
-        running: true
+        running: page.live
+        triggeredOnStart: true
         repeat: true
         onTriggered: {
             pUptime.running = true
