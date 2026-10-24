@@ -96,7 +96,7 @@ fi
 # Generated at install time (theme.py recreates them) or per-user state.
 is_generated() {
     case "$1" in
-        config/hypr/hyprlock-colors.conf|config/waybar/colors.css|config/wlogout/colors.css|config/wofi/style.css|config/kitty/matugen.conf|config/quickshell/state/*)
+        config/hypr/colors.lua|config/hypr/hyprlock-colors.conf|config/waybar/colors.css|config/wlogout/colors.css|config/wofi/style.css|config/kitty/matugen.conf|config/quickshell/state/*)
             return 0 ;;
         *) return 1 ;;
     esac

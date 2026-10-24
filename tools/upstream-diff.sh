@@ -98,8 +98,8 @@ fi
 cat <<'EOF'
 
 Notes:
-  - Generated files (waybar/colors.css, hyprlock-colors.conf, wofi/style.css,
-    kitty/matugen.conf, wlogout/colors.css) are not committed
+  - Generated files (waybar/colors.css, hypr/colors.lua, hyprlock-colors.conf,
+    wofi/style.css, kitty/matugen.conf, wlogout/colors.css) are not committed
     here and will always show as missing; theme.py apply regenerates them.
   - Divergences are expected: this port adds Waybar, adapts monitors/keybinds
     and adds the Debian-specific hooks.

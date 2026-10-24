@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `SUPER+ALT+Tab` focuses the previously active window, mirroring the
+  `SUPER+Tab` previous-workspace toggle. It uses Hyprland's
+  `focuscurrentorlast` dispatcher, so pressing it again returns to the window
+  you came from.
+- Hyprland window borders now follow the active 43PR theme. `theme.py` renders
+  `~/.config/hypr/colors.lua` from the palette (`accent` for active windows,
+  `bg_hover` for inactive ones) and reloads Hyprland; `look.lua` keeps a neutral
+  fallback when the generated file is missing.
+
 ### Changed
 
 - `config/hypr/monitors.lua` is now user-owned: `update.sh` no longer

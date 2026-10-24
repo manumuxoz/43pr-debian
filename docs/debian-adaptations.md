@@ -129,6 +129,9 @@ source change stacks extra bars on the external output (upstream #3344 and
 #4336). btop 1.3.2 is compatible with the generated theme
 (`color_theme = "43pr"` in `~/.config/btop/btop.conf`); cava's target stays
 disabled because Debian 13 ships cava 0.10.4, which lacks `theme =` support.
+Hyprland borders are generated too: `theme.py` writes `hypr/colors.lua` with the
+theme's `accent` and `bg_hover` colours, and `look.lua` reads it with a neutral
+fallback before setting `border_size = 1`.
 
 ## 16. Editors: xdg-open instead of xed
 

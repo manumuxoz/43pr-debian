@@ -4,7 +4,7 @@
 - **Config**: `~/.config/hypr/keybinds.lua`
 - **Recargar tras editar**: `hyprctl reload`
 - **Layout de teclado**: `es` (afecta a los binds de teclas especiales, ver **Notas**)
-- **Total**: 85 binds activos
+- **Total**: 86 binds activos
 
 > Algunas filas agrupan varios binds (los rangos 1–9 / 0 de workspaces).
 
@@ -164,6 +164,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar y la esquina superior derecha (hot corner) abren este mismo menú; wlogout sigue en `SUPER + ºª` |
 | `SUPER + SHIFT + Tab` | Bloquear la pantalla — hyprlock |
 | `SUPER + Tab` | Alternar entre el escritorio actual y el anterior utilizado |
+| `SUPER + ALT + Tab` | Alternar entre la ventana actual y la anterior (equivale a `focuscurrentorlast`) |
 | `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
 | Clic en la campana de Waybar | Abre el panel de notificaciones de Quickshell; clic derecho activa/desactiva No Molestar; clic central limpia el historial |

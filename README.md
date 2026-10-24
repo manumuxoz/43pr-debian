@@ -166,10 +166,11 @@ uninstall.sh restores the pre-install configuration
 CHANGELOG.md release notes
 ```
 
-Files generated at install time (`hyprlock-colors.conf`, `waybar/colors.css`,
-`wlogout/colors.css`, `wofi/style.css`, `kitty/matugen.conf`,
-`btop/themes/43pr.theme`) are **not** committed; `theme.py apply` recreates
-them. cava's theme target stays disabled until Debian ships cava >= 0.10.5.
+Files generated at install time (`hypr/colors.lua`, `hyprlock-colors.conf`,
+`waybar/colors.css`, `wlogout/colors.css`, `wofi/style.css`,
+`kitty/matugen.conf`, `btop/themes/43pr.theme`) are **not** committed;
+`theme.py apply` recreates them. cava's theme target stays disabled until
+Debian ships cava >= 0.10.5.
 
 ## Credits and license
 

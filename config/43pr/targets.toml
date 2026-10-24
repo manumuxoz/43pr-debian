@@ -38,3 +38,9 @@ reload = ["pkill", "-USR2", "-x", "btop"]
 [wofi]
 input  = "~/.config/43pr/templates/wofi-style.css"
 output = "~/.config/wofi/style.css"
+# Bordes de ventana de Hyprland con los colores del tema. look.lua lee este
+# archivo con un fallback neutro; el reload aplica el cambio sin reiniciar.
+[hypr]
+input  = "~/.config/43pr/templates/hypr-colors.lua"
+output = "~/.config/hypr/colors.lua"
+reload = ["hyprctl", "reload"]

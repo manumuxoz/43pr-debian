@@ -140,7 +140,7 @@ else
     fail "no existe $theme_py"
 fi
 
-for rel in waybar/colors.css wlogout/colors.css wofi/style.css hypr/hyprlock-colors.conf; do
+for rel in waybar/colors.css wlogout/colors.css wofi/style.css hypr/colors.lua hypr/hyprlock-colors.conf; do
     if [ -s "$HOME/.config/$rel" ]; then
         pass "generado: ~/.config/$rel"
     else
