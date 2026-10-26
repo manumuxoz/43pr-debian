@@ -56,9 +56,28 @@ hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x
 -- Screenshot monitor with focus (SUPER+Supr; wrapper en scripts/screenshot.sh)
 hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh"),
         { description = "Screenshot: focused monitor" })
--- Screenshot area select (SUPER+SHIFT+Supr)
-hl.bind(mainMod .. " + SHIFT + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh area"),
-        { description = "Screenshot: select area" })
+-- Screenshot area select (Fn+F11 del ASUS: "Asus WMI hotkeys" emite
+-- KEY_SELECTIVE_SCREENSHOT, que xkb traduce a XF86SelectiveScreenshot).
+-- El firmware también envía la macro Super+Shift+S; se marca la pulsación
+-- para que el atajo de scratchpad no mueva la ventana (ver más abajo).
+local fn_f11_active = false
+local fn_f11_timer = nil
+local function mark_fn_f11()
+    fn_f11_active = true
+    if fn_f11_timer ~= nil then
+        fn_f11_timer:set_enabled(false)
+    end
+    fn_f11_timer = hl.timer(function()
+        fn_f11_active = false
+        fn_f11_timer = nil
+    end, { timeout = 300, type = "oneshot" })
+end
+
+-- ignore_mods: la tecla debe capturar aunque el firmware mantenga Super/Shift.
+hl.bind("XF86SelectiveScreenshot", function()
+    mark_fn_f11()
+    hl.dispatch(hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh area"))
+end, { description = "Screenshot: select area", ignore_mods = true })
 
 hl.bind(mainMod .. " + CTRL + Delete", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screenshot.sh annotate"),
         { description = "Screenshot: annotate area" }) -- Captura de area + anotar (swappy)
@@ -150,7 +169,14 @@ end
 
 -- Scratchpad (workspace especial "scratch")
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("scratch"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:scratch" }))
+hl.bind(mainMod .. " + SHIFT + S", function()
+    -- Fn+F11 emite Super+Shift+S (macro del firmware) antes del keysym de
+    -- captura; se espera un instante y se descarta si viene de esa tecla.
+    hl.timer(function()
+        if fn_f11_active then return end
+        hl.dispatch(hl.dsp.window.move({ workspace = "special:scratch" }))
+    end, { timeout = 80, type = "oneshot" })
+end)
 
 -- Color picker y luz nocturna
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("hyprpicker -a"))

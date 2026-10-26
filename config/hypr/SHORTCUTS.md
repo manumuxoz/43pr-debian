@@ -41,7 +41,7 @@
 | `SUPER + CTRL + K` | Redimensionar: −40 px en vertical (repetible) |
 | `SUPER + CTRL + J` | Redimensionar: +40 px en vertical (repetible) |
 | `SUPER + S` | Alternar el scratchpad — workspace especial `scratch` (toggle) |
-| `SUPER + SHIFT + S` | Mover la ventana activa al scratchpad (`special:scratch`) |
+| `SUPER + SHIFT + S` | Mover la ventana activa al scratchpad (`special:scratch`); la macro que emite `Fn+F11` se descarta y no mueve la ventana |
 
 > **Snap de ventanas** activado (`look.lua`, `general.snap`): al mover una
 > ventana se ajusta a las demás y a los bordes del monitor (window_gap 4,
@@ -128,7 +128,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | Atajo | Acción |
 | --- | --- |
 | `SUPER + Supr (Delete)` | Captura del **monitor con el foco** (`grim -o`) → `~/Imágenes/Capturas de pantalla/<fecha-hora>.png`; copia al portapapeles (`wl-copy`) y notificación OSD (`qs ipc call screenshot notify`, tolerante a fallos); wrapper `~/.config/hypr/scripts/screenshot.sh` |
-| `SUPER + SHIFT + Supr (Delete)` | Captura de **área**: selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación); `Esc` cancela sin guardar; wrapper `~/.config/hypr/scripts/screenshot.sh area` |
+| `Fn + F11` (ASUS) | Captura de **área**: la tecla de captura del portátil emite `KEY_SELECTIVE_SCREENSHOT` (`Asus WMI hotkeys`) → `XF86SelectiveScreenshot`; funciona aunque queden Super/Shift pulsados (`ignore_mods`). El firmware también envía `Super+Shift+S`, que se ignora para no mover la ventana al scratchpad; selección con `slurp` + `grim -g` → mismo flujo (archivo, portapapeles, notificación); `Esc` cancela sin guardar; wrapper `~/.config/hypr/scripts/screenshot.sh area` |
 | `SUPER + CTRL + Supr (Delete)` | Captura de área + anotación: `slurp` + `grim` a un temporal y editor **swappy** (flechas, texto, difuminado); `Ctrl+S` guarda en `~/Imágenes/Capturas de pantalla/` y `Ctrl+C` copia al portapapeles; wrapper `screenshot.sh annotate` |
 | `SUPER + R` | Grabar/parar con wf-recorder (monitor con el foco, audio por defecto) → `~/Vídeos/Grabaciones de la pantalla/rec-<fecha-hora>.mp4` (carpeta XDG de vídeos, la misma que usaba GNOME); wrapper `~/.local/bin/screen-record.sh` con PID en `/tmp/osu-rec.pid`; al parar espera a finalizar el MP4 antes de notificar. Mientras grabas se muestra un indicador REC arriba a la derecha (`RecorderOSD.qml`) |
 

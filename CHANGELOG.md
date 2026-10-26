@@ -37,6 +37,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Area screenshot now uses the laptop's dedicated capture key (`Fn+F11`,
+  `KEY_SELECTIVE_SCREENSHOT` → `XF86SelectiveScreenshot`) instead of
+  `SUPER+SHIFT+Delete`. The bind ignores held modifiers (`ignore_mods`) so it
+  also works if Super/Shift are still pressed. The key's firmware also emits a
+  `Super+Shift+S` macro; that synthetic press is ignored so it no longer moves
+  the window to the scratchpad, while a real `SUPER+SHIFT+S` still works. The
+  annotate variant stays on `SUPER+CTRL+Delete`.
 - Hyprland window borders are disabled (`border_size = 0`): windows are
   separated only by gaps, with rounding and shadows still marking their edges.
   The generated border colours stay available for anyone re-enabling borders in
