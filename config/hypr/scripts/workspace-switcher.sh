@@ -43,7 +43,7 @@ menu=$(jq -rn --slurpfile ws "$ws_file" --slurpfile cl "$cl_file" '
 if [ -n "${WS_SWITCH_SELECT:-}" ]; then
     sel="$WS_SWITCH_SELECT"        # modo test: selección inyectada
 else
-    sel=$(printf '%s\n' "$menu" | wofi --dmenu --prompt "Escritorio…" --width 640 --sort-order alphabetical) || exit 0
+    sel=$(printf '%s\n' "$menu" | wofi --dmenu --width 640 --sort-order alphabetical) || exit 0
 fi
 [ -n "$sel" ] || exit 0
 
