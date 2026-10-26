@@ -51,6 +51,7 @@ Captures from the author's real desktop.
 | Widgets | Quickshell: media OSD (volume + media, any MPRIS player), notification panel, brightness/screenshot/recorder OSDs, todo list, power menu, settings window, wallpaper picker (`hyprquickpaper`) |
 | Theme engine | `~/.config/43pr/bin/theme.py` — palettes, wallpapers, matugen (optional), greeter sync |
 | Launchers / UI | wofi, wlogout, kitty (dunst is kept only as a fallback) |
+| fastfetch | Animated Debian ASCII header when kitty starts; see [`scripts/debian-ascii/`](scripts/debian-ascii/README.md) |
 | Camera | `scripts/camera.sh` — V4L2 webcam: floating mpv preview (`SUPER+C`), photo (`s`) and recording (`r`) from inside the window |
 | Login screen | **hyprlogin** (greetd greeter forked from hyprlock) + theme sync + fingerprint PAM |
 | Patches | hyprlogin unlock-race fix, libfprint EGIS/`egismoc` build fix |

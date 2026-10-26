@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Animated Debian ASCII header for fastfetch/kitty (`scripts/debian-ascii/`):
+  fixed 22×13 logo, live scanline, fixed system info beside it; it pauses when
+  a command runs and scrolls away with the output. The 30×18 and 44×26 arts are
+  available with `--art`.
 - Settings → System now has a **CPU MODE** selector (Power Saver / Balanced /
   Performance) that writes the ACPI `platform_profile` directly, bypassing
   `power-profiles-daemon`. Available modes are read from the kernel, the

@@ -52,6 +52,7 @@ Capturas del escritorio real del autor.
 | Widgets | Quickshell: OSD de medios (volumen + media, cualquier reproductor MPRIS), panel de notificaciones, OSDs de brillo/captura/grabación, lista de tareas, menú de energía, ventana de ajustes, selector de fondos (`hyprquickpaper`) |
 | Motor de temas | `~/.config/43pr/bin/theme.py` — paletas, fondos, matugen (opcional), sincronización con el login |
 | Lanzadores / UI | wofi, wlogout, kitty (dunst se mantiene solo como respaldo) |
+| fastfetch | Cabecera Debian ASCII animada al abrir kitty; ver [`scripts/debian-ascii/`](scripts/debian-ascii/README.md) |
 | Cámara | `scripts/camera.sh` — webcam por V4L2: vista previa flotante con mpv (`SUPER+C`), foto (`s`) y grabación (`r`) desde la propia ventana |
 | Pantalla de login | **hyprlogin** (greeter de greetd forkeado de hyprlock) + sincronización de tema + huella por PAM |
 | Parches | fix de carrera en el desbloqueo de hyprlogin, fix de compilación de libfprint (`egismoc`) |
