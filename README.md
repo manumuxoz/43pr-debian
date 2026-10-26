@@ -71,6 +71,10 @@ Captures from the author's real desktop.
   [in Spanish](docs/hyprlogin.es.md)).
 - **Fingerprint** (EgisTech `1c7a:0584`) with fprintd + PAM —
   [`docs/fingerprint.md`](docs/fingerprint.md).
+- **Thunar** (optional) opens kitty from "Open Terminal Here" via
+  `config/xfce4/helpers.rc`; `thunar-archive-plugin` + `ark` add
+  "Create Archive...", "Extract Here" and "Extract To..." to the context
+  menu — see [`docs/debian-adaptations.md`](docs/debian-adaptations.md).
 - GNOME is left untouched: GTK global theming is intentionally disabled.
 
 ## Install

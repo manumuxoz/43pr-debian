@@ -5,7 +5,7 @@
 # to <backup>/post-uninstall-removed/ before the backup is restored.
 set -Eeuo pipefail
 
-CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell swappy waybar wlogout wofi)
+CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell swappy waybar wlogout wofi xfce4)
 BACKUP_ROOT="$HOME/.config-backups"
 
 say()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }

@@ -227,3 +227,44 @@ right-click toggles DND and middle-click clears the history. The `dunst`
 autostart line was removed from `hyprland.lua`; `dunst` remains installed only
 as a fallback and must not run at the same time. The old wofi history script was
 removed.
+
+## 21. Thunar: kitty terminal and archive actions
+
+Thunar is optional (see `packages.txt`) but is bound to `SUPER+E` in
+`hyprland.lua`/`keybinds.lua`. Two integration details matter on a minimal
+Hyprland session:
+
+- **"Open Terminal Here" uses kitty.** Thunar 4.20 runs the default UCA
+  `exo-open --working-directory %f --launch TerminalEmulator`. exo 4.20 does
+  not use `$TERMINAL` or `x-terminal-emulator`: it reads
+  `~/.config/xfce4/helpers.rc` and falls back to `xfce4-terminal.desktop` when
+  that file (or `xfce4-mime-helper`) is missing. The repo ships
+  `config/xfce4/helpers.rc` with `TerminalEmulator=kitty`, so `install.sh` and
+  `update.sh` deploy it to `~/.config/xfce4/helpers.rc`. If `xfce4-settings`
+  (and therefore `xfce4-mime-helper`) is installed later, the value must name
+  an Xfce helper desktop file instead of a bare executable.
+- **Archive actions use Ark.** `thunar-archive-plugin` adds "Create Archive...",
+  "Extract Here" and "Extract To..." to the context menu, but it needs an
+  archive-manager backend. Ark ships
+  `/usr/libexec/thunar-archive-plugin/ark.tap`, which implements all three
+  actions (interactive creation, batch extraction with a containing folder and
+  batch extraction to a chosen directory). The repo lists it explicitly
+  because the plugin only recommends an archive manager. `7zip` and `unzip`
+  cover formats Ark delegates to command-line helpers. Ark pulls a KDE/Qt6
+  stack (around 91 packages on a minimal Hyprland install), but it handles
+  many more formats than the lighter `xarchiver`/`file-roller` alternatives;
+  mixing backends can make the plugin ask which manager to use. Restart Thunar
+  (`thunar -q`) after installing the plugin if it was already running.
+
+  To make Ark the default handler for archive types:
+
+  ```bash
+  for mime in application/zip application/x-7z-compressed \
+              application/x-compressed-tar application/x-tar; do
+      xdg-mime default org.kde.ark.desktop "$mime"
+  done
+  ```
+
+The archive plugin only acts on a selection: right-click a file or folder, not
+the empty background. "Extract Here" creates a containing folder and may
+overwrite existing files; "Extract To..." opens the extraction dialog.

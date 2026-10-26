@@ -72,6 +72,10 @@ Capturas del escritorio real del autor.
   [en inglés](docs/hyprlogin.md)).
 - **Huella** (EgisTech `1c7a:0584`) con fprintd + PAM —
   [`docs/fingerprint.md`](docs/fingerprint.md).
+- **Thunar** (opcional) abre kitty en «Abrir terminal aquí» mediante
+  `config/xfce4/helpers.rc`; `thunar-archive-plugin` + `ark` añaden
+  «Crear archivador…», «Extraer aquí» y «Extraer en…» al menú contextual —
+  ver [`docs/debian-adaptations.md`](docs/debian-adaptations.md).
 - GNOME no se toca: el theming global de GTK queda desactivado a propósito.
 
 ## Instalación

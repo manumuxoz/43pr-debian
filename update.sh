@@ -28,8 +28,8 @@ PACKAGES=(
     xdg-user-dirs xdg-utils
 )
 OPTIONAL_PACKAGES=(
-    thunar thunar-volman thunar-archive-plugin gvfs tumbler ffmpegthumbnailer
-    python3-pil pavucontrol blueman
+    thunar thunar-volman thunar-archive-plugin ark gvfs tumbler
+    ffmpegthumbnailer python3-pil 7zip unzip pavucontrol blueman
 )
 
 say()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }

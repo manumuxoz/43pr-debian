@@ -1,0 +1,4 @@
+# Preferred applications for exo-open. Thunar's "Open Terminal Here" action
+# calls `exo-open --launch TerminalEmulator`, and exo 4.20 reads this file.
+# Keep the value as an executable name/path, not a command line.
+TerminalEmulator=kitty

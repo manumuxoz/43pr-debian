@@ -7,14 +7,14 @@
 #     ./install.sh --dry-run
 #
 # It only touches your HOME:
-#   ~/.config/{43pr,dunst,hypr,kitty,matugen,quickshell,waybar,wlogout,wofi}
+#   ~/.config/{43pr,dunst,hypr,kitty,matugen,quickshell,swappy,waybar,wlogout,wofi,xfce4}
 #   ~/.local/bin/{awww,screen-record.sh}
 #   ~/.local/share/fonts/43pr/
 # Existing directories are backed up first under ~/.config-backups/43pr-debian-<date>/.
 set -Eeuo pipefail
 
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell swappy waybar wlogout wofi)
+CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell swappy waybar wlogout wofi xfce4)
 STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 BACKUP="$HOME/.config-backups/43pr-debian-$STAMP"
 

@@ -17,6 +17,10 @@
 | `SUPER + E` | Gestor de archivos — thunar |
 | `SUPER + B` | Navegador — firefox |
 
+> Thunar usa kitty en «Abrir terminal aquí» (`~/.config/xfce4/helpers.rc`) y,
+> con `thunar-archive-plugin` + `ark`, muestra «Crear archivador…»,
+> «Extraer aquí» y «Extraer en…» al seleccionar archivos o carpetas.
+
 ## Ventanas
 
 | Atajo | Acción |

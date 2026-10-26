@@ -48,10 +48,14 @@ sudo apt install \
 # ---------------------------------------------------------------------------
 # Optional file manager / thumbnails (SUPER+E and the Thunar dialog rules)
 # ---------------------------------------------------------------------------
+# thunar-archive-plugin adds "Create Archive...", "Extract Here" and
+# "Extract To..." to Thunar's context menu; ark is the archive manager
+# backend that implements those actions (the plugin only recommends it).
+# 7zip/unzip cover formats Ark delegates to command-line helpers.
 # python3-pil: fallback for the lock/login wallpaper and hyprquickpaper when
 # ImageMagick is not installed.
-sudo apt install thunar thunar-volman thunar-archive-plugin gvfs tumbler \
-  ffmpegthumbnailer python3-pil
+sudo apt install thunar thunar-volman thunar-archive-plugin ark \
+  gvfs tumbler ffmpegthumbnailer python3-pil 7zip unzip
 
 # ---------------------------------------------------------------------------
 # Login / fingerprint (trixie stable)

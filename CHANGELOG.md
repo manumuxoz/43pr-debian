@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`accent` at 50% for the active window and 25% for inactive ones) and reloads
   Hyprland; `look.lua` keeps a neutral fallback when the generated file is
   missing.
+- Thunar's "Open Terminal Here" action now launches `kitty` through the
+  repo-managed `~/.config/xfce4/helpers.rc` (`TerminalEmulator=kitty`).
+  `install.sh`/`uninstall.sh` deploy and restore the new `xfce4` config
+  directory; `update.sh` picks it up automatically.
+- `ark` (plus `7zip` and `unzip`) is now listed explicitly as the archive
+  backend for `thunar-archive-plugin`, so a fresh install offers "Create
+  Archive...", "Extract Here" and "Extract To..." in Thunar's context menu.
 
 ### Changed
 

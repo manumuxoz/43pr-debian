@@ -242,8 +242,9 @@ else
     fail "faltan paquetes: ${missing[*]}"
 fi
 
-optional=(imagemagick thunar thunar-volman thunar-archive-plugin gvfs tumbler \
-          ffmpegthumbnailer python3-pil pavucontrol blueman)
+optional=(imagemagick thunar thunar-volman thunar-archive-plugin ark \
+          gvfs tumbler ffmpegthumbnailer python3-pil 7zip unzip \
+          pavucontrol blueman)
 opt_missing=()
 for pkg in "${optional[@]}"; do
     if ! dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed"; then
