@@ -46,16 +46,27 @@ sudo apt install \
   xdg-user-dirs xdg-utils
 
 # ---------------------------------------------------------------------------
-# Optional file manager / thumbnails (SUPER+E and the Thunar dialog rules)
+# File manager / thumbnails / Ranger (SUPER+E and the Thunar dialog rules)
 # ---------------------------------------------------------------------------
-# thunar-archive-plugin adds "Create Archive...", "Extract Here" and
-# "Extract To..." to Thunar's context menu; ark is the archive manager
-# backend that implements those actions (the plugin only recommends it).
-# 7zip/unzip cover formats Ark delegates to command-line helpers.
+# Thunar is the default file manager (SUPER+E). This pack adds volume
+# management, archive integration, media tags and extra thumbnailers.
+# thunar-archive-plugin provides "Comprimir...", "Extract Here" and
+# "Extract To..."; File Roller is the archive backend (Ark is not needed).
+# tumbler + tumbler-plugins-extra generate local thumbnails (100 MiB limit).
+# catfish + plocate provide fast file search; gvfs-fuse exposes GVFS mounts
+# to Ranger under /run/user/1000/gvfs.
+# ranger is the optional TUI companion (SUPER+ALT+E), configured by install.sh.
+# 7zip/unzip cover archive formats.
 # python3-pil: fallback for the lock/login wallpaper and hyprquickpaper when
 # ImageMagick is not installed.
-sudo apt install thunar thunar-volman thunar-archive-plugin ark \
-  gvfs tumbler ffmpegthumbnailer python3-pil 7zip unzip
+sudo apt install thunar thunar-volman thunar-archive-plugin \
+  thunar-media-tags-plugin tumbler tumbler-plugins-extra \
+  file-roller catfish plocate gvfs gvfs-fuse \
+  ffmpegthumbnailer python3-pil 7zip unzip
+
+# Ranger is optional; --no-install-recommends avoids pulling w3m/w3m-img
+# (the kitty image protocol is used instead of the X11 preview helpers).
+sudo apt install --no-install-recommends ranger file less python3-chardet python3-pil
 
 # ---------------------------------------------------------------------------
 # Login / fingerprint (trixie stable)

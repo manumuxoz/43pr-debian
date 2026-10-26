@@ -228,43 +228,41 @@ autostart line was removed from `hyprland.lua`; `dunst` remains installed only
 as a fallback and must not run at the same time. The old wofi history script was
 removed.
 
-## 21. Thunar: kitty terminal and archive actions
+## 21. Thunar: file manager, kitty, Ranger and archive actions
 
-Thunar is optional (see `packages.txt`) but is bound to `SUPER+E` in
-`hyprland.lua`/`keybinds.lua`. Two integration details matter on a minimal
-Hyprland session:
+Thunar is the default file manager (`SUPER+E`) and Ranger is its optional TUI
+companion (`SUPER+ALT+E`). Nautilus is not installed. The integration lives in
+the repo, not in ad-hoc scripts:
 
-- **"Open Terminal Here" uses kitty.** Thunar 4.20 runs the default UCA
-  `exo-open --working-directory %f --launch TerminalEmulator`. exo 4.20 does
-  not use `$TERMINAL` or `x-terminal-emulator`: it reads
-  `~/.config/xfce4/helpers.rc` and falls back to `xfce4-terminal.desktop` when
-  that file (or `xfce4-mime-helper`) is missing. The repo ships
-  `config/xfce4/helpers.rc` with `TerminalEmulator=kitty`, so `install.sh` and
-  `update.sh` deploy it to `~/.config/xfce4/helpers.rc`. If `xfce4-settings`
-  (and therefore `xfce4-mime-helper`) is installed later, the value must name
-  an Xfce helper desktop file instead of a bare executable.
-- **Archive actions use Ark.** `thunar-archive-plugin` adds "Create Archive...",
-  "Extract Here" and "Extract To..." to the context menu, but it needs an
-  archive-manager backend. Ark ships
-  `/usr/libexec/thunar-archive-plugin/ark.tap`, which implements all three
-  actions (interactive creation, batch extraction with a containing folder and
-  batch extraction to a chosen directory). The repo lists it explicitly
-  because the plugin only recommends an archive manager. `7zip` and `unzip`
-  cover formats Ark delegates to command-line helpers. Ark pulls a KDE/Qt6
-  stack (around 91 packages on a minimal Hyprland install), but it handles
-  many more formats than the lighter `xarchiver`/`file-roller` alternatives;
-  mixing backends can make the plugin ask which manager to use. Restart Thunar
-  (`thunar -q`) after installing the plugin if it was already running.
-
-  To make Ark the default handler for archive types:
-
-  ```bash
-  for mime in application/zip application/x-7z-compressed \
-              application/x-compressed-tar application/x-tar; do
-      xdg-mime default org.kde.ark.desktop "$mime"
-  done
-  ```
-
-The archive plugin only acts on a selection: right-click a file or folder, not
-the empty background. "Extract Here" creates a containing folder and may
-overwrite existing files; "Extract To..." opens the extraction dialog.
+- **Custom actions:** `config/Thunar/uca.xml` is copied by `install.sh` to
+  `~/.config/Thunar/uca.xml`. It defines:
+  - **Abrir terminal aquí** — opens kitty in the selected folder, or in the
+    parent folder when a file is selected; from the background it uses the
+    current folder.
+  - **Abrir Ranger aquí** — same folder logic, but starts Ranger in kitty; when
+    a file is selected it passes `--selectfile` so Ranger highlights it.
+  Thunar runs UCA commands through `/bin/sh -c` and quotes `%f`/`%d`; `%d` is
+  the parent directory of the first selected item, not the current folder.
+  Review `uca.xml` as code before extending it.
+- **exo/Thunar helper:** `config/xfce4/helpers.rc` keeps
+  `TerminalEmulator=kitty` for exo-based helpers. The UCA actions call kitty
+  directly, so they do not depend on `xfce4-terminal`.
+- **Archive actions use File Roller.** `thunar-archive-plugin` adds
+  "Comprimir...", "Extract Here" and "Extract To..."; File Roller implements
+  the backend. `7zip` and `unzip` cover additional formats. Ark is not needed
+  and is not installed. File Roller still depends on
+  `libnautilus-extension4`; that library is kept even though Nautilus is gone.
+  The Spanish "Comprimir..." label is a local `.mo` translation override on
+  this machine; a package upgrade may restore the upstream "Crear archivador"
+  wording, and `install.sh` does not modify `/usr`.
+- **Ranger:** `config/ranger/{rc.conf,rifle.conf,scope.sh}` is copied by
+  `install.sh`, with `700`/`600` permissions. Previews use the kitty graphics
+  protocol for images, PDF and video (25 MiB limit); `gio trash` shares
+  Thunar's FreeDesktop trash. `gN` opens the current directory in Thunar and
+  `gF` opens Thunar with the highlighted file selected.
+- **Window rules:** `rules.lua` floats Thunar's modal dialogs and auxiliary
+  windows, while leaving the main `carpeta - Thunar` window tiled.
+- **Archive plugin scope:** it only acts on a selection, not the empty
+  background. "Extract Here" creates a containing folder and may overwrite
+  existing files; "Extract To..." opens the extraction dialog. Restart Thunar
+  (`thunar -q`) after changing the plugin or its translations.

@@ -1,4 +1,5 @@
-# Preferred applications for exo-open. Thunar's "Open Terminal Here" action
-# calls `exo-open --launch TerminalEmulator`, and exo 4.20 reads this file.
-# Keep the value as an executable name/path, not a command line.
+# Preferred applications for exo-open. Thunar/exo read this file for
+# TerminalEmulator (for example, exo-open --launch TerminalEmulator).
+# The repo's UCA actions call kitty directly, but this keeps other Thunar/Xfce
+# helpers consistent. Keep the value as an executable name/path, not a command.
 TerminalEmulator=kitty

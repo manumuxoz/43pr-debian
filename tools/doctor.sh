@@ -242,8 +242,10 @@ else
     fail "faltan paquetes: ${missing[*]}"
 fi
 
-optional=(imagemagick thunar thunar-volman thunar-archive-plugin ark \
-          gvfs tumbler ffmpegthumbnailer python3-pil 7zip unzip \
+optional=(imagemagick thunar thunar-volman thunar-archive-plugin \
+          thunar-media-tags-plugin tumbler tumbler-plugins-extra \
+          file-roller catfish plocate gvfs gvfs-fuse \
+          ffmpegthumbnailer python3-pil 7zip unzip ranger \
           pavucontrol blueman)
 opt_missing=()
 for pkg in "${optional[@]}"; do

@@ -27,13 +27,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`accent` at 50% for the active window and 25% for inactive ones) and reloads
   Hyprland; `look.lua` keeps a neutral fallback when the generated file is
   missing.
-- Thunar's "Open Terminal Here" action now launches `kitty` through the
-  repo-managed `~/.config/xfce4/helpers.rc` (`TerminalEmulator=kitty`).
-  `install.sh`/`uninstall.sh` deploy and restore the new `xfce4` config
-  directory; `update.sh` picks it up automatically.
-- `ark` (plus `7zip` and `unzip`) is now listed explicitly as the archive
-  backend for `thunar-archive-plugin`, so a fresh install offers "Create
-  Archive...", "Extract Here" and "Extract To..." in Thunar's context menu.
+- Thunar is the default file manager (`SUPER+E`). The repo now deploys
+  `config/Thunar/uca.xml` with "Abrir terminal aquí" and "Abrir Ranger aquí"
+  actions; both call `kitty` directly. `install.sh`/`uninstall.sh` include the
+  new `Thunar` config directory and `update.sh` picks it up automatically.
+- Ranger is an optional TUI companion (`SUPER+ALT+E`). `config/ranger/`
+  contains the reviewed `rc.conf`, `rifle.conf` and `scope.sh`, with kitty
+  image/PDF/video previews, a 25 MiB preview limit, `gio trash` integration
+  and `gN`/`gF` mappings that open Thunar.
+- `file-roller` (plus `7zip` and `unzip`) is now listed explicitly as the
+  archive backend for `thunar-archive-plugin`, so a fresh install offers
+  "Comprimir...", "Extract Here" and "Extract To..." in Thunar's context menu.
+  Ark and the KDE dependency stack are no longer needed.
 
 ### Changed
 
@@ -56,6 +61,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The animated Debian header now adapts to small terminal windows instead of
+  clipping the fastfetch info or falling back to the oversized default
+  fastfetch layout. Narrow windows use a compact structure (title, OS, kernel,
+  WM, memory, shell); windows below 62×24 get a static compact fastfetch with
+  no logo or boxes.
 - The external ASUS VW199 no longer stays powered on with a black screen. The
   repo preset forced `1920x1080@120`, a mode the EDID does not advertise;
   Hyprland accepted it and the panel could not display it. The default is now

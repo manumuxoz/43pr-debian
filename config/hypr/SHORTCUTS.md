@@ -4,7 +4,7 @@
 - **Config**: `~/.config/hypr/keybinds.lua`
 - **Recargar tras editar**: `hyprctl reload`
 - **Layout de teclado**: `es` (afecta a los binds de teclas especiales, ver **Notas**)
-- **Total**: 86 binds activos
+- **Total**: 87 binds activos
 
 > Algunas filas agrupan varios binds (los rangos 1–9 / 0 de workspaces).
 
@@ -14,12 +14,19 @@
 | --- | --- |
 | `SUPER + T` | Terminal — kitty |
 | `SUPER + D` | Menú de aplicaciones — wofi `--show drun` (si wofi ya está abierto, lo cierra) |
-| `SUPER + E` | Gestor de archivos — thunar |
+| `SUPER + E` | Gestor de archivos — Thunar |
+| `SUPER + ALT + E` | Ranger (TUI) en kitty — complemento de Thunar |
 | `SUPER + B` | Navegador — firefox |
 
-> Thunar usa kitty en «Abrir terminal aquí» (`~/.config/xfce4/helpers.rc`) y,
-> con `thunar-archive-plugin` + `ark`, muestra «Crear archivador…»,
-> «Extraer aquí» y «Extraer en…» al seleccionar archivos o carpetas.
+> Thunar usa kitty en «Abrir terminal aquí» y «Abrir Ranger aquí» (acciones
+> UCA en `~/.config/Thunar/uca.xml`). `thunar-archive-plugin` + File Roller
+> muestran «Comprimir…», «Extraer aquí» y «Extraer en…» al seleccionar archivos.
+> Atajos útiles de Thunar: `F3` panel dividido, `Ctrl+L` barra de ruta,
+> `Ctrl+H` ocultos, `Ctrl+T` pestaña, `Ctrl+Shift+N` carpeta nueva,
+> `Ctrl+F` búsqueda y `Delete` papelera.
+> En Ranger, `gN` abre el directorio actual en Thunar y `gF` abre Thunar
+> seleccionando el archivo resaltado. `dT`/`F8` envían a la papelera;
+> `dD` borra permanentemente.
 
 ## Ventanas
 

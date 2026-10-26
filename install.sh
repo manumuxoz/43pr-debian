@@ -7,14 +7,14 @@
 #     ./install.sh --dry-run
 #
 # It only touches your HOME:
-#   ~/.config/{43pr,dunst,hypr,kitty,matugen,quickshell,swappy,waybar,wlogout,wofi,xfce4}
+#   ~/.config/{43pr,dunst,hypr,kitty,matugen,quickshell,ranger,swappy,Thunar,waybar,wlogout,wofi,xfce4}
 #   ~/.local/bin/{awww,screen-record.sh}
 #   ~/.local/share/fonts/43pr/
 # Existing directories are backed up first under ~/.config-backups/43pr-debian-<date>/.
 set -Eeuo pipefail
 
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell swappy waybar wlogout wofi xfce4)
+CONFIG_DIRS=(43pr dunst hypr kitty matugen quickshell ranger swappy Thunar waybar wlogout wofi xfce4)
 STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 BACKUP="$HOME/.config-backups/43pr-debian-$STAMP"
 
@@ -112,6 +112,15 @@ else
         say "Kept existing ~/.config/hypr/monitors.lua (user-owned monitor layout)."
     fi
     say "Configs copied to ~/.config/"
+    # Ranger treats rc.conf/rifle.conf/scope.sh as code; keep them private.
+    if [[ -d "$HOME/.config/ranger" ]]; then
+        chmod 700 "$HOME/.config/ranger"
+        chmod 600 "$HOME/.config/ranger/rc.conf" "$HOME/.config/ranger/rifle.conf"
+        chmod 700 "$HOME/.config/ranger/scope.sh"
+    fi
+    if [[ -f "$HOME/.config/Thunar/uca.xml" ]]; then
+        chmod 600 "$HOME/.config/Thunar/uca.xml"
+    fi
     # Runtime state of the Quickshell widgets (Todo, PowerMenu, MediaOSD)
     mkdir -p "$HOME/.config/quickshell/state"
 fi

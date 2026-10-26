@@ -7,6 +7,7 @@
 mainMod    = "SUPER"
 terminal   = "kitty"
 menu       = "wofi --show drun"
+-- Thunar es el gestor principal; Ranger (SUPER+ALT+E) es el complemento TUI.
 fileManager = "thunar"
 browser    = "firefox"
 
@@ -53,6 +54,8 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 hl.env("_JAVA_AWT_WM_NONREPARENTING", "1")
 -- hl.env("GDK_SCALE", "2.5") -- En Wayland no hace falta; causaba doble escalado
 hl.env("QT_QPA_PLATFORM", "wayland")
+-- Tema Qt oscuro para utilidades Qt (qt6ct); Thunar es GTK y usa GTK_THEME.
+hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("MOZ_ENABLE_WAYLAND", "1")
 -- Tema oscuro solo para apps GTK dentro de Hyprland (GNOME no se toca)
 hl.env("GTK_THEME", "Adwaita:dark")

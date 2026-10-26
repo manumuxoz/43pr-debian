@@ -106,9 +106,17 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    name = "float-thunar-dialogs",
-    match = { class = "^(Thunar|thunar)$", title = "^(Confirm to replace files|File Operation Progress)$" },
+    name = "float-thunar-modal-dialogs",
+    match = { class = "^(thunar|Thunar|org\\.xfce\\.Thunar)$", modal = true },
     float = true,
+    center = true,
+})
+
+hl.window_rule({
+    name = "float-thunar-aux-windows",
+    match = { class = "^(thunar|Thunar|org\\.xfce\\.Thunar)$", title = "negative:.* - Thunar$" },
+    float = true,
+    center = true,
 })
 
 hl.window_rule({

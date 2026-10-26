@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+<action>
+	<icon>utilities-terminal</icon>
+	<name>Abrir terminal aquí</name>
+	<submenu></submenu>
+	<unique-id>1790782134287515-2</unique-id>
+	<command>target=%f; [ -n "$target" ] || target="$HOME"; [ -d "$target" ] || target=%d; [ -n "$target" ] || target="$HOME"; exec kitty --directory "$target"</command>
+	<description>Abre kitty en la carpeta actual o en la del archivo seleccionado</description>
+	<range></range>
+	<patterns>*</patterns>
+	<directories/>
+	<audio-files/>
+	<image-files/>
+	<other-files/>
+	<text-files/>
+	<video-files/>
+</action>
+<action>
+	<icon>utilities-terminal</icon>
+	<name>Abrir Ranger aquí</name>
+	<submenu></submenu>
+	<unique-id>1790782134287515-3</unique-id>
+	<command>file=%f; [ -n "$file" ] || file="$PWD"; if [ -d "$file" ]; then exec kitty --directory "$file" ranger; else exec kitty --directory %d ranger --selectfile="$file"; fi</command>
+	<description>Abre Ranger en la carpeta actual, en la carpeta seleccionada o en la del archivo seleccionado, con el archivo resaltado</description>
+	<range></range>
+	<patterns>*</patterns>
+	<directories/>
+	<audio-files/>
+	<image-files/>
+	<other-files/>
+	<text-files/>
+	<video-files/>
+</action>
+</actions>

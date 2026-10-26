@@ -28,8 +28,10 @@ PACKAGES=(
     xdg-user-dirs xdg-utils
 )
 OPTIONAL_PACKAGES=(
-    thunar thunar-volman thunar-archive-plugin ark gvfs tumbler
-    ffmpegthumbnailer python3-pil 7zip unzip pavucontrol blueman
+    thunar thunar-volman thunar-archive-plugin thunar-media-tags-plugin
+    tumbler tumbler-plugins-extra file-roller catfish plocate
+    gvfs gvfs-fuse ffmpegthumbnailer python3-pil 7zip unzip ranger
+    pavucontrol blueman
 )
 
 say()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
@@ -102,11 +104,11 @@ is_generated() {
     esac
 }
 
-# Per-machine layout: never overwrite it on update. Use monitor-ctl.sh to
-# change modes/scales, or create monitors.local.lua for manual overrides.
+# Per-machine layout and Xfce settings: never overwrite them on update. Use
+# monitor-ctl.sh to change modes/scales, or edit the xfconf channel directly.
 is_user_owned() {
     case "$1" in
-        config/hypr/monitors.lua|config/hypr/monitors.local.lua)
+        config/hypr/monitors.lua|config/hypr/monitors.local.lua|config/xfce4/xfconf/*)
             return 0 ;;
         *) return 1 ;;
     esac

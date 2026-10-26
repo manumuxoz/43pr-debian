@@ -9,7 +9,13 @@ local menu = "wofi --show drun"
 -- Launchers
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || " .. menu))
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+if fileManager and fileManager ~= "" then
+    hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager),
+            { description = "Gestor de archivos — Thunar" })
+end
+-- Ranger (TUI) como complemento de Thunar; abre en $HOME.
+hl.bind(mainMod .. " + ALT + E", hl.dsp.exec_cmd("kitty ranger"),
+        { description = "Ranger (TUI) en kitty" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 
