@@ -61,11 +61,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- The animated Debian header now adapts to small terminal windows instead of
-  clipping the fastfetch info or falling back to the oversized default
-  fastfetch layout. Narrow windows use a compact structure (title, OS, kernel,
-  WM, memory, shell); windows below 62×24 get a static compact fastfetch with
-  no logo or boxes.
+- The animated Debian header now only renders when the complete fastfetch
+  information fits beside the logo. In smaller terminal windows it shows
+  nothing instead of clipping the info or printing a reduced variant. Resizing
+  below the required size clears the header and stops the animation.
 - The external ASUS VW199 no longer stays powered on with a black screen. The
   repo preset forced `1920x1080@120`, a mode the EDID does not advertise;
   Hyprland accepted it and the panel could not display it. The default is now

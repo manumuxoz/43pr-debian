@@ -9,6 +9,10 @@ fijada: se pausa cuando zsh va a ejecutar un comando y sube con el scroll como
 cualquier otra línea. Por defecto usa siempre el logo pequeño de 22×13; los
 artes mayores solo se usan si se pasan con --art.
 
+La cabecera solo se dibuja si la información completa de fastfetch cabe en la
+terminal. Si no cabe, no se muestra nada; con --fallback la salida es
+silenciosa.
+
 Uso principal (lo hace ~/.zshrc):
     debian-fetch-header.py --fallback
 
@@ -55,7 +59,6 @@ DEFAULT_ART = Path(__file__).with_name("debian_small_22x13.txt")
 ART_CANDIDATES = ((DEFAULT_ART, 0),)
 DEFAULT_FPS = 12.0
 FRAMES = 31
-MIN_INFO_WIDTH = 45
 MIN_SHELL_ROWS = 10
 BASE_RGB = (168, 0, 48)  # #A80030, rojo oficial del logo Debian
 
@@ -215,7 +218,7 @@ def detect_shell() -> str | None:
     return shell or None
 
 
-def run_fastfetch(compact_cpu: bool = False) -> list[str]:
+def fastfetch_command() -> list[str]:
     cmd = ["fastfetch", "--logo-type", "none", "--pipe", "false"]
     terminal = detect_terminal()
     if terminal:
@@ -223,8 +226,11 @@ def run_fastfetch(compact_cpu: bool = False) -> list[str]:
     shell = detect_shell()
     if shell:
         cmd += ["--shell-format", shell]
-    if compact_cpu:
-        cmd += ["--cpu-format", "{name} ({cores-logical})"]
+    return cmd
+
+
+def run_fastfetch() -> list[str]:
+    cmd = fastfetch_command()
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
     except (OSError, subprocess.TimeoutExpired) as exc:
@@ -317,21 +323,24 @@ class Header:
         self.info_col = self.art_w + 3
 
     def adapt_art(self, candidates=ART_CANDIDATES) -> bool:
-        """Vuelve a aplicar el arte fijo tras un redimensionado."""
-        _rows, cols = self.get_size()
+        """Reaplica el arte fijo y comprueba si la cabecera sigue cabiendo."""
+        size = self.get_size()
+        _rows, cols = size
         for path, min_cols in candidates:
             if cols < min_cols or not path.exists():
                 continue
-            art = load_art(path)
-            probe = Header(art, self.info, self.fps, self.base_rgb, self.glitch)
-            if not probe.layout():
-                continue
-            self.set_art(art)
-            return self.layout()
+            self.set_art(load_art(path))
+            if self.fit_info(size):
+                return True
         return False
 
-    def layout(self) -> bool:
-        self.rows, self.cols = self.wait_for_size()
+    def fit_info(self, size: tuple[int, int] | None = None) -> bool:
+        """Comprueba si la información completa cabe en la terminal."""
+        rows, cols = size or self.wait_for_size()
+        return self.layout((rows, cols))
+
+    def layout(self, size: tuple[int, int] | None = None) -> bool:
+        self.rows, self.cols = size or self.wait_for_size()
         self.content_h = max(self.art_h, self.info_h)
         self.header_h = self.content_h + 1
         self.scroll_top = self.header_h + 1
@@ -341,8 +350,7 @@ class Header:
         self.ok = (
             bool(self.info)
             and self.full_info_w > 0
-            and available_info_w >= MIN_INFO_WIDTH
-            and self.cols - self.info_col + 1 >= MIN_INFO_WIDTH
+            and self.full_info_w <= available_info_w
             and self.rows - self.header_h >= MIN_SHELL_ROWS
         )
         return self.ok
@@ -437,6 +445,18 @@ class Header:
         write_tty(CURSOR_RESTORE)
         write_tty(SYNC_END)
 
+    def erase_header(self) -> None:
+        """Borra la cabecera cuando deja de caber en la terminal."""
+        self.rows, self.cols = self.get_size()
+        rows = min(max(self.header_h, self._drawn_header_h), self.rows)
+        if rows <= 0:
+            return
+        write_tty(CURSOR_SAVE + RESET)
+        write_tty(SYNC_START)
+        write_tty(self.clear_header(rows))
+        write_tty(CURSOR_RESTORE + SYNC_END)
+        self._drawn_header_h = 0
+
     def cleanup(self) -> None:
         # No se borran las filas de la cabecera: ya forma parte del scrollback.
         # `clear` y Ctrl+L limpian la pantalla completa cuando hace falta.
@@ -495,7 +515,8 @@ class Header:
                     time.sleep(0.03)
                     continue
                 if self.dirty:
-                    if not self.layout():
+                    if not self.fit_info():
+                        self.erase_header()
                         self.log("la terminal ya no tiene tamaño suficiente; se detiene")
                         break
                     self.redraw()
@@ -514,9 +535,11 @@ class Header:
                     if (rows, cols) != (self.rows, self.cols):
                         if self.art_candidates:
                             if not self.adapt_art(self.art_candidates):
+                                self.erase_header()
                                 self.log("la terminal ya no tiene tamaño suficiente; se detiene")
                                 break
-                        elif not self.layout():
+                        elif not self.fit_info():
+                            self.erase_header()
                             self.log("la terminal ya no tiene tamaño suficiente; se detiene")
                             break
                         self.redraw()
@@ -524,14 +547,6 @@ class Header:
             self.log(traceback.format_exc())
         finally:
             self.cleanup()
-
-
-def run_normal_fastfetch() -> int:
-    try:
-        return subprocess.run(["fastfetch"]).returncode
-    except OSError as exc:
-        print(f"debian-fetch: no se pudo ejecutar fastfetch: {exc}", file=sys.stderr)
-        return 1
 
 
 def signal_existing(pidfile: Path, signum: int) -> bool:
@@ -549,24 +564,27 @@ def make_header(art: list[str], info: list[str], args) -> Header:
     return Header(art, info, args.fps, args.color, not args.no_glitch)
 
 
+def build_header(art: list[str], info: list[str], args) -> Header:
+    """Crea la cabecera y comprueba si la información completa cabe."""
+    header = make_header(art, info, args)
+    header.fit_info(header.wait_for_size())
+    return header
+
+
 def select_header(info: list[str], args) -> Header | None:
-    """Usa el arte pequeño fijo (22×13)."""
+    """Usa el arte pequeño fijo (22×13). Devuelve la última cabecera probada."""
+    header = None
     for path, min_cols in ART_CANDIDATES:
         if not path.exists():
             continue
         art = load_art(path)
-        header = make_header(art, info, args)
-        _rows, cols = header.wait_for_size()
+        header = build_header(art, info, args)
+        _rows, cols = header.get_size()
         if cols < min_cols:
             continue
-        if not header.layout():
-            continue
-        if header.full_info_w > header.cols - header.info_col + 1:
-            compact = make_header(art, run_fastfetch(compact_cpu=True), args)
-            if compact.layout():
-                header = compact
-        return header
-    return None
+        if header.ok:
+            return header
+    return header
 
 
 def stop_existing(pidfile: Path) -> None:
@@ -599,7 +617,7 @@ def main() -> int:
     parser.add_argument("--fps", type=float, default=DEFAULT_FPS)
     parser.add_argument("--color", type=parse_rgb, default=BASE_RGB, help="color base R,G,B (por defecto 168,0,48)")
     parser.add_argument("--no-glitch", action="store_true", help="no cambia caracteres en la línea de barrido")
-    parser.add_argument("--fallback", action="store_true", help="si no cabe, ejecuta fastfetch normal")
+    parser.add_argument("--fallback", action="store_true", help="si no cabe, no muestra nada y sale en silencio")
     parser.add_argument("--pidfile", type=Path, default=default_pidfile())
     parser.add_argument("--log", type=Path, default=default_logfile())
     parser.add_argument("--pause", action="store_true", help="pausa la animación")
@@ -636,46 +654,30 @@ def main() -> int:
     try:
         info = run_fastfetch()
         if args.art:
-            # Arte fijo elegido a mano: no se adapta al redimensionar.
-            art = load_art(args.art)
-            header = make_header(art, info, args)
-            if not header.layout():
-                if args.fallback:
-                    return run_normal_fastfetch()
-                print(
-                    f"debian-fetch: la terminal necesita al menos "
-                    f"{header.info_col + MIN_INFO_WIDTH - 1} columnas y "
-                    f"{header.content_h + 1 + MIN_SHELL_ROWS} filas "
-                    f"(actual: {header.cols}x{header.rows}).",
-                    file=sys.stderr,
-                )
-                return 1
-            # En ventanas estrechas, quitar la frecuencia de la CPU suele
-            # bastar para que la caja de información no se recorte.
-            if header.full_info_w > header.cols - header.info_col + 1:
-                compact_header = make_header(
-                    art, run_fastfetch(compact_cpu=True), args
-                )
-                if compact_header.layout():
-                    header = compact_header
+            # Arte fijo elegido a mano: el logo no cambia al redimensionar.
+            header = build_header(load_art(args.art), info, args)
             header.art_candidates = ()
         else:
             header = select_header(info, args)
-            if header is None:
-                # No cabe ni el arte pequeño: dejar que el mensaje de error
-                # indique el tamaño mínimo y, si se pidió, usar fastfetch.
-                header = make_header(load_art(DEFAULT_ART), info, args)
-                if not header.layout():
-                    if args.fallback:
-                        return run_normal_fastfetch()
-                    print(
-                        f"debian-fetch: la terminal necesita al menos "
-                        f"{header.info_col + MIN_INFO_WIDTH - 1} columnas y "
-                        f"{header.content_h + 1 + MIN_SHELL_ROWS} filas "
-                        f"(actual: {header.cols}x{header.rows}).",
-                        file=sys.stderr,
-                    )
-                    return 1
+
+        if header is None:
+            if args.fallback:
+                return 0
+            print("debian-fetch: no se encontró el arte ASCII por defecto", file=sys.stderr)
+            return 1
+        if not header.ok:
+            # Preferencia del usuario: si el fastfetch completo no cabe, no se
+            # muestra ninguna versión reducida.
+            if args.fallback:
+                return 0
+            print(
+                f"debian-fetch: la terminal necesita al menos "
+                f"{header.info_col + header.full_info_w - 1} columnas y "
+                f"{header.content_h + 1 + MIN_SHELL_ROWS} filas "
+                f"(actual: {header.cols}x{header.rows}).",
+                file=sys.stderr,
+            )
+            return 1
 
         header.pidfile = args.pidfile
         header.logfile = args.log
@@ -695,7 +697,7 @@ def main() -> int:
             os.close(ready_w)
             header.cleanup_for_fallback()
             if args.fallback:
-                return run_normal_fastfetch()
+                return 0
             raise
 
         if pid == 0:
@@ -724,7 +726,7 @@ def main() -> int:
         if ready != b"R":
             header.cleanup_for_fallback()
             if args.fallback:
-                return run_normal_fastfetch()
+                return 0
             return 1
         try:
             args.pidfile.write_text(f"{pid}\n")
@@ -733,8 +735,12 @@ def main() -> int:
         return 0
     except Exception as exc:
         if args.fallback:
-            print(f"debian-fetch: {exc}; usando fastfetch normal", file=sys.stderr)
-            return run_normal_fastfetch()
+            try:
+                with args.log.open("a") as handle:
+                    handle.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} {exc}\n")
+            except OSError:
+                pass
+            return 0
         print(f"debian-fetch: {exc}", file=sys.stderr)
         return 1
 

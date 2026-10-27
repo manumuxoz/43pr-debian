@@ -5,7 +5,10 @@ Cabecera para kitty que combina el logo Debian en ASCII con la información de
 
 - Logo fijo de **22×13** a la izquierda, en rojo `#A80030`, con una línea de
   barrido animada.
-- Información de fastfetch a la derecha, sin volver a ejecutarlo en cada frame.
+- Información completa de fastfetch a la derecha, sin volver a ejecutarla en
+  cada frame.
+- Si la información completa no cabe, no se dibuja nada: no hay versión
+  compacta ni fastfetch de reserva.
 - El prompt y los comandos van debajo.
 - La animación se pausa al ejecutar un comando y **no** se reanuda sola.
 - La cabecera no se queda fija: al llenarse la pantalla sube con el scroll como
@@ -15,8 +18,11 @@ Cabecera para kitty que combina el logo Debian en ASCII con la información de
 
 - Debian 13 / zsh.
 - `fastfetch` y `python3`.
-- Terminal de al menos **69×26** (22 de logo + 2 de separación + 45 de info +
-  10 de shell). En kitty funciona sin configuración extra.
+- Terminal lo bastante ancha para el logo (22 columnas), 2 de separación y la
+  información completa de fastfetch, con 10 filas libres debajo. Con la
+  configuración actual son **83×26** (22 + 2 + 59 de información + 10 de
+  shell). En ventanas más pequeñas no se muestra nada, ni cabecera ni
+  fastfetch de reserva.
 - No hace falta actualizar fastfetch: la animación la gestiona el script, no
   fastfetch. La animación nativa de fastfetch (GIF/APNG en `logo.type: kitty`)
   solo existe desde la 2.69 y no es ASCII.
@@ -72,10 +78,13 @@ Opciones principales: `--art`, `--fps`, `--color R,G,B`, `--no-glitch`,
 ## Cómo funciona
 
 El script ejecuta `fastfetch --logo-type none` una vez, guarda la información y
-dibuja el logo animado en las filas superiores. El proceso de animación se
-separa en un hijo y se pausa con `SIGUSR1` cuando zsh va a ejecutar un comando.
-Al no fijar una región de scroll, la cabecera se desplaza hacia arriba con la
-salida normal de la terminal.
+dibuja el logo animado en las filas superiores. Antes de dibujar comprueba que
+la información completa cabe a la derecha del logo; si no cabe, no muestra
+nada. La opción `--fallback` (la que usa `~/.zshrc`) también silencia ese caso.
+Al redimensionar, borra la cabecera y se detiene en cuanto deja de caber.
+El proceso de animación se separa en un hijo y se pausa con `SIGUSR1` cuando
+zsh va a ejecutar un comando. Al no fijar una región de scroll, la cabecera se
+desplaza hacia arriba con la salida normal de la terminal.
 
 El PID se guarda por terminal en
 `${XDG_RUNTIME_DIR:-/tmp}/debian-fetch-header-<tty>-<uid>.pid`, así que varias
