@@ -104,6 +104,10 @@ cd 43pr-debian
 sudo bash scripts/install-cpu-profile-sudoers.sh
 ```
 
+The selected CPU MODE is saved in
+`~/.config/quickshell/state/cpu-profile.json` and re-applied when the
+Quickshell shell starts, so it survives reboots.
+
 `install.sh` copies the configs to `~/.config/`, the helper scripts to
 `~/.local/bin/`, installs Roboto Mono in `~/.local/share/fonts/43pr/`, and runs
 `theme.py apply` to generate the files that are not committed (colors, etc.).

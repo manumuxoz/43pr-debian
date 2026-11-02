@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   active one is highlighted, and the CPU badge above the graph refreshes after
   each change. Switching modes is passwordless once the narrow rule from
   `scripts/install-cpu-profile-sudoers.sh` is installed (one-time `sudo`/`pkexec`).
+  The chosen mode is saved in `~/.config/quickshell/state/cpu-profile.json` and
+  re-applied when the shell starts, so it survives reboots.
 - `SUPER+ALT+Tab` focuses the previously active window, mirroring the
   `SUPER+Tab` previous-workspace toggle. It uses Hyprland's
   `focuscurrentorlast` dispatcher, so pressing it again returns to the window

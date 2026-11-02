@@ -104,6 +104,10 @@ cd 43pr-debian
 sudo bash scripts/install-cpu-profile-sudoers.sh
 ```
 
+El modo de CPU elegido se guarda en
+`~/.config/quickshell/state/cpu-profile.json` y se vuelve a aplicar al iniciar
+el shell de Quickshell, por lo que se mantiene entre reinicios.
+
 `install.sh` copia las configs a `~/.config/`, los scripts a `~/.local/bin/`,
 instala Roboto Mono en `~/.local/share/fonts/43pr/` y ejecuta
 `theme.py apply` para generar los archivos que no se versionan (colores, etc.).

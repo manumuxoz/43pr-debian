@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Quickshell.Io
 import "../"
 
@@ -67,6 +68,13 @@ Item {
     property bool platformProfileChecked: false
     property bool platformProfileAvailable: false
 
+    // The kernel resets platform_profile on every boot, so the last mode chosen
+    // here is stored in state/cpu-profile.json and re-applied when the page
+    // loads in a new session.
+    property string savedPlatformProfile: ""
+    property bool platformProfileRead: false
+    property bool platformProfileRestoreTried: false
+
     function platformProfileLabel(id) {
         if (id === "quiet") return "POWER SAVER"
         if (id === "balanced") return "BALANCED"
@@ -84,6 +92,7 @@ Item {
         page.availablePlatformProfiles = values
         page.platformProfileAvailable = values.length > 0
         page.platformProfileChecked = true
+        page.tryRestorePlatformProfile()
     }
 
     function setPlatformProfile(id) {
@@ -95,6 +104,50 @@ Item {
         pSetPlatformProfile.pendingProfile = id
         pSetPlatformProfile.stdinEnabled = true
         pSetPlatformProfile.running = true
+    }
+
+    function savePlatformProfile(id) {
+        page.savedPlatformProfile = id
+        cpuProfileStore.setText(JSON.stringify({ profile: id }))
+    }
+
+    function loadSavedPlatformProfile(text) {
+        // A click can finish before the state file is read: keep the newer
+        // in-memory choice instead of overwriting it with the stale file.
+        if (page.savedPlatformProfile !== "") {
+            page.tryRestorePlatformProfile()
+            return
+        }
+
+        var raw = text.trim()
+        if (raw === "") {
+            page.tryRestorePlatformProfile()
+            return
+        }
+
+        try {
+            var data = JSON.parse(raw)
+            if (data && typeof data.profile === "string")
+                page.savedPlatformProfile = data.profile
+        } catch (e) {
+            console.warn("Ignoring invalid CPU profile state:", e)
+        }
+        page.tryRestorePlatformProfile()
+    }
+
+    // Applies the persisted mode once both the saved value and the current
+    // kernel profile are known. Skipped if the mode is no longer offered by
+    // the firmware (e.g. after a hardware/kernel change).
+    function tryRestorePlatformProfile() {
+        if (page.platformProfileRestoreTried) return
+        if (!page.platformProfileChecked || !page.platformProfileRead) return
+        if (page.savedPlatformProfile === "") return
+        if (page.availablePlatformProfiles.indexOf(page.savedPlatformProfile) === -1) return
+        if (page.cpuPlatformProfile === page.savedPlatformProfile) return
+        if (pSetPlatformProfile.running) return
+
+        page.platformProfileRestoreTried = true
+        page.setPlatformProfile(page.savedPlatformProfile)
     }
 
     // --- helpers -----------------------------------------------------
@@ -229,6 +282,8 @@ Item {
         var ghz = parseFloat(lines[0])
         page.cpuFreq = isNaN(ghz) ? "—" : ghz.toFixed(2) + " GHz"
         page.cpuPlatformProfile = lines[1].trim() || "—"
+        page.platformProfileRead = true
+        page.tryRestorePlatformProfile()
 
         var mhz = parseFloat(lines[2])
         page.gpuFreq = isNaN(mhz) ? "—" : mhz > 0 ? (mhz / 1000).toFixed(2) + " GHz" : "idle"
@@ -678,14 +733,24 @@ Item {
         }
 
         onExited: function(exitCode) {
+            var profile = pendingProfile
             pendingProfile = ""
             // Refresh the header/badge as soon as the privileged write ends.
+            // Only remember the mode if the kernel accepted it.
             if (exitCode === 0) {
+                page.savePlatformProfile(profile)
                 pFreq.running = true
             } else {
                 console.warn("CPU platform profile change failed with code", exitCode)
             }
         }
+    }
+
+    FileView {
+        id: cpuProfileStore
+        path: Quickshell.env("HOME") + "/.config/quickshell/state/cpu-profile.json"
+        printErrors: false
+        onLoaded: page.loadSavedPlatformProfile(cpuProfileStore.text())
     }
 
     Process {
