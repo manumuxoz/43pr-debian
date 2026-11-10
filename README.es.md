@@ -138,6 +138,9 @@ no hace `git pull`; solo informa de los paquetes que falten. Opciones útiles:
 `--dry-run`, `--diff`, `--skip-theme`, `--skip-packages`, `--reload-hyprland`,
 `--reload-waybar`, `--restart-shell`.
 
+El estado de usuario (`~/.local/state/`, p. ej. la opacidad global de
+`opacity.sh`) queda fuera del repositorio y no se sobrescribe al actualizar.
+
 Para deshacer una instalación completa, `./uninstall.sh` restaura el respaldo
 `~/.config-backups/43pr-debian-<fecha>/`. Los respaldos del updater son por
 archivo y `uninstall.sh` no los usa.
@@ -165,7 +168,9 @@ Ver [`config/hypr/SHORTCUTS.md`](config/hypr/SHORTCUTS.md). Destacados:
 ajustes de Quickshell, `SUPER+N` bloc de notas, `SUPER+SHIFT+T` lista de
 tareas, `SUPER+SHIFT+N` panel de notificaciones, `SUPER+SHIFT+M` panel de
 medios, `SUPER+SHIFT+E` menú de energía, `SUPER+R` grabación de pantalla,
-`SUPER+C` vista previa de la webcam, `SUPER+SHIFT+D` cambio de tema,
+`SUPER+C` vista previa de la webcam, `SUPER+O` menú de opacidad (ventana activa
+por defecto, o todas las ventanas), `SUPER+SHIFT+O` ciclo de opacidad de la
+ventana activa, `SUPER+SHIFT+D` cambio de tema,
 `SUPER+SHIFT+W` ocultar/mostrar Waybar.
 El resto es el 43PR original (enfoque estilo vim, scratchpad, capturas en
 `~/Imágenes/Capturas de pantalla`, teclas multimedia…).

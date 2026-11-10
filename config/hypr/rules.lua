@@ -40,14 +40,28 @@ hl.layer_rule({
     ignore_alpha = 0.15,
 })
 
--- Opacity rules: 100% for all windows
+-- Opacidad global para todas las ventanas. El valor lo escribe
+-- scripts/opacity.sh (SUPER+O → ámbito "todas las ventanas") en el estado del
+-- usuario; si el archivo no existe, se usa 100 %. La opacidad de una sola
+-- ventana se aplica en caliente con hyprctl y no toca este archivo.
+local opacity_state_home = os.getenv("XDG_STATE_HOME")
+if opacity_state_home == nil or opacity_state_home == "" then
+    opacity_state_home = os.getenv("HOME") .. "/.local/state"
+end
+
+local global_opacity = "1.0"
+local opacity_ok, saved_opacity = pcall(dofile, opacity_state_home .. "/hypr/opacity.lua")
+if opacity_ok and type(saved_opacity) == "string" and saved_opacity:match("^%d+%.?%d*$") then
+    global_opacity = saved_opacity
+end
+
 hl.window_rule({
     match = { class = ".*" },
-    opacity = "1.0 override",
+    opacity = global_opacity .. " override",
 })
 
 -- Fullscreen windows stay fully opaque even if the global rule was lowered
--- with scripts/opacity.sh (SUPER+O).
+-- with scripts/opacity.sh (SUPER+O) or a per-window override is active.
 hl.window_rule({
     match = { class = ".*", fullscreen = true },
     opacity = "1.0 override",

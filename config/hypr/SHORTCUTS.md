@@ -4,7 +4,7 @@
 - **Config**: `~/.config/hypr/keybinds.lua`
 - **Recargar tras editar**: `hyprctl reload`
 - **Layout de teclado**: `es` (afecta a los binds de teclas especiales, ver **Notas**)
-- **Total**: 87 binds activos
+- **Total**: 88 binds activos
 
 > Algunas filas agrupan varios binds (los rangos 1–9 / 0 de workspaces).
 
@@ -163,7 +163,8 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + D` | Alternar tema claro/oscuro (`theme.py toggle`) |
 | `SUPER + P` | Selector de color — `hyprpicker -a` (copia el color HEX al portapapeles; hyprpicker 0.4.7 instalado) |
 | `SUPER + SHIFT + P` | Luz nocturna on/off — `~/.config/hypr/scripts/nightlight-toggle.sh` (hyprsunset 0.4.0; 4000 K por defecto, temperatura compartida con Ajustes → Display y guardada; `NIGHTLIGHT_TEMP` la fuerza al activar) |
-| `SUPER + O` | Menú de opacidad de la ventana activa (wofi; guarda override en `rules.lua` y recarga) — toggle: repetir el atajo cierra el menú |
+| `SUPER + O` | Menú de opacidad (wofi): la primera entrada cambia el ámbito (**ventana activa**, por defecto, o **todas las ventanas**) y las demás aplican un preset. La ventana activa se ajusta al instante (sin recargar); el ámbito global se guarda en `~/.local/state/hypr/opacity.lua` y recarga Hyprland. Toggle: repetir el atajo cierra el menú |
+| `SUPER + SHIFT + O` | Ciclo de opacidad de la **ventana activa**: 100 → 90 → 80 → 70 → 60 → 50 → 40 → 100 % (`opacity.sh window-cycle`), sin abrir menú |
 | `SUPER + G` | Conmutador de escritorios — wofi con todos los escritorios, nº de ventanas y apps; eliges y salta (toggle: repetir el atajo cierra el menú) |
 | `SUPER + W` | Fondos de pantalla — quickshell hyprquickpaper |
 | `SUPER + I` | Panel de ajustes — quickshell settings |
@@ -199,3 +200,17 @@ Estado tras la revisión de `keybinds.lua` con Hyprland 0.55.2 (config Lua):
    `screenshot.sh` espera 200 ms antes de lanzar `grim`; sin esa espera,
    Hyprland todavía conserva el último frame con el overlay de `slurp` y la
    captura sale con el borde de la selección incrustado.
+7. **Opacidad por ventana**: `SUPER+O` aplica el preset elegido al ámbito que
+   muestra la primera entrada del menú («ventana activa», por defecto, o «todas
+   las ventanas»; seleccionarla cambia de ámbito). En la ventana activa se aplica
+   en caliente con `hl.dsp.window.set_prop` (Hyprland 0.55 ya no acepta
+   `hyprctl setprop` como petición directa). Se fijan `opacity` y
+   `opacity_inactive` para que la transparencia se mantenga al perder el foco, y
+   no se modifica la configuración; el ajuste dura hasta cerrar esa ventana. Una
+   ventana a pantalla completa sigue opaca, igual que con la regla global. El
+   ámbito global se guarda en `~/.local/state/hypr/opacity.lua` (lo lee
+   `rules.lua` al cargar, así sobrevive a install/update), se aplica también a
+   las ventanas que ya tenían una opacidad propia y recarga Hyprland. Sin
+   ventana activa, el menú aplica directamente el ámbito global. El resto de
+   comandos (`window`, `global`, `window-step`, `window-cycle`, `reset`,
+   `status`) están en `opacity.sh --help`.

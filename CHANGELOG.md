@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Per-window opacity: the `SUPER+O` menu now offers presets for the **focused
+  window** (the default scope) as well as the existing "all windows" setting.
+  The first menu entry switches the scope; the presets below apply to it. With
+  no active window the menu applies the global scope directly. The per-window
+  choice is applied live through `hl.dsp.window.set_prop` (Hyprland 0.55 no
+  longer accepts `hyprctl setprop` as a direct request), sets both `opacity` and
+  `opacity_inactive` so the window stays translucent when unfocused, and leaves
+  the config untouched. The global value is stored in
+  `~/.local/state/hypr/opacity.lua`, which `rules.lua` reads at load time, so
+  installs and updates no longer reset it; choosing "all windows" also updates
+  windows that already had their own opacity. `SUPER+SHIFT+O` cycles the focused
+  window through 100 → 90 → … → 40 → 100 %, and the `opacity.sh` commands
+  (`window`, `window-step`, `window-cycle`, `reset`, `global`, `status`) work
+  from a terminal. Fullscreen windows remain opaque, matching the existing
+  global behaviour.
 - Animated Debian ASCII header for fastfetch/kitty (`scripts/debian-ascii/`):
   fixed 22×13 logo, live scanline, fixed system info beside it; it pauses when
   a command runs and scrolls away with the output. The 30×18 and 44×26 arts are

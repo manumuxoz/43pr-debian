@@ -261,7 +261,8 @@ fi
 
 section "Scripts ejecutables"
 for rel in hypr/scripts/screenshot.sh hypr/scripts/monitor-ctl.sh \
-           hypr/scripts/random-wallpaper.sh hypr/scripts/wallpaper-restore.sh; do
+           hypr/scripts/random-wallpaper.sh hypr/scripts/wallpaper-restore.sh \
+           hypr/scripts/opacity.sh; do
     if [ -x "$HOME/.config/$rel" ]; then
         pass "$rel"
     else

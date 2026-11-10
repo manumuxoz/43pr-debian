@@ -43,7 +43,10 @@ hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("qs ipc call mediaosd media")
 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = 0 })) -- Fullscreen
 
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || " .. home .. "/.config/hypr/scripts/opacity.sh")) -- Opacity (toggle)
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || " .. home .. "/.config/hypr/scripts/opacity.sh"),
+        { description = "Opacidad: menú (ventana activa / todas)" }) -- toggle
+hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/opacity.sh window-cycle"),
+        { description = "Opacidad de la ventana activa: ciclo 100→90→…→40 %" })
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("pgrep -x wofi >/dev/null && pkill -x wofi || " .. home .. "/.config/hypr/scripts/workspace-switcher.sh")) -- Conmutador de escritorios (wofi; toggle)
 
