@@ -97,6 +97,16 @@ hl.window_rule({
     move = "monitor_w-500 20",
 })
 
+-- El portal es un proceso aparte, activado por D-Bus, y puede heredar un
+-- HL_INITIAL_WORKSPACE_TOKEN antiguo (o recibir el workspace de la app padre
+-- aunque el usuario este en otro). "workspace = unset" ignora ese workspace
+-- solicitado y deja que el dialogo siga al workspace activo.
+hl.window_rule({
+    name = "portal-dialogs-active-workspace",
+    match = { class = "^(xdg-desktop-portal-gtk|xdg-desktop-portal-gnome|xdg-desktop-portal-kde)$" },
+    workspace = "unset",
+})
+
 hl.window_rule({
     name = "float-xdg-desktop-portal-gtk",
     match = { class = "^(xdg-desktop-portal-gtk)$" },

@@ -16,7 +16,17 @@ browser    = "firefox"
 hl.on("hyprland.start", function()
     -- Adaptacion Debian: actualiza el entorno del gestor systemd de usuario
     -- para que los portales (xdg-desktop-portal-hyprland) funcionen bien.
-    hl.exec_cmd("dbus-update-activation-environment --systemd --all")
+    -- Hyprland marca cada proceso que lanza con HL_INITIAL_WORKSPACE_TOKEN
+    -- (y HL_EXEC_RULE_TOKEN) para abrir su primera ventana en el workspace de
+    -- origen. Con --all esos tokens acababan en el entorno de systemd y los
+    -- heredaban los servicios activados por D-Bus: el primer dialogo del
+    -- portal (p. ej. el selector de archivos de WhatsApp) se abria en el
+    -- workspace 1 del arranque, no en el activo. El token es de un solo uso,
+    -- por eso el segundo dialogo ya salia bien. Se limpian antes de propagar
+    -- el entorno y se borran restos de una sesion anterior de Hyprland.
+    hl.exec_cmd("systemctl --user unset-environment HL_INITIAL_WORKSPACE_TOKEN HL_EXEC_RULE_TOKEN 2>/dev/null || true; "
+        .. "unset HL_INITIAL_WORKSPACE_TOKEN HL_EXEC_RULE_TOKEN; "
+        .. "dbus-update-activation-environment --systemd --all")
     -- Adaptacion waybar 0.12 + Hyprland 0.55 (Lua): el wrapper waybar-start.sh
     -- arranca el puente IPC que traduce los clics de los iconos de workspace.
     hl.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/waybar-start.sh")
@@ -120,6 +130,13 @@ hl.config({
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
+        -- Hyprland 0.55.2 inyecta HL_INITIAL_WORKSPACE_TOKEN en cada proceso
+        -- que lanza y el token no caduca (TTL de meses). Los dialogos de
+        -- servicios persistentes (portal, polkit, nm-applet) se abrian en el
+        -- workspace 1 del login la primera vez. Sin tracking, las ventanas
+        -- nuevas siguen al workspace activo. Upstream lo corrige en 0.56.0
+        -- con un TTL de 10 s (misc:initial_workspace_token_timeout).
+        initial_workspace_tracking = 0,
     },
 })
 

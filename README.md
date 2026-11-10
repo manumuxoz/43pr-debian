@@ -62,6 +62,12 @@ Captures from the author's real desktop.
 - **`graphical-session.target` never activates** under `start-hyprland`, so
   hypridle/hyprsunset/portals are started manually — see
   [`docs/debian-adaptations.md`](docs/debian-adaptations.md).
+- **Portal dialogs follow the active workspace**: Hyprland 0.55 leaks its
+  per-process workspace token into the systemd user environment, so the first
+  file chooser from WhatsApp (and polkit prompts) used to open on workspace 1.
+  The session unsets the token and forces `xdg-desktop-portal-*` dialogs to the
+  active workspace — see
+  [`docs/debian-adaptations.md`](docs/debian-adaptations.md).
 - **Waybar 0.12 vs Lua dispatchers**: the official fix is not in any Waybar
   release yet, so this repo ships an IPC shim —
   [`docs/waybar-hyprland-lua-shim.md`](docs/waybar-hyprland-lua-shim.md).

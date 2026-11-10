@@ -94,6 +94,49 @@ if [ "${qs_instances:-0}" -gt 1 ]; then
     warn "$qs_instances instancias de Quickshell: comparten org.freedesktop.Notifications; cierra la sesión más antigua si los avisos no aparecen o el sonido/DND no responde"
 fi
 
+section "Portales"
+tracking=""
+if have hyprctl && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+    tracking="$(hyprctl getoption misc:initial_workspace_tracking 2>/dev/null | awk '/^int:/ {print $2}')"
+    if [ "${tracking:-}" = "0" ]; then
+        pass "misc:initial_workspace_tracking = 0"
+    else
+        fail "misc:initial_workspace_tracking = ${tracking:-<desconocido>} (se esperaba 0)"
+    fi
+fi
+
+if have systemctl; then
+    hl_env="$(systemctl --user show-environment 2>/dev/null | grep -E '^HL_(INITIAL_WORKSPACE|EXEC_RULE)_TOKEN=' || true)"
+    if [ -z "$hl_env" ]; then
+        pass "entorno de systemd sin tokens HL_*"
+    elif [ "${tracking:-}" = "0" ]; then
+        warn "tokens HL_* residuales en systemd (inertes con tracking desactivado); se limpian al cerrar sesión"
+    else
+        fail "tokens de Hyprland filtrados al entorno de systemd: ${hl_env%%=*}"
+        printf '       corrige con: systemctl --user unset-environment HL_INITIAL_WORKSPACE_TOKEN HL_EXEC_RULE_TOKEN\n'
+    fi
+else
+    warn "systemctl no disponible; comprobación de portales omitida"
+fi
+
+portal_leak=""
+while IFS= read -r pid; do
+    [ -n "$pid" ] || continue
+    if tr '\0' '\n' < "/proc/$pid/environ" 2>/dev/null | grep -qE '^HL_(INITIAL_WORKSPACE|EXEC_RULE)_TOKEN='; then
+        portal_leak="$portal_leak $pid"
+    fi
+done < <(pgrep -f '/usr/libexec/xdg-desktop-portal' 2>/dev/null || true)
+if [ -n "$portal_leak" ]; then
+    if [ "${tracking:-}" = "0" ]; then
+        warn "portales con token heredado (inertes con tracking desactivado): PID:$portal_leak"
+    else
+        fail "portales con token de workspace heredado (PID:$portal_leak)"
+        printf '       reinícialos: systemctl --user restart xdg-desktop-portal-gtk.service xdg-desktop-portal.service\n'
+    fi
+else
+    pass "portales sin tokens de workspace heredados"
+fi
+
 section "Comandos imprescindibles"
 for cmd in hyprctl qs waybar dunst wofi grim slurp wl-copy cliphist jq \
            python3 playerctl brightnessctl swaybg xdg-user-dir notify-send swappy; do

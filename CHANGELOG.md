@@ -63,6 +63,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Portal dialogs (the file chooser used by WhatsApp and other apps) no longer
+  open on workspace 1 the first time. `hyprland.lua` was propagating Hyprland's
+  per-process `HL_INITIAL_WORKSPACE_TOKEN`/`HL_EXEC_RULE_TOKEN` into the systemd
+  user environment with `dbus-update-activation-environment --all`, so
+  D-Bus-activated services such as `xdg-desktop-portal-gtk` inherited the
+  workspace of the login session. The session now disables
+  `misc:initial_workspace_tracking`, unsets the tokens before propagating the
+  environment, and `rules.lua` forces `xdg-desktop-portal-*` dialogs to the
+  active workspace. The second dialog already worked because the initial
+  workspace token is single-use.
 - The animated Debian header now only renders when the complete fastfetch
   information fits beside the logo. In smaller terminal windows it shows
   nothing instead of clipping the info or printing a reduced variant. Resizing

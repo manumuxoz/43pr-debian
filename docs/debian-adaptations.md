@@ -30,6 +30,17 @@ started. Workarounds used here:
   `hyprland.lua` (`hl.on("hyprland.start", …)`).
 - `hypridle` is not run as a systemd unit for the same reason.
 
+`dbus-update-activation-environment --all` also copied Hyprland's per-process
+`HL_INITIAL_WORKSPACE_TOKEN` into the systemd user environment. D-Bus activated
+services (notably `xdg-desktop-portal-gtk`) inherited it, so their first window
+was placed on the workspace the token pointed to — usually workspace 1, the
+workspace active when the token was created at login — instead of the active
+one. The token is single-use, which is why the second dialog already opened on
+the right workspace. The session now sets
+`misc:initial_workspace_tracking = 0`, unsets `HL_INITIAL_WORKSPACE_TOKEN` and
+`HL_EXEC_RULE_TOKEN` before propagating the environment, and `rules.lua` forces
+`xdg-desktop-portal-*` dialogs to the active workspace as a safety net.
+
 ## 4. polkit agent path
 
 Debian installs the KDE polkit agent under a multiarch path, which differs from
