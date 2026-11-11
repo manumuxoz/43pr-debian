@@ -84,6 +84,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- hyprlock's fingerprint `retry_delay` is now 750 ms. The EgisTech sensor is a
+  "press" reader, and the previous 250 ms restarted verification before the
+  finger was lifted after a `verify-no-match`. The fingerprint block and the
+  known hyprlock 0.9.6 teardown issues are documented in
+  `docs/fingerprint.md`.
 - Portal dialogs (the file chooser used by WhatsApp and other apps) no longer
   open on workspace 1 the first time. `hyprland.lua` was propagating Hyprland's
   per-process `HL_INITIAL_WORKSPACE_TOKEN`/`HL_EXEC_RULE_TOKEN` into the systemd

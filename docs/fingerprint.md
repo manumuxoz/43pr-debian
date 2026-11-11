@@ -72,5 +72,32 @@ Order matters: `pam_fprintd` is tried first (`success=end` means a good finger
 ends authentication immediately; failure falls through to the password via
 `@include login`). Increase `max-tries`/`timeout` if you want more attempts.
 
-For screen unlocking, the fingerprint block in `hyprlock.conf` is already
-enabled in this repo (no PAM file change needed for hyprlock).
+## Screen unlocking (hyprlock)
+
+The fingerprint block in `config/hypr/hyprlock.conf` is already enabled, so
+hyprlock talks to fprintd directly. Do **not** add `pam_fprintd` to
+`/etc/pam.d/hyprlock` as well: that would start a second, competing
+verification.
+
+`retry_delay` is set to 750 ms. The EgisTech sensor is a "press" reader, so
+this gives enough time to lift the finger before fprintd starts the next
+verification after a `verify-no-match`. Increase it (for example to 1000) if
+the first touch often fails.
+
+Known issue with hyprlock 0.9.6 (the version in trixie-backports): after a
+successful fingerprint unlock the log shows
+
+    ERR auth: Authentication failed for hyprlock
+
+It comes from the PAM thread that runs in parallel and is harmless unless
+`pam_faillock` is enabled. hyprlock 0.9.7 reworks PAM teardown and should
+remove this message, but Debian does not package that version yet.
+
+The same teardown race means a re-lock issued immediately after unlocking can
+find the fprintd device still claimed (upstream issue hyprwm/hyprlock#1074).
+If the fingerprint stops responding in that situation, wait a couple of
+seconds before locking again. Upstream still has no retry for the D-Bus
+`Claim` call.
+
+To debug, run `hyprlock --verbose` from a TTY or capture its output; the
+`fprint:` lines show claim, verification and release events.
