@@ -5,6 +5,7 @@
 
 local home = os.getenv("HOME")
 local menu = "wofi --show drun"
+local move_all = require("move-all")
 
 -- Launchers
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
@@ -178,31 +179,15 @@ for i = 1, 10 do
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
--- SUPER+ALT+N: enviar TODAS las ventanas del escritorio actual al N.
--- Se mueve cada ventana por objeto (no por la activa), así que también salen
--- las que están en segundo plano o en otro monitor. Al terminar el foco pasa
--- al destino para seguir a las ventanas (con S se muestra el scratchpad).
-local function move_all_windows_to(target)
-    local source = hl.get_active_workspace()
-    if source == nil then
-        return
-    end
-    for _, w in ipairs(hl.get_workspace_windows(source)) do
-        hl.dispatch(hl.dsp.window.move({ window = w, workspace = target }))
-    end
-    -- Los movimientos se aplican después del callback; se enfoca el destino
-    -- en un timer para que el scratchpad ya tenga las ventanas dentro.
-    hl.timer(function()
-        hl.dispatch(hl.dsp.focus({ workspace = target }))
-    end, { timeout = 50, type = "oneshot" })
-end
-
+-- SUPER+ALT+N: enviar TODAS las ventanas del escritorio actual al N y seguir
+-- al destino. El layout se conserva si el destino está vacío; si ya hay
+-- ventanas, se reparten todas en un árbol equilibrado (ver move-all.lua).
 for i = 1, 10 do
     local key = i % 10
-    hl.bind(mainMod .. " + ALT + " .. key, function() move_all_windows_to(i) end,
+    hl.bind(mainMod .. " + ALT + " .. key, function() move_all.move_all_windows_to(i) end,
             { description = "Enviar todas las ventanas al workspace " .. i })
 end
-hl.bind(mainMod .. " + ALT + S", function() move_all_windows_to("special:scratch") end,
+hl.bind(mainMod .. " + ALT + S", function() move_all.move_all_windows_to("special:scratch") end,
         { description = "Enviar todas las ventanas al scratchpad" })
 
 -- Scratchpad (workspace especial "scratch")

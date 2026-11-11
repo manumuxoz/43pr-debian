@@ -70,6 +70,10 @@
 > `SUPER + ALT + N` mueve todas las ventanas del escritorio en el que estás
 > (incluidas las que están en segundo plano o en otro monitor) al escritorio
 > elegido y cambia el foco a ese destino; con `S` se muestra el scratchpad.
+> Si el destino está vacío se conserva la distribución de origen (árbol de
+> splits y proporciones); si ya tiene ventanas, todas se reparten en un árbol
+> equilibrado por áreas, sin ventanas desproporcionadas. La lógica está en
+> `move-all.lua`.
 
 ## Ratón
 
