@@ -69,7 +69,7 @@
 
 > `SUPER + ALT + N` mueve todas las ventanas del escritorio en el que estás
 > (incluidas las que están en segundo plano o en otro monitor) al escritorio
-> elegido; el foco permanece en el actual, que puede quedar vacío.
+> elegido y cambia el foco a ese destino; con `S` se muestra el scratchpad.
 
 ## Ratón
 

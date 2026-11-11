@@ -182,28 +182,21 @@ end
 
 -- SUPER+ALT+N: enviar TODAS las ventanas del escritorio actual al N.
 -- Se mueve cada ventana por objeto (no por la activa), así que también salen
--- las que están en segundo plano o en otro monitor. Al terminar se vuelve a
--- enfocar el origen: al quedarse sin ventanas, Hyprland saltaría al destino.
+-- las que están en segundo plano o en otro monitor. Al terminar el foco pasa
+-- al destino para seguir a las ventanas (con S se muestra el scratchpad).
 local function move_all_windows_to(target)
     local source = hl.get_active_workspace()
     if source == nil then
         return
     end
-    -- Guardar el ID antes de mover: al quedarse sin ventanas el workspace de
-    -- origen se destruye y `source.id` pasa a valer nil.
-    local source_id = source.id
-    if source_id == nil then
-        return
-    end
     for _, w in ipairs(hl.get_workspace_windows(source)) do
         hl.dispatch(hl.dsp.window.move({ window = w, workspace = target }))
     end
-    -- Los movimientos se aplican después de este callback; cuando el origen
-    -- se queda vacío Hyprland salta solo al destino. Se reenfoca el origen
-    -- unos milisegundos más tarde para conservar el escritorio actual.
+    -- Los movimientos se aplican después del callback; se enfoca el destino
+    -- en un timer para que el scratchpad ya tenga las ventanas dentro.
     hl.timer(function()
-        hl.dispatch(hl.dsp.focus({ workspace = source_id }))
-    end, { timeout = 100, type = "oneshot" })
+        hl.dispatch(hl.dsp.focus({ workspace = target }))
+    end, { timeout = 50, type = "oneshot" })
 end
 
 for i = 1, 10 do
