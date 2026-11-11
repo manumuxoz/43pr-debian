@@ -4,7 +4,7 @@
 - **Config**: `~/.config/hypr/keybinds.lua`
 - **Recargar tras editar**: `hyprctl reload`
 - **Layout de teclado**: `es` (afecta a los binds de teclas especiales, ver **Notas**)
-- **Total**: 88 binds activos
+- **Total**: 99 binds activos
 
 > Algunas filas agrupan varios binds (los rangos 1–9 / 0 de workspaces).
 
@@ -16,6 +16,7 @@
 | `SUPER + D` | Menú de aplicaciones — wofi `--show drun` (si wofi ya está abierto, lo cierra) |
 | `SUPER + E` | Gestor de archivos — Thunar |
 | `SUPER + ALT + E` | Ranger (TUI) en kitty — complemento de Thunar |
+| `SUPER + ALT + SHIFT + S` | Spotify TUI — spotatui en kitty |
 | `SUPER + B` | Navegador — firefox |
 
 > Thunar usa kitty en «Abrir terminal aquí» y «Abrir Ranger aquí» (acciones
@@ -62,6 +63,13 @@
 | `SUPER + 0` | Cambiar al workspace 10 |
 | `SUPER + SHIFT + 1 … 9` | Mover la ventana activa al workspace 1–9 |
 | `SUPER + SHIFT + 0` | Mover la ventana activa al workspace 10 |
+| `SUPER + ALT + 1 … 9` | Enviar **todas** las ventanas del escritorio actual al workspace 1–9 |
+| `SUPER + ALT + 0` | Enviar todas las ventanas del escritorio actual al workspace 10 |
+| `SUPER + ALT + S` | Enviar todas las ventanas del escritorio actual al scratchpad (`special:scratch`) |
+
+> `SUPER + ALT + N` mueve todas las ventanas del escritorio en el que estás
+> (incluidas las que están en segundo plano o en otro monitor) al escritorio
+> elegido; el foco permanece en el actual, que puede quedar vacío.
 
 ## Ratón
 

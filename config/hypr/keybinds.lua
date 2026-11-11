@@ -16,6 +16,10 @@ end
 -- Ranger (TUI) como complemento de Thunar; abre en $HOME.
 hl.bind(mainMod .. " + ALT + E", hl.dsp.exec_cmd("kitty ranger"),
         { description = "Ranger (TUI) en kitty" })
+-- Spotatui (TUI de Spotify) en kitty.
+-- SUPER+ALT+S queda libre para enviar todas las ventanas al scratchpad.
+hl.bind(mainMod .. " + ALT + SHIFT + S", hl.dsp.exec_cmd("kitty spotatui"),
+        { description = "Spotatui — TUI de Spotify" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 
@@ -175,6 +179,40 @@ for i = 1, 10 do
     hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
+
+-- SUPER+ALT+N: enviar TODAS las ventanas del escritorio actual al N.
+-- Se mueve cada ventana por objeto (no por la activa), así que también salen
+-- las que están en segundo plano o en otro monitor. Al terminar se vuelve a
+-- enfocar el origen: al quedarse sin ventanas, Hyprland saltaría al destino.
+local function move_all_windows_to(target)
+    local source = hl.get_active_workspace()
+    if source == nil then
+        return
+    end
+    -- Guardar el ID antes de mover: al quedarse sin ventanas el workspace de
+    -- origen se destruye y `source.id` pasa a valer nil.
+    local source_id = source.id
+    if source_id == nil then
+        return
+    end
+    for _, w in ipairs(hl.get_workspace_windows(source)) do
+        hl.dispatch(hl.dsp.window.move({ window = w, workspace = target }))
+    end
+    -- Los movimientos se aplican después de este callback; cuando el origen
+    -- se queda vacío Hyprland salta solo al destino. Se reenfoca el origen
+    -- unos milisegundos más tarde para conservar el escritorio actual.
+    hl.timer(function()
+        hl.dispatch(hl.dsp.focus({ workspace = source_id }))
+    end, { timeout = 100, type = "oneshot" })
+end
+
+for i = 1, 10 do
+    local key = i % 10
+    hl.bind(mainMod .. " + ALT + " .. key, function() move_all_windows_to(i) end,
+            { description = "Enviar todas las ventanas al workspace " .. i })
+end
+hl.bind(mainMod .. " + ALT + S", function() move_all_windows_to("special:scratch") end,
+        { description = "Enviar todas las ventanas al scratchpad" })
 
 -- Scratchpad (workspace especial "scratch")
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("scratch"))

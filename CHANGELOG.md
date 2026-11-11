@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `SUPER+ALT+1…0` sends every window on the current workspace to workspace
+  1–10, and `SUPER+ALT+S` sends them to the scratchpad (`special:scratch`).
+  Windows are moved by object through `hl.dsp.window.move`, so background
+  windows and windows on other monitors move too, and focus stays on the
+  source workspace. Spotatui moves to `SUPER+ALT+SHIFT+S` to free
+  `SUPER+ALT+S`.
 - Per-window opacity: the `SUPER+O` menu now offers presets for the **focused
   window** (the default scope) as well as the existing "all windows" setting.
   The first menu entry switches the scope; the presets below apply to it. With
