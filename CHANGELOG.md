@@ -131,6 +131,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   matches the spacing of the other right-side modules. The bell glyph leaves
   more side bearing inside its box than the speaker, so it looked tighter.
 
+### Removed
+
+- The wlogout power menu and its `SUPER+ºª` bind were removed. The Quickshell
+  PowerMenu (`SUPER+SHIFT+E`, the Waybar power icon and the top-right hot
+  corner) remains as the single power/lock menu. This also drops the
+  `wlogout` package dependency, its GTK stylesheet and icon set, the
+  `wlogout/colors.css` theme target and the related Settings → Configs page.
+
 ## [1.2.0] - 2026-10-23
 
 ### Added

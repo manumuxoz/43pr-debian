@@ -10,7 +10,7 @@ Waybar setup, IPC shim, documentation and patches).
 - **[43PR dotfiles](https://github.com/43PR/dotfiles)** — MIT, © 2026 43PR
   (`LICENSES/43PR-MIT.txt`). Most files under `config/` are adapted from this
   project: Hyprland Lua config, Quickshell widgets, the `43pr` theme engine,
-  dunst/kitty/wofi/wlogout setup.
+  dunst/kitty/wofi setup.
 - **[hyprlogin](https://github.com/AuthenticSm1les/hyprlogin)** — BSD-3-Clause,
   © 2024 Hypr Development (`LICENSES/hyprlogin-BSD-3-Clause.txt`).
   `patches/hyprlogin-0.3.0-unlock-race.patch` applies to it; no hyprlogin
@@ -20,7 +20,6 @@ Waybar setup, IPC shim, documentation and patches).
   no libfprint source code is redistributed here.
 - **[Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono)** — Apache-2.0
   (`LICENSES/Apache-2.0.txt`). Binaries under `assets/fonts/`.
-- **[wlogout](https://github.com/ArtsyMacaw/wlogout)** — MIT. Layout and icons.
 
 ## Runtime dependencies
 

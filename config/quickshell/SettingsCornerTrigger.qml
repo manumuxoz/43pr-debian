@@ -12,7 +12,7 @@ Item {
     // superior solo debe abrirse el gestor de configuracion, no el selector de
     // fondos de pantalla.
     property bool wallpaperEnabled: false
-    // Esquina superior derecha: PowerMenu de Quickshell (ya no wlogout).
+    // Esquina superior derecha: PowerMenu de Quickshell.
     property bool powerMenuEnabled: true
 
     property int triggerHeight: 10

@@ -15,9 +15,6 @@ reload = ["sh", "-c", "exec \"$HOME/.config/hypr/scripts/waybar-restart.sh\""]
 [hyprlock]
 input  = "~/.config/43pr/templates/hyprlock-colors.conf"
 output = "~/.config/hypr/hyprlock-colors.conf"
-[wlogout]
-input  = "~/.config/43pr/templates/wlogout-colors.css"
-output = "~/.config/wlogout/colors.css"
 # Adaptacion Debian: [gtk3]/[gtk4] desactivados a proposito.
 # El tema GTK global (~/.config/gtk-3.0 y gtk-4.0) se deja intacto para no
 # afectar a GNOME; dentro de Hyprland las apps GTK usan "Adwaita:dark"

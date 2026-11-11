@@ -207,34 +207,6 @@ Item {
             }
 
             Text {
-                text: "WLOGOUT"
-                color: Theme.text
-                font.family: Theme.fontFamily
-                font.pixelSize: 16
-                font.letterSpacing: 3
-            }
-
-            Rectangle {
-                width: parent.width
-                height: 1
-                color: Theme.border
-            }
-
-            Column {
-                width: parent.width
-                spacing: page.sectionSpacing
-
-                ConfigButton {
-                    label: "STYLE"
-                    path: "~/.config/wlogout/style.css"
-                }
-
-                ConfigButton {
-                    label: "LAYOUT"
-                    path: "~/.config/wlogout/layout"
-                }
-            }
-            Text {
                 text: "SETTINGS"
                 color: Theme.text
                 font.family: Theme.fontFamily

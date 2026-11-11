@@ -86,10 +86,10 @@ def forced_mode(mode):
 
 # ---------- palettes ----------
 
-# Upstream dropped the wb_* (Waybar) and wl_* (wlogout) tokens from its presets
-# after moving to a Quickshell-only shell. This port still renders both, so the
-# missing keys are derived from each theme's semantic colors instead of falling
-# back to the pinned default.
+# Upstream dropped the wb_* (Waybar) tokens from its presets after moving to a
+# Quickshell-only shell. This port still renders Waybar, so the missing keys are
+# derived from each theme's semantic colors instead of falling back to the
+# pinned default.
 DERIVED_COLORS = {
     "wb_panel_bg": "bg_panel",
     "wb_text": "fg",
@@ -97,12 +97,6 @@ DERIVED_COLORS = {
     "wb_ws_idle": "fg",
     "wb_ws_active": "accent",
     "wb_ws_urgent": "danger",
-    "wl_window_bg": "bg",
-    "wl_button_bg": "bg_card",
-    "wl_text": "fg",
-    "wl_hover_bg": "accent",
-    "wl_active_bg": "accent",
-    "wl_focus_ring": "accent",
 }
 
 
@@ -342,8 +336,6 @@ def apply_palette(pal, wallpaper=None, only=None, write_palette=True):
     stage = Path(tempfile.mkdtemp(prefix=".stage-", dir=CACHE))
     hooks = []
     render_vars = dict(pal)
-    render_vars["icon_dir"] = str(HOME / ".config" / "wlogout" / "icons")
-    render_vars["icon_suffix"] = "2" if current_mode() == "light" else ""
     # Fondo de bloqueo/login: al elegir un wallpaper se pasa la ruta nueva; en el
     # resto de comandos se recupera del estado. Se genera una copia estirada a
     # la proporción de la pantalla (el escritorio usa `swaybg -m stretch`) para

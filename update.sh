@@ -20,7 +20,7 @@ KEEP_BACKUPS=5
 PACKAGES=(
     hyprland hyprland-guiutils hypridle hyprlock hyprpaper hyprpicker
     hyprsunset xdg-desktop-portal-hyprland quickshell
-    waybar dunst wofi kitty wlogout mpv ffmpeg
+    waybar dunst wofi kitty mpv ffmpeg
     grim slurp wl-clipboard cliphist swappy
     brightnessctl playerctl network-manager-gnome polkit-kde-agent-1
     swaybg jq imagemagick python3 greetd
@@ -98,7 +98,7 @@ fi
 # Generated at install time (theme.py recreates them) or per-user state.
 is_generated() {
     case "$1" in
-        config/hypr/colors.lua|config/hypr/hyprlock-colors.conf|config/waybar/colors.css|config/wlogout/colors.css|config/wofi/style.css|config/kitty/matugen.conf|config/quickshell/state/*)
+        config/hypr/colors.lua|config/hypr/hyprlock-colors.conf|config/waybar/colors.css|config/wofi/style.css|config/kitty/matugen.conf|config/quickshell/state/*)
             return 0 ;;
         *) return 1 ;;
     esac

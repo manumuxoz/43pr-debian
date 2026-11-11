@@ -50,7 +50,7 @@ Captures from the author's real desktop.
 | Bar | Waybar 0.12 + `waybar-ipc-shim.py` (bridges legacy IPC to Hyprland 0.55 Lua dispatchers) |
 | Widgets | Quickshell: media OSD (volume + media, any MPRIS player), notification panel, brightness/screenshot/recorder OSDs, todo list, power menu, settings window, wallpaper picker (`hyprquickpaper`) |
 | Theme engine | `~/.config/43pr/bin/theme.py` — palettes, wallpapers, matugen (optional), greeter sync |
-| Launchers / UI | wofi, wlogout, kitty (dunst is kept only as a fallback) |
+| Launchers / UI | wofi, kitty (dunst is kept only as a fallback) |
 | fastfetch | Animated Debian ASCII header when kitty starts; see [`scripts/debian-ascii/`](scripts/debian-ascii/README.md) |
 | Camera | `scripts/camera.sh` — V4L2 webcam: floating mpv preview (`SUPER+C`), photo (`s`) and recording (`r`) from inside the window |
 | Login screen | **hyprlogin** (greetd greeter forked from hyprlock) + theme sync + fingerprint PAM |
@@ -96,7 +96,7 @@ sudo apt install -t trixie-backports \
   hyprland hyprland-guiutils hypridle hyprlock hyprpaper hyprpicker \
   hyprsunset xdg-desktop-portal-hyprland quickshell
 sudo apt install \
-  waybar dunst wofi kitty wlogout grim slurp wl-clipboard cliphist \
+  waybar dunst wofi kitty grim slurp wl-clipboard cliphist \
   brightnessctl playerctl network-manager-gnome polkit-kde-agent-1 \
   swaybg jq imagemagick python3 greetd
 
@@ -194,7 +194,7 @@ CHANGELOG.md release notes
 ```
 
 Files generated at install time (`hypr/colors.lua`, `hyprlock-colors.conf`,
-`waybar/colors.css`, `wlogout/colors.css`, `wofi/style.css`,
+`waybar/colors.css`, `wofi/style.css`,
 `kitty/matugen.conf`, `btop/themes/43pr.theme`) are **not** committed;
 `theme.py apply` recreates them. cava's theme target stays disabled until
 Debian ships cava >= 0.10.5.

@@ -123,12 +123,12 @@ and recordings are driven from inside the window by `camera-mpv.lua`
 (`s` / `r`). Because V4L2 admits a single reader, a recording is remuxed by
 `mpv` to a FIFO and a background `ffmpeg` re-encodes it to H.264 MP4.
 
-## 15. Upstream themes with Waybar and wlogout
+## 15. Upstream themes with Waybar
 
-Upstream dropped the Waybar (`wb_*`) and wlogout (`wl_*`) colour tokens from
-its presets when it moved to a Quickshell-only shell. This port still renders
-both, so `theme.py merged()` derives those keys from each theme's semantic
-colours (panel, accent, danger…) instead of falling back to `default.toml`.
+Upstream dropped the Waybar (`wb_*`) colour tokens from its presets when it
+moved to a Quickshell-only shell. This port still renders Waybar, so
+`theme.py merged()` derives those keys from each theme's semantic colours
+(panel, accent, danger…) instead of falling back to `default.toml`.
 The 26 imported presets keep upstream's `override = false`: a wallpaper change
 regenerates the palette. Set `override = true` in a theme TOML to pin it.
 
@@ -177,9 +177,9 @@ toggle was removed. Three more upstream widgets were ported:
 
 - **Todo** — task list with reminder parsing, on `SUPER+SHIFT+T`
   (`qs ipc call todo toggle`).
-- **PowerMenu** — an alternative to wlogout (which stays on `SUPER+ºª`), on
-  `SUPER+SHIFT+E` (`qs ipc call powermenu toggle`); the Waybar power icon opens
-  the same menu; logout dispatches `hl.dsp.exit()`.
+- **PowerMenu** — the power menu, on `SUPER+SHIFT+E`
+  (`qs ipc call powermenu toggle`); the Waybar power icon opens the same menu;
+  logout dispatches `hl.dsp.exit()`.
 - **RecorderOSD** — REC indicator polling `screen-record.sh`'s
   `/tmp/osu-rec.pid` (every 2 s when idle, 1 s while recording).
 

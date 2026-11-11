@@ -181,11 +181,10 @@ Funcionan también con la pantalla bloqueada (`locked`).
 | `SUPER + SHIFT + M` | Panel de medios — MediaOSD de Quickshell (carátula, controles, cava; cualquier reproductor MPRIS) |
 | `SUPER + SHIFT + N` | Panel de notificaciones — Quickshell: toasts, historial persistente, No Molestar y sonido; clic en la campana también lo abre |
 | `SUPER + ALT + W` | Fondo aleatorio — elige una imagen de `~/Imágenes/Wallpapers`; actualiza la imagen y el fondo de bloqueo/login, pero no recolorea el tema; `random-wallpaper.sh` |
-| `SUPER + SHIFT + E` | Menú de energía alternativo — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar y la esquina superior derecha (hot corner) abren este mismo menú; wlogout sigue en `SUPER + ºª` |
+| `SUPER + SHIFT + E` | Menú de energía — PowerMenu de Quickshell (apagar, reiniciar, suspender, cerrar sesión, hibernar) con estado propio; el icono ⏻ de Waybar y la esquina superior derecha (hot corner) abren este mismo menú |
 | `SUPER + SHIFT + Tab` | Bloquear la pantalla — hyprlock |
 | `SUPER + Tab` | Alternar entre el escritorio actual y el anterior utilizado |
 | `SUPER + ALT + Tab` | Alternar entre la ventana actual y la anterior (equivale a `focuscurrentorlast`) |
-| `SUPER + ºª/\ (keycode 49)` | Menú de apagado/sesión — wlogout (bind por keycode; funciona con cualquier layout) |
 | `SUPER + SHIFT + W` | Mostrar/ocultar waybar |
 | Clic en la campana de Waybar | Abre el panel de notificaciones de Quickshell; clic derecho activa/desactiva No Molestar; clic central limpia el historial |
 | Clic en el contador de tareas de Waybar | Abre el widget Todo; el indicador solo aparece si hay tareas pendientes (en rojo si algún recordatorio venció) |
@@ -196,7 +195,7 @@ Funcionan también con la pantalla bloqueada (`locked`).
 
 Estado tras la revisión de `keybinds.lua` con Hyprland 0.55.2 (config Lua):
 
-1. **Binds por keycode y `hyprctl`**: los atajos por keycode (`code:49` de wlogout y `code:82/86` del zoom del numpad) funcionan con cualquier layout, pero `hyprctl binds -j` los muestra con el campo `key` vacío; en `hyprctl binds` (salida normal) aparecen como `SUPER + code:49`, etc.
+1. **Binds por keycode y `hyprctl`**: los atajos por keycode (`code:82/86` del zoom del numpad) funcionan con cualquier layout, pero `hyprctl binds -j` los muestra con el campo `key` vacío; en `hyprctl binds` (salida normal) aparecen como `SUPER + code:82`, etc.
 2. **Notificación de capturas (quickshell)**: si el shell está arrancando, `qs ipc call screenshot notify` puede responder `Not ready to accept queries yet.`; el bind lo tolera (`|| true`) y la captura + copiado no se ven afectados.
 3. **Grabadora**: `gpu-screen-recorder` no está empaquetado en Debian; se usa `wf-recorder` extraído manualmente en `~/.local/opt/wf-recorder` y el wrapper `~/.local/bin/screen-record.sh` (sin sudo, con las libs ffmpeg/pulse del sistema). Los vídeos van a `$(xdg-user-dir VIDEOS)/Grabaciones de la pantalla` (`~/Vídeos/Grabaciones de la pantalla/`), no a `~/Videos`; si la grabación no arranca o no genera fichero, la notificación lo indica y el log está en `/tmp/wf-recorder.log`.
 4. **Teclas de brillo**: Fn+F4/Fn+F5 llegan por el dispositivo ACPI **Video Bus** (no por el teclado interno); antes de añadir los binds no había nada escuchándolas y no hacían nada. El brillo se ajusta con `brightnessctl` (`intel_backlight`, 5 % por pulsación) y también funciona con la pantalla bloqueada (`locked`).
