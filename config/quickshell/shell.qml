@@ -12,6 +12,7 @@ ShellRoot {
     RecorderOSD {}
     Notifications {}
     SettingsWindow {}
+    PowerAgent {}
     NotepadWindow {}
     Todo {}
     PowerMenu {}

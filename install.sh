@@ -8,7 +8,7 @@
 #
 # It only touches your HOME:
 #   ~/.config/{43pr,dunst,hypr,kitty,matugen,quickshell,ranger,swappy,Thunar,waybar,wofi,xfce4}
-#   ~/.local/bin/{awww,screen-record.sh}
+#   ~/.local/bin/{awww,screen-record.sh,waybar}
 #   ~/.local/share/fonts/43pr/
 # Existing directories are backed up first under ~/.config-backups/43pr-debian-<date>/.
 set -Eeuo pipefail
@@ -60,7 +60,7 @@ fi
 cat <<EOF
 This will install the 43pr-debian configuration into:
   ~/.config/{$(IFS=,; echo "${CONFIG_DIRS[*]}")}
-  ~/.local/bin/{awww,screen-record.sh}
+  ~/.local/bin/{awww,screen-record.sh,waybar}
   ~/.local/share/fonts/43pr/
 
 Existing files are backed up to: $BACKUP
@@ -127,11 +127,11 @@ fi
 
 # --- local/bin ----------------------------------------------------------------
 if [[ $DRY_RUN -eq 1 ]]; then
-    say "[dry-run] would install awww and screen-record.sh into ~/.local/bin/"
+    say "[dry-run] would install awww, screen-record.sh and waybar into ~/.local/bin/"
 else
     mkdir -p "$HOME/.local/bin"
     cp -a "$REPO/local/bin/." "$HOME/.local/bin/"
-    chmod +x "$HOME/.local/bin/awww" "$HOME/.local/bin/screen-record.sh"
+    chmod +x "$HOME/.local/bin/awww" "$HOME/.local/bin/screen-record.sh" "$HOME/.local/bin/waybar"
 fi
 
 # --- fonts ---------------------------------------------------------------------

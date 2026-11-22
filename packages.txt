@@ -106,6 +106,22 @@ sudo apt install fonts-jetbrains-mono   # base font; Nerd glyphs are manual
 # Debian 13 ships cava 0.10.4, which does not support `theme =` (needs >= 0.10.5).
 
 # ---------------------------------------------------------------------------
+# Power / performance (optional)
+# ---------------------------------------------------------------------------
+# The Settings → Power page needs no extra packages: it reads sysfs and, for
+# the charge limit and Turbo toggle, uses the narrow sudoers rule from
+# scripts/install-power-sudoers.sh.
+#
+# systemd-zram-generator: compressed RAM swap. Recommended on machines without
+#   a swap partition; scripts/install-zram.sh installs and configures it.
+# thermald: Intel thermal daemon; helps sustain clocks and reduce throttling.
+# systemd-oomd: last-resort cgroup OOM killer before the desktop freezes.
+# powertop: read-only power diagnostics (already useful without tuning).
+# irqbalance/tlp/tuned: alternatives to power-profiles-daemon. Do not run them
+#   together with PPD or with the manual CPU MODE selector.
+sudo apt install systemd-zram-generator thermald systemd-oomd powertop
+
+# ---------------------------------------------------------------------------
 # Optional extras NOT packaged in Debian
 # ---------------------------------------------------------------------------
 # wf-recorder (screen recording) — extracted under ~/.local/opt, see

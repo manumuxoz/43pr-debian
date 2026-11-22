@@ -49,7 +49,7 @@ Capturas del escritorio real del autor.
 |---|---|
 | Config de Hyprland | Archivos Lua (`hyprland.lua`, `keybinds.lua`, `look.lua`, `monitors.lua`, `rules.lua`) |
 | Barra | Waybar 0.12 + `waybar-ipc-shim.py` (traduce el IPC antiguo a los dispatchers Lua de Hyprland 0.55) |
-| Widgets | Quickshell: OSD de medios (volumen + media, cualquier reproductor MPRIS), panel de notificaciones, OSDs de brillo/captura/grabación, lista de tareas, menú de energía, ventana de ajustes, selector de fondos (`hyprquickpaper`) |
+| Widgets | Quickshell: OSD de medios (volumen + media, cualquier reproductor MPRIS), panel de notificaciones, OSDs de brillo/captura/grabación, lista de tareas, menú de energía, ventana de ajustes (incluye la página Power con la salud de la batería), selector de fondos (`hyprquickpaper`) |
 | Motor de temas | `~/.config/43pr/bin/theme.py` — paletas, fondos, matugen (opcional), sincronización con el login |
 | Lanzadores / UI | wofi, kitty (dunst se mantiene solo como respaldo) |
 | fastfetch | Cabecera Debian ASCII animada al abrir kitty; ver [`scripts/debian-ascii/`](scripts/debian-ascii/README.md) |
@@ -105,14 +105,23 @@ git clone https://github.com/manumuxoz/43pr-debian.git
 cd 43pr-debian
 ./install.sh
 
-# 3. Opcional: permite que Ajustes → Sistema → CPU MODE cambie de perfil sin
-#    contraseña (instala una regla sudoers estrecha; solo una vez):
-sudo bash scripts/install-cpu-profile-sudoers.sh
+# 3. Opcional: permite que Ajustes → Sistema / Power cambie el perfil de CPU,
+#    Turbo Boost y el límite de carga de la batería sin contraseña (instala
+#    una regla sudoers estrecha; solo una vez):
+sudo bash scripts/install-power-sudoers.sh
 ```
 
 El modo de CPU elegido se guarda en
 `~/.config/quickshell/state/cpu-profile.json` y se vuelve a aplicar al iniciar
-el shell de Quickshell, por lo que se mantiene entre reinicios.
+el shell de Quickshell, por lo que se mantiene entre reinicios. Ajustes → Power
+muestra la salud de la batería en vivo, presets de límite de carga (60/80/100 %),
+Turbo Boost, consumo y datos térmicos; guarda el límite y Turbo en
+`~/.config/quickshell/state/power.json`, y un agente los vuelve a aplicar al
+iniciar el shell y registra una muestra de salud cada seis horas.
+
+Consulta [`docs/power.es.md`](docs/power.es.md) para la herramienta de salud de
+la batería, el instalador opcional de zram (`scripts/install-zram.sh`) y la
+auditoría de energía de solo lectura (`tools/power-audit.sh`).
 
 `install.sh` copia las configs a `~/.config/`, los scripts a `~/.local/bin/`,
 instala Roboto Mono en `~/.local/share/fonts/43pr/` y ejecuta
@@ -171,7 +180,8 @@ medios, `SUPER+SHIFT+E` menú de energía, `SUPER+R` grabación de pantalla,
 `SUPER+C` vista previa de la webcam, `SUPER+O` menú de opacidad (ventana activa
 por defecto, o todas las ventanas), `SUPER+SHIFT+O` ciclo de opacidad de la
 ventana activa, `SUPER+SHIFT+D` cambio de tema,
-`SUPER+SHIFT+W` ocultar/mostrar Waybar.
+`SUPER+SHIFT+W` ocultar/mostrar Waybar. El icono de batería de Waybar abre
+Ajustes → Power.
 El resto es el 43PR original (enfoque estilo vim, scratchpad, capturas en
 `~/Imágenes/Capturas de pantalla`, teclas multimedia…).
 
@@ -179,13 +189,13 @@ El resto es el 43PR original (enfoque estilo vim, scratchpad, capturas en
 
 ```
 config/      archivos que van a ~/.config/ (hypr, waybar, quickshell, 43pr, …)
-local/bin/   helpers que van a ~/.local/bin/ (shim de awww, screen-record.sh)
+local/bin/   helpers que van a ~/.local/bin/ (shim de awww, screen-record.sh, lanzador de Waybar)
 assets/      fuentes (Roboto Mono)
 etc/         archivos de sistema para el greeter (greetd, hyprlogin, PAM)
 patches/     fix de hyprlogin, fix de compilación de libfprint (egismoc)
-scripts/     utilidades del greeter (sincronización, rescate, instalación)
-docs/        notas de Debian, shim, greeter, huella y hardware
-tools/       upstream-diff.sh, doctor.sh (diagnóstico) y check-links.py (CI)
+scripts/     utilidades del greeter + install-power-sudoers.sh + install-zram.sh
+docs/        notas de Debian, shim, greeter, huella, hardware y energía
+tools/       upstream-diff.sh, doctor.sh, power-audit.sh (diagnóstico) y check-links.py (CI)
 .github/     workflow de CI + plantilla de issue de hardware
 packages.txt referencia de paquetes apt
 install.sh   instalador a nivel de usuario (admite --dry-run)

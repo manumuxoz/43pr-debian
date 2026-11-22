@@ -137,11 +137,12 @@
             "󰁺", "󰁻", "󰁼", "󰁽", "󰁾",
             "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
         ],
-        "tooltip-format": "Batería: {capacity}%\nSalud: {health}%\nPotencia: {power:.2f} W\n{timeTo}",
-        "tooltip-format-charging": "Cargando · {capacity}%\nSalud: {health}%\nPotencia: {power:.2f} W\n{timeTo}",
-        "tooltip-format-discharging": "Descargando · {capacity}%\nSalud: {health}%\nPotencia: {power:.2f} W\n{timeTo}",
-        "tooltip-format-plugged": "Enchufado · {capacity}%\nSalud: {health}%\nPotencia: {power:.2f} W\n{timeTo}",
-        "tooltip-format-full": "Batería llena · {capacity}%\nSalud: {health}%"
+        "tooltip-format": "Battery: {capacity}%\nHealth: {health}%\nPower: {power:.2f} W",
+        "tooltip-format-charging": "Charging · {capacity}%\nHealth: {health}%\nPower: {power:.2f} W",
+        "tooltip-format-discharging": "Discharging · {capacity}%\nHealth: {health}%\nPower: {power:.2f} W",
+        "tooltip-format-plugged": "Plugged: {capacity}%\nHealth: {health}%\nPower: {power:.2f} W",
+        "tooltip-format-full": "Battery full · {capacity}%\nHealth: {health}%",
+        "on-click": "qs ipc call settings power"
     },
 
     "custom/power": {

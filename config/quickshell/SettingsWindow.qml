@@ -221,15 +221,19 @@ Scope {
             shell.show(name)
         }
         function sound(): void {
-            shell.selectedIndex = 1
+            shell.selectedIndex = 2
             shell.show()
         }
         function network(): void {
-            shell.selectedIndex = 3
+            shell.selectedIndex = 4
             shell.show()
         }
         function display(): void {
-            shell.selectedIndex = 2
+            shell.selectedIndex = 3
+            shell.show()
+        }
+        function power(): void {
+            shell.selectedIndex = 1
             shell.show()
         }
         function snapTop(): void {
@@ -369,6 +373,7 @@ Scope {
 
             property var navItems: [
                 { name: "System", icon: "󰒓", page: "SystemPage" },
+                { name: "Power", icon: "󰁹", page: "PowerPage" },
                 { name: "Audio", icon: "\uf028", page: "SoundPage" },
                 { name: "Display", icon: "\uf108", page: "MonitorsPage" },
                 { name: "Network", icon: "\uf1eb", page: "NetworkPage" },

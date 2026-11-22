@@ -23,7 +23,8 @@ The shim is a small fake Hyprland instance:
    sockets (`.socket.sock` and `.socket2.sock`).
 2. `waybar-start.sh` launches Waybar with
    `HYPRLAND_INSTANCE_SIGNATURE=waybar-lua-shim`, so Waybar believes it is
-   talking to Hyprland.
+   talking to Hyprland. The `~/.local/bin/waybar` launcher delegates manual
+   `waybar` invocations to the same script.
 3. Requests are received on the fake socket:
    - Legacy dispatches (`dispatch workspace 2`,
      `dispatch focusworkspaceoncurrentmonitor 2`,
@@ -44,10 +45,14 @@ fails to start.
 ## Usage
 
 - Waybar starts automatically with the session (`SUPER+SHIFT+W` toggles it).
+- `~/.local/bin/waybar` is a launcher that sends manual `waybar` invocations
+  through `waybar-start.sh` while a Hyprland Lua session is active, so a bar
+  started from a terminal also gets working workspace clicks. To debug without
+  the bridge, run `WAYBAR_NO_SHIM=1 waybar`.
 - Test the translation manually:
 
-  ```bash
-  python3 ~/.config/hypr/scripts/waybar-ipc-shim.py --translate "workspace 2"
+  ```sh
+  python3 ~/.config/hypr/scripts/waybar-ipc-shim.py --translate "dispatch workspace 2"
   ```
 
 - Log file: `$XDG_RUNTIME_DIR/waybar-ipc-shim.log`
@@ -56,8 +61,9 @@ fails to start.
 ## When to remove the shim
 
 When a Waybar release with the Lua-dispatch support reaches Debian, remove the
-wrapper from `hyprland.lua` and launch `waybar` directly (the config itself
-needs no changes). The shim is self-contained, so deleting it is safe.
+wrapper from `hyprland.lua`, remove `~/.local/bin/waybar` (it only exists for
+this bridge), and launch `waybar` directly (the config itself needs no
+changes). The shim is self-contained, so deleting it is safe.
 
 ## Notes
 
@@ -65,3 +71,6 @@ needs no changes). The shim is self-contained, so deleting it is safe.
   expected.
 - The shim only translates the three dispatch families Waybar needs; it is not a
   general-purpose Hyprland proxy.
+- Start Waybar through `waybar-start.sh` (or the `~/.local/bin/waybar`
+  launcher). A plain `/usr/bin/waybar` started inside the session talks to the
+  real instance and its workspace clicks fail again on Hyprland 0.55.

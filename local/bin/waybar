@@ -1,0 +1,40 @@
+#!/bin/sh
+# waybar — lanzador que garantiza el puente IPC con Hyprland 0.55 (Lua).
+#
+# Waybar 0.12 envia los clics de los iconos de workspace con la sintaxis
+# antigua de Hyprland ("dispatch workspace N"), pero Hyprland 0.55 con config
+# Lua solo entiende dispatchers Lua. Sin el puente waybar-ipc-shim.py esos
+# clics no cambian de escritorio.
+#
+# El autostart, el atajo SUPER+SHIFT+W y el motor de temas ya lanzan
+# waybar-start.sh, pero una invocacion manual de "waybar" desde una terminal
+# dejaba la barra hablando con la instancia real (sin puente) y los clics
+# rotos. Este lanzador cierra ese hueco: si hay una sesion Hyprland con config
+# Lua, delega en waybar-start.sh. Para depurar sin puente:
+#
+#     WAYBAR_NO_SHIM=1 waybar
+#
+# --version y --help no arrancan la barra y van directos al binario real.
+
+set -u
+
+real_waybar="${WAYBAR_REAL_BIN:-/usr/bin/waybar}"
+
+case "${1:-}" in
+    -v|--version|-h|--help)
+        exec "$real_waybar" "$@"
+        ;;
+esac
+
+# Sin puente cuando ya lo gestiona waybar-start.sh (WAYBAR_NO_SHIM), cuando la
+# firma es la falsa, cuando no hay sesion Hyprland, o cuando este checkout no
+# esta instalado con config Lua.
+if [ -n "${WAYBAR_NO_SHIM:-}" ] \
+    || [ "${HYPRLAND_INSTANCE_SIGNATURE:-}" = "waybar-lua-shim" ] \
+    || [ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] \
+    || [ ! -f "${HOME:-}/.config/hypr/hyprland.lua" ] \
+    || [ ! -x "${HOME:-}/.config/hypr/scripts/waybar-start.sh" ]; then
+    exec "$real_waybar" "$@"
+fi
+
+exec "${HOME}/.config/hypr/scripts/waybar-start.sh" "$@"

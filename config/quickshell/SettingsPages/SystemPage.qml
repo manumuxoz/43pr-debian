@@ -46,9 +46,6 @@ Item {
     property string wifiSignal: "—"
     property string wifiLevel: "—"
 
-    property string batteryText: "…"
-    property string batteryHealthText: "…"
-
     property string tempNvme: "—"
     property string tempWifi: "—"
     property string tempAcpi: "—"
@@ -100,7 +97,7 @@ Item {
         if (pSetPlatformProfile.running) return
 
         // The narrow NOPASSWD rule installed by
-        // scripts/install-cpu-profile-sudoers.sh allows this exact command.
+        // scripts/install-power-sudoers.sh allows this exact command.
         pSetPlatformProfile.pendingProfile = id
         pSetPlatformProfile.stdinEnabled = true
         pSetPlatformProfile.running = true
@@ -249,11 +246,6 @@ Item {
         return (kbps / 1024).toFixed(1) + " MB/s"
     }
 
-    function formatMinutes(mins) {
-        if (mins >= 90) return Math.floor(mins / 60) + " h " + Math.round(mins % 60) + " min"
-        return Math.round(mins) + " min"
-    }
-
     // Rounds `max` up to a friendly graph ceiling (1/2/5 * 10^n).
     function niceScale(max) {
         if (!(max > 0)) return 100
@@ -321,37 +313,6 @@ Item {
 
         page.wifiSignal = p[0]
         page.wifiLevel = p[1] + " dBm"
-    }
-
-    function batteryTime(charge, full, amps, status) {
-        if (amps < 0.01) return "—"
-
-        var hours = -1
-        if (status === "Discharging") hours = (charge / 1e6) / amps
-        else if (status === "Charging") hours = Math.max(0, ((full - charge) / 1e6) / amps)
-        if (hours < 0) return "—"
-
-        return formatMinutes(hours * 60)
-    }
-
-    function updateBattery(text) {
-        var l = text.trim().split("\n")
-        if (l.length < 8) return
-
-        var level = parseInt(l[0], 10)
-        var status = l[1].trim()
-        var volts = Number(l[2]) / 1e6
-        var amps = Math.abs(Number(l[3])) / 1e6
-        var charge = Number(l[4])
-        var full = Number(l[5])
-        var design = Number(l[6])
-        var cycles = l[7].trim()
-
-        page.batteryText = level + "% · " + status.toLowerCase() +
-            (amps > 0.01 ? " · " + (volts * amps).toFixed(1) + " W" : "") +
-            " · " + batteryTime(charge, full, amps, status)
-        page.batteryHealthText = (design > 0 ? Math.round(full / design * 100) + "%" : "—") +
-            " · " + cycles + " cycles · " + (full / 1e6).toFixed(2) + "/" + (design / 1e6).toFixed(2) + " Ah"
     }
 
     function updateClock() {
@@ -768,13 +729,6 @@ Item {
     }
 
     Process {
-        id: pBattery
-        command: ["sh", "-c", "cat /sys/class/power_supply/BAT0/capacity /sys/class/power_supply/BAT0/status /sys/class/power_supply/BAT0/voltage_now /sys/class/power_supply/BAT0/current_now /sys/class/power_supply/BAT0/charge_now /sys/class/power_supply/BAT0/charge_full /sys/class/power_supply/BAT0/charge_full_design /sys/class/power_supply/BAT0/cycle_count"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: page.updateBattery(text) }
-    }
-
-    Process {
         id: pTempNvme
         command: ["sh", "-c", "for h in /sys/class/hwmon/hwmon*; do [ \"$(cat $h/name 2>/dev/null)\" = nvme ] && cat $h/temp1_input; done"]
         running: true
@@ -832,7 +786,6 @@ Item {
         repeat: true
         onTriggered: {
             pUptime.running = true
-            pBattery.running = true
             pTempNvme.running = true
             pTempWifi.running = true
             pTempAcpi.running = true
@@ -1042,8 +995,6 @@ Item {
                 width: parent.width
                 spacing: 14
 
-                InfoRow { icon: "󰁹"; label: "BATTERY"; value: page.batteryText; valueWidth: 680 }
-                InfoRow { icon: "󰁹"; label: "BATTERY HEALTH"; value: page.batteryHealthText; valueWidth: 680 }
                 InfoRow {
                     icon: "󰔏"
                     label: "SENSORS"

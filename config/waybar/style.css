@@ -254,3 +254,8 @@ tooltip label {
     color: @wb_critical;
 }
 
+#battery.charging,
+#battery.plugged {
+    color: @wb_ws_active;
+}
+

@@ -48,7 +48,7 @@ Captures from the author's real desktop.
 |---|---|
 | Hyprland config | Lua files (`hyprland.lua`, `keybinds.lua`, `look.lua`, `monitors.lua`, `rules.lua`) |
 | Bar | Waybar 0.12 + `waybar-ipc-shim.py` (bridges legacy IPC to Hyprland 0.55 Lua dispatchers) |
-| Widgets | Quickshell: media OSD (volume + media, any MPRIS player), notification panel, brightness/screenshot/recorder OSDs, todo list, power menu, settings window, wallpaper picker (`hyprquickpaper`) |
+| Widgets | Quickshell: media OSD (volume + media, any MPRIS player), notification panel, brightness/screenshot/recorder OSDs, todo list, power menu, settings window (including the Power / battery-health page), wallpaper picker (`hyprquickpaper`) |
 | Theme engine | `~/.config/43pr/bin/theme.py` — palettes, wallpapers, matugen (optional), greeter sync |
 | Launchers / UI | wofi, kitty (dunst is kept only as a fallback) |
 | fastfetch | Animated Debian ASCII header when kitty starts; see [`scripts/debian-ascii/`](scripts/debian-ascii/README.md) |
@@ -105,14 +105,23 @@ git clone https://github.com/manumuxoz/43pr-debian.git
 cd 43pr-debian
 ./install.sh
 
-# 3. Optional: let Settings → System → CPU MODE switch profiles without a
-#    password (installs a narrow sudoers rule; one-time):
-sudo bash scripts/install-cpu-profile-sudoers.sh
+# 3. Optional: let Settings → System / Power change the CPU profile, Turbo
+#    Boost and the battery charge limit without a password (installs a narrow
+#    sudoers rule; one-time):
+sudo bash scripts/install-power-sudoers.sh
 ```
 
 The selected CPU MODE is saved in
 `~/.config/quickshell/state/cpu-profile.json` and re-applied when the
-Quickshell shell starts, so it survives reboots.
+Quickshell shell starts, so it survives reboots. Settings → Power shows live
+battery health, charge-limit presets (60/80/100 %), Turbo Boost, power draw and
+thermal data; it saves the charge limit and Turbo choice in
+`~/.config/quickshell/state/power.json`, and a background agent re-applies them
+at the next shell start and records a health sample every six hours.
+
+See [`docs/power.md`](docs/power.md) for the battery-health tool, the optional
+zram installer (`scripts/install-zram.sh`) and the read-only power audit
+(`tools/power-audit.sh`).
 
 `install.sh` copies the configs to `~/.config/`, the helper scripts to
 `~/.local/bin/`, installs Roboto Mono in `~/.local/share/fonts/43pr/`, and runs
@@ -170,7 +179,8 @@ Quickshell settings, `SUPER+N` notepad, `SUPER+SHIFT+T` todo list,
 `SUPER+SHIFT+E` power menu, `SUPER+R` screen recording, `SUPER+C` webcam
 preview, `SUPER+O` opacity menu (focused window by default, or all windows),
 `SUPER+SHIFT+O` cycles the focused window's opacity, `SUPER+SHIFT+D` theme
-toggle, `SUPER+SHIFT+W` toggle Waybar.
+toggle, `SUPER+SHIFT+W` toggle Waybar. The Waybar battery icon opens
+Settings → Power.
 Everything else is upstream 43PR (vim-style focus, scratchpad, screenshots to
 `~/Imágenes/Capturas de pantalla`, media keys…).
 
@@ -178,13 +188,13 @@ Everything else is upstream 43PR (vim-style focus, scratchpad, screenshots to
 
 ```
 config/      files that go to ~/.config/ (hypr, waybar, quickshell, 43pr, …)
-local/bin/   helpers that go to ~/.local/bin/ (awww shim, screen-record.sh)
+local/bin/   helpers that go to ~/.local/bin/ (awww shim, screen-record.sh, Waybar launcher)
 assets/      fonts (Roboto Mono)
 etc/         system files for the greeter (greetd, hyprlogin, PAM)
 patches/     hyprlogin unlock-race fix, libfprint egismoc build fix
-scripts/     greeter utilities (theme sync, rescue, install)
-docs/        Debian notes, shim + greeter + fingerprint + hardware docs
-tools/       upstream-diff.sh, doctor.sh (diagnóstico) y check-links.py (CI)
+scripts/     greeter utilities + install-power-sudoers.sh + install-zram.sh
+docs/        Debian notes, shim, greeter, fingerprint, hardware and power docs
+tools/       upstream-diff.sh, doctor.sh, power-audit.sh (diagnostics), check-links.py (CI)
 .github/     CI workflow + hardware-report issue template
 packages.txt apt package reference
 install.sh   user-level installer (supports --dry-run)

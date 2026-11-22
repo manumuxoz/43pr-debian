@@ -55,7 +55,20 @@ The three-finger workspace swipe gesture is also configured there.
 ## Battery / power
 
 - Waybar shows `BAT0` and `ADP1` (fixed in `~/.config/waybar/config.jsonc`).
-- `suspend-if-on-battery.sh` (hypridle timeout) only suspends on battery.
+- `BAT0` exposes `charge_control_end_threshold`, so **Settings → Power** can
+  enforce the ASUS Battery Health Charging presets (60/80/100 %). Writing it
+  needs the narrow NOPASSWD rule from `scripts/install-power-sudoers.sh`.
+- `intel_pstate/no_turbo` is also exposed; the Power page uses it for the Turbo
+  Boost toggle. There is no `energy_*` counter on this battery: health is
+  computed from `charge_full / charge_full_design`.
+- Health history is logged to `~/.local/state/43pr/battery-history.jsonl` every
+  six hours while the Quickshell session runs; see
+  [`docs/power.md`](power.md) (Spanish: [`docs/power.es.md`](power.es.md)).
+- `suspend-if-on-battery.sh` (hypridle timeout) only suspends when no charger
+  is online; it checks `ADP1` and USB-C power sources (`type=USB`).
+- This machine has no swap configured. `scripts/install-zram.sh` sets up
+  compressed RAM swap if you want a memory-pressure safety net; zram is not
+  compatible with hibernation.
 
 ## Fingerprint
 

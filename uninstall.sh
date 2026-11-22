@@ -101,7 +101,7 @@ cat <<EOF
 
 Notes:
   - Helpers installed by install.sh are left in place; remove them with:
-      rm ~/.local/bin/awww ~/.local/bin/screen-record.sh
+      rm ~/.local/bin/awww ~/.local/bin/screen-record.sh ~/.local/bin/waybar
       rm -rf ~/.local/share/fonts/43pr && fc-cache -f
   - The post-install configs were moved to:
       $REMOVED

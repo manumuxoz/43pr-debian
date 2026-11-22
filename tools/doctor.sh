@@ -21,7 +21,7 @@ section() { printf '\n%s== %s ==%s\n' "$B" "$*" "$N"; }
 pass()    { printf '  %sOK%s   %s\n' "$G" "$N" "$*"; okc=$((okc + 1)); }
 warn()    { printf '  %sWARN%s %s\n' "$Y" "$N" "$*"; warnc=$((warnc + 1)); }
 fail()    { printf '  %sFAIL%s %s\n' "$R" "$N" "$*"; failc=$((failc + 1)); }
-have()    { command -v "$1" >/dev/null 2>&1; }
+have()    { command -v "$1" >/dev/null 2>&1 || [ -x "/usr/sbin/$1" ]; }
 
 section "Sesión y compositor"
 if [ "${XDG_SESSION_TYPE:-}" = "wayland" ]; then
@@ -87,6 +87,21 @@ if pgrep -x hyprsunset >/dev/null 2>&1; then
     pass "hyprsunset activo (luz nocturna)"
 else
     printf '  %sINFO%s hyprsunset inactivo (luz nocturna apagada)\n' "$B" "$N"
+fi
+
+waybar_pid="$(pgrep -x waybar 2>/dev/null | head -n1 || true)"
+if [ -n "$waybar_pid" ]; then
+    waybar_sig="$(tr '\0' '\n' <"/proc/$waybar_pid/environ" 2>/dev/null \
+        | sed -n 's/^HYPRLAND_INSTANCE_SIGNATURE=//p' | head -n1)"
+    shim_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hypr/waybar-lua-shim"
+    shim_pid="$(cat "$shim_dir/shim.pid" 2>/dev/null || true)"
+    if [ "$waybar_sig" != "waybar-lua-shim" ]; then
+        fail "Waybar habla con Hyprland sin puente: los clics de workspace no cambian de escritorio; reinicia con ~/.config/hypr/scripts/waybar-restart.sh"
+    elif [ -z "$shim_pid" ] || ! kill -0 "$shim_pid" 2>/dev/null; then
+        fail "Waybar apunta al puente IPC pero el proceso no está vivo; reinicia con ~/.config/hypr/scripts/waybar-restart.sh"
+    else
+        pass "Waybar usa el puente IPC (clics de workspace operativos)"
+    fi
 fi
 
 qs_instances="$(pgrep -xc qs 2>/dev/null || true)"
@@ -269,6 +284,39 @@ for rel in hypr/scripts/screenshot.sh hypr/scripts/monitor-ctl.sh \
         fail "no ejecutable o ausente: ~/.config/$rel"
     fi
 done
+
+section "Energía y rendimiento"
+bat=/sys/class/power_supply/BAT0
+full="$(cat "$bat/charge_full" 2>/dev/null || true)"
+design="$(cat "$bat/charge_full_design" 2>/dev/null || true)"
+if [ -n "$full" ] && [ -n "$design" ] && [ "$design" -gt 0 ]; then
+    health=$((full * 100 / design))
+    if [ "$health" -ge 80 ]; then pass "salud de batería: ${health}%"
+    elif [ "$health" -ge 70 ]; then warn "salud de batería: ${health}% (70-79%)"
+    else fail "salud de batería: ${health}% (<70%)"; fi
+else
+    warn "no pude leer la salud de BAT0"
+fi
+limit="$(cat "$bat/charge_control_end_threshold" 2>/dev/null || true)"
+if [ "$limit" = 100 ]; then printf '  %sINFO%s límite de carga 100%%; 60-80%% alarga la vida útil\n' "$B" "$N"
+elif [ -n "$limit" ] && [ "$limit" -le 80 ]; then pass "límite de carga: ${limit}%"
+elif [ -n "$limit" ]; then warn "límite de carga: ${limit}% (sugerido 60-80%)"; fi
+profile="$(cat /sys/firmware/acpi/platform_profile 2>/dev/null || true)"
+[ -n "$profile" ] && pass "platform_profile: $profile" || warn "platform_profile no disponible"
+turbo="$(cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true)"
+if [ "$turbo" = 0 ]; then pass "turbo habilitado"
+elif [ "$turbo" = 1 ]; then printf '  %sINFO%s turbo desactivado (no_turbo=1)\n' "$B" "$N"; fi
+swaps="$(awk 'NR>1 && $1 != "" {print $1}' /proc/swaps 2>/dev/null)"
+if [ -n "$swaps" ]; then pass "swap activa: $swaps"
+elif [ -e /sys/block/zram0 ]; then warn "zram0 presente pero sin swap activa"
+else warn "sin swap ni zram; usa: sudo bash $REPO/scripts/install-zram.sh"; fi
+if systemctl is-active --quiet systemd-oomd 2>/dev/null || systemctl is-active --quiet earlyoom 2>/dev/null || [ -e /sys/block/zram0 ]; then pass "gestor OOM o zram disponible"; else warn "sin systemd-oomd/earlyoom ni zram"; fi
+missing_tools=""
+for tool in thermald powertop; do have "$tool" || missing_tools="$missing_tools $tool"; done
+if [ -z "$missing_tools" ]; then pass "thermald y powertop instalados"
+else printf '  %sINFO%s no instalados (opcionales):%s\n' "$B" "$N" "$missing_tools"; fi
+thr="$(cat /sys/devices/system/cpu/cpu0/thermal_throttle/package_throttle_count 2>/dev/null || true)"
+if [ -n "$thr" ] && [ "$thr" -gt 0 ]; then warn "throttle de paquete: $thr eventos desde el arranque"; else pass "sin throttle de paquete registrado"; fi
 
 section "Paquetes"
 required=(waybar dunst wofi quickshell hyprland hyprlock hypridle grim slurp \

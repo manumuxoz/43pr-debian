@@ -43,9 +43,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `power-profiles-daemon`. Available modes are read from the kernel, the
   active one is highlighted, and the CPU badge above the graph refreshes after
   each change. Switching modes is passwordless once the narrow rule from
-  `scripts/install-cpu-profile-sudoers.sh` is installed (one-time `sudo`/`pkexec`).
+  `scripts/install-power-sudoers.sh` is installed (one-time `sudo`/`pkexec`).
   The chosen mode is saved in `~/.config/quickshell/state/cpu-profile.json` and
   re-applied when the shell starts, so it survives reboots.
+- Settings → **Power** page: live charge/runtime, pack power graph, battery
+  health (`charge_full / charge_full_design`), wear, cycle count, capacity in
+  Ah/Wh, a 180-day health history, charge-limit presets (60/80/100 %) for
+  batteries that expose `charge_control_end_threshold`, a Turbo Boost toggle
+  (`intel_pstate/no_turbo`), package temperature, fan and package-throttle
+  counters, and the active swap/zram devices. The battery CLI
+  (`config/quickshell/scripts/battery-health.py`) also supports
+  `status`, `history`, `record`, `report` and `limit`. `PowerAgent` records a
+  health sample every six hours to
+  `~/.local/state/43pr/battery-history.jsonl` (three-year retention) and
+  re-applies the charge limit and Turbo choice saved in
+  `~/.config/quickshell/state/power.json` at shell start.
+- `scripts/install-power-sudoers.sh` replaces
+  `install-cpu-profile-sudoers.sh` and extends the narrow NOPASSWD rule to the
+  Turbo and charge-limit sysfs files; the old rule is removed on upgrade.
+- `scripts/install-zram.sh`: optional compressed RAM swap
+  (`systemd-zram-generator`, `min(ram / 2, 8192)` MiB, zstd) plus the usual
+  zram sysctls, with `--dry-run` and `--remove`. Useful on machines without a
+  swap partition; it is not compatible with hibernation.
+- `tools/power-audit.sh`: read-only battery, CPU, memory, boot, thermal and
+  tooling report with concrete suggestions. `tools/doctor.sh` gained a compact
+  "Energía y rendimiento" section.
+- `docs/power.md` and `docs/power.es.md` document the Power page, the battery
+  CLI, zram, thermald, systemd-oomd, boot-time cleanup, the 60 Hz battery mode
+  and the one-power-owner rule. Waybar's battery module opens the Power page on
+  click and uses the accent colour while charging.
 - `SUPER+ALT+Tab` focuses the previously active window, mirroring the
   `SUPER+Tab` previous-workspace toggle. It uses Hyprland's
   `focuscurrentorlast` dispatcher, so pressing it again returns to the window
@@ -69,6 +95,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The Waybar battery tooltip is now in English and shows only the state, the
+  health and the power draw. The `{timeTo}` line (which printed `Plugged` when
+  connected) and the `Click: salud de la batería` hint are gone, and the
+  plugged state uses `Plugged: N%` with a colon instead of the middle dot.
+- Settings → System no longer duplicates the battery and battery-health rows
+  at the bottom; battery status, health and the charge limit live only in
+  Settings → Power. The CPU/GPU/RAM/load/net graphs and the SENSORS row are
+  unchanged.
 - Area screenshot now uses the laptop's dedicated capture key (`Fn+F11`,
   `KEY_SELECTIVE_SCREENSHOT` → `XF86SelectiveScreenshot`) instead of
   `SUPER+SHIFT+Delete`. The bind ignores held modifiers (`ignore_mods`) so it
@@ -88,6 +122,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Clicking a workspace icon in Waybar now keeps working after a manual
+  `waybar` restart. A plain `/usr/bin/waybar` launched inside the session
+  bypassed `waybar-start.sh`, so Waybar sent the legacy `dispatch workspace N`
+  command straight to Hyprland 0.55 and the click did nothing. The new
+  `~/.local/bin/waybar` launcher forwards manual invocations to
+  `waybar-start.sh` while a Hyprland Lua session is active; use
+  `WAYBAR_NO_SHIM=1 waybar` to start the plain binary for debugging.
+- The hypridle suspend-on-battery listener now treats USB-C chargers as AC
+  power. It checked only `ADP1`, so a charger connected through a USB-C port
+  (`ucsi-source-psy-*`, `type=USB`, `online=1`) still let the 15-minute
+  timeout suspend the laptop.
 - hyprlock's fingerprint `retry_delay` is now 750 ms. The EgisTech sensor is a
   "press" reader, and the previous 250 ms restarted verification before the
   finger was lifted after a `verify-no-match`. The fingerprint block and the

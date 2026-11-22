@@ -12,6 +12,12 @@
 
 set -u
 
+# El lanzador ~/.local/bin/waybar reenvia las invocaciones manuales de "waybar"
+# a este script. Al llegar aqui el puente ya esta gestionado: WAYBAR_NO_SHIM
+# evita que el lanzador vuelva a entrar en este script y ejecute el binario
+# real (tambien en el fallback sin puente).
+export WAYBAR_NO_SHIM=1
+
 script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 
 exec_plain() {
